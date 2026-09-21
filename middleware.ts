@@ -17,7 +17,7 @@ const sha256 = async (s: string) => {
 
 const page = (state: 'ask' | 'wrong' | 'unset') => `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">
-<title>Sperrkonto-Mockup</title>
+<title>Blocked Account Mockup</title>
 <style>
   :root { color-scheme: light; }
   body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f4f4f5; color: #0b0f19; font: 16px/1.5 -apple-system, "Segoe UI", system-ui, sans-serif; }
@@ -34,7 +34,7 @@ const page = (state: 'ask' | 'wrong' | 'unset') => `<!doctype html>
 </style></head>
 <body><main>
   <p class="mark">ec assets</p>
-  <h1>Sperrkonto-Mockup</h1>
+  <h1>Blocked Account Mockup</h1>
   <p>This is an internal preview. Please enter the password.</p>
   ${state === 'unset' ? '<p class="err">No password is configured for this deployment yet.</p>' : `<form method="post">
     <label for="key">Password</label>
