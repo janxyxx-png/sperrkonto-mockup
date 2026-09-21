@@ -1,0 +1,91 @@
+{
+  "slug": "legal-notice",
+  "path": "/legal-notice",
+  "title": "قانونی نوٹس | EC Assets",
+  "description": "EC Assets کا قانونی نوٹس اور امپرنٹ۔",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "قانونی نوٹس"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>یہ ماک اپ کے لیے ایک ساختی پلیس ہولڈر ہے۔ حتمی عبارت اشاعت سے پہلے EC Assets کے قانونی مشیر سے آنی چاہیے۔</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "جرمن قانون کے تحت درکار معلومات۔"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "کمپنی"
+        },
+        {
+          "type": "paragraph",
+          "html": "<span dir=\"ltr\">EC Assets GmbH <br> Musterstraße 1 <br> 10178 Berlin, Germany</span>"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "منیجنگ ڈائریکٹرز"
+        },
+        {
+          "type": "paragraph",
+          "html": "Sara Ahmed, Jonas Weber"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "کمرشل رجسٹر"
+        },
+        {
+          "type": "paragraph",
+          "html": "برلن (شارلوٹن بُرگ) کی مقامی عدالت میں رجسٹرڈ، رجسٹریشن نمبر HRB 123456 B"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "وی اے ٹی شناختی نمبر"
+        },
+        {
+          "type": "paragraph",
+          "html": "DE 123456789"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "انشورنس بروکریج"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets جرمن ٹریڈ ریگولیشن ایکٹ کی دفعہ 34d کے تحت انشورنس بروکر کے طور پر کام کرتا ہے۔ رجسٹریشن نمبر D-1234-ABCDE-56، رجسٹر جرمن چیمبر آف انڈسٹری اینڈ کامرس رکھتا ہے۔"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "رابطہ"
+        },
+        {
+          "type": "paragraph",
+          "html": "ای میل: legal@ecassets.com <br> سپورٹ: ہیلپ سینٹر کے ذریعے"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تنازعات کا حل"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets صارف ثالثی بورڈ کے سامنے تنازعات کے حل کی کارروائی میں حصہ لینے کا نہ پابند ہے نہ آمادہ۔"
+        }
+      ]
+    }
+  ]
+}

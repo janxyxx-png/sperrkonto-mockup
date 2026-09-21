@@ -1,0 +1,82 @@
+---
+/**
+ * Eigene Flach-Illustrationen im Farbsystem der Seite (Tinte, Grau, ein Bordeaux-Punkt).
+ * Reines Inline-SVG, 4:3, keine Fremdgrafiken. Auswahl nach Thema ueber lib/illo.ts.
+ */
+import type { IlloName } from '../lib/illo';
+interface Props { name: IlloName; class?: string; bare?: boolean }
+const { name, class: cls, bare = false } = Astro.props;
+// Monochrom nach Design-Upgrade (18.09.): Szenen in Tinte und Grau; nur der Haken-Kreis traegt das Bordeaux der Marke (wie Haken, Stempel und Badge), damit die Illustration nicht mit dem Interface um Farbe konkurriert
+const INK = '#0b0f19', ACCENT = '#8e2d2f', BLUE = '#3a4258', DEEP = '#0b0f19', SOFT = '#ebebec', SOFT2 = '#d6d8dd', GREY = '#e4e4e6', GREY2 = '#c9cfda', MID = '#3a4258', WHITE = '#ffffff';
+const check = (cx: number, cy: number, r = 26) => `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${ACCENT}"/><path d="M${cx - r * 0.42} ${cy + 1} l${r * 0.28} ${r * 0.28} l${r * 0.56} -${r * 0.56}" fill="none" stroke="${WHITE}" stroke-width="${r * 0.16}" stroke-linecap="round" stroke-linejoin="round"/>`;
+const backdrop = bare ? '' : `<circle cx="200" cy="158" r="118" fill="${SOFT}"/><circle cx="84" cy="70" r="7" fill="${SOFT2}"/><circle cx="322" cy="248" r="10" fill="${SOFT2}"/><circle cx="330" cy="72" r="4" fill="${BLUE}"/>`;
+const scenes: Record<IlloName, string> = {
+  visa: `<rect x="118" y="66" width="150" height="204" rx="16" fill="${INK}"/><rect x="118" y="66" width="18" height="204" rx="9" fill="${MID}"/>
+    <circle cx="200" cy="150" r="30" fill="none" stroke="#c9cfda" stroke-width="4"/><ellipse cx="200" cy="150" rx="13" ry="30" fill="none" stroke="#c9cfda" stroke-width="3"/><path d="M170 150h60M176 135h48M176 165h48" stroke="#c9cfda" stroke-width="3" stroke-linecap="round"/>
+    <rect x="160" y="212" width="80" height="7" rx="3.5" fill="${MID}"/><rect x="160" y="228" width="56" height="7" rx="3.5" fill="${MID}"/>
+    <g transform="rotate(-12 292 112)"><circle cx="292" cy="112" r="46" fill="${WHITE}" stroke="${BLUE}" stroke-width="6"/><circle cx="292" cy="112" r="34" fill="none" stroke="${BLUE}" stroke-width="2.5" stroke-dasharray="5 5"/><text x="292" y="119" text-anchor="middle" font-family="Instrument Sans, Arial, sans-serif" font-weight="700" font-size="19" fill="${BLUE}" letter-spacing="1">VISA</text></g>
+    ${check(286, 240)}`,
+  documents: `<g transform="rotate(-7 215 160)"><rect x="140" y="62" width="150" height="196" rx="14" fill="${SOFT2}"/></g>
+    <rect x="122" y="84" width="150" height="196" rx="14" fill="${WHITE}" stroke="${GREY}" stroke-width="2"/>
+    <rect x="142" y="106" width="54" height="10" rx="5" fill="${BLUE}"/><rect x="142" y="132" width="110" height="8" rx="4" fill="${GREY}"/><rect x="142" y="152" width="96" height="8" rx="4" fill="${GREY}"/><rect x="142" y="172" width="110" height="8" rx="4" fill="${GREY}"/><rect x="142" y="192" width="70" height="8" rx="4" fill="${GREY}"/>
+    <rect x="142" y="226" width="44" height="30" rx="8" fill="${INK}"/>
+    ${check(268, 250)}`,
+  study: `<rect x="108" y="212" width="184" height="26" rx="7" fill="${BLUE}"/><rect x="120" y="186" width="160" height="26" rx="7" fill="${INK}"/><rect x="132" y="160" width="136" height="26" rx="7" fill="${SOFT2}"/>
+    <path d="M200 74 L308 118 L200 162 L92 118 Z" fill="${INK}"/><path d="M148 132 V158 C148 176 252 176 252 158 V132" fill="${MID}"/><path d="M148 132 L200 152 L252 132" fill="${INK}"/>
+    <path d="M308 118 V160" stroke="${BLUE}" stroke-width="4" stroke-linecap="round"/><circle cx="308" cy="166" r="7" fill="${BLUE}"/>`,
+  work: `<rect x="96" y="226" width="228" height="14" rx="7" fill="${MID}"/><rect x="112" y="104" width="176" height="122" rx="12" fill="${INK}"/><rect x="124" y="116" width="152" height="94" rx="6" fill="${WHITE}"/>
+    <rect x="138" y="132" width="52" height="9" rx="4.5" fill="${BLUE}"/><rect x="138" y="152" width="90" height="7" rx="3.5" fill="${GREY}"/><rect x="138" y="168" width="70" height="7" rx="3.5" fill="${GREY}"/><rect x="138" y="184" width="100" height="7" rx="3.5" fill="${GREY}"/>
+    <rect x="262" y="168" width="98" height="76" rx="12" fill="${BLUE}"/><rect x="296" y="154" width="30" height="16" rx="6" fill="none" stroke="${BLUE}" stroke-width="6"/><rect x="262" y="196" width="98" height="6" fill="${DEEP}"/><rect x="302" y="190" width="18" height="18" rx="4" fill="${WHITE}"/>`,
+  bank: `<path d="M200 66 L322 132 H78 Z" fill="${BLUE}"/><rect x="88" y="132" width="224" height="12" rx="4" fill="${INK}"/>
+    <rect x="108" y="150" width="22" height="70" rx="4" fill="${INK}"/><rect x="156" y="150" width="22" height="70" rx="4" fill="${INK}"/><rect x="222" y="150" width="22" height="70" rx="4" fill="${INK}"/><rect x="270" y="150" width="22" height="70" rx="4" fill="${INK}"/>
+    <rect x="80" y="222" width="240" height="18" rx="6" fill="${INK}"/>
+    <circle cx="308" cy="236" r="30" fill="${BLUE}" stroke="${WHITE}" stroke-width="5"/><text x="308" y="245" text-anchor="middle" font-family="Instrument Sans, Arial, sans-serif" font-weight="700" font-size="26" fill="${WHITE}">€</text>`,
+  insurance: `<path d="M200 56 L292 92 V158 C292 214 246 250 200 266 C154 250 108 214 108 158 V92 Z" fill="${BLUE}"/><path d="M200 78 L272 106 V156 C272 200 236 230 200 244 V78 Z" fill="${DEEP}"/>
+    <rect x="188" y="124" width="24" height="88" rx="7" fill="${WHITE}"/><rect x="156" y="156" width="88" height="24" rx="7" fill="${WHITE}"/>
+    <rect x="266" y="202" width="92" height="58" rx="10" fill="${INK}"/><rect x="266" y="216" width="92" height="10" fill="${MID}"/><rect x="278" y="238" width="36" height="8" rx="4" fill="#c9cfda"/>`,
+  home: `<path d="M200 66 L322 164 H78 Z" fill="${INK}"/><rect x="104" y="164" width="192" height="106" fill="${WHITE}" stroke="${GREY}" stroke-width="2"/>
+    <rect x="182" y="198" width="42" height="72" rx="5" fill="${BLUE}"/><circle cx="214" cy="236" r="3.5" fill="${WHITE}"/>
+    <rect x="124" y="186" width="38" height="38" rx="6" fill="${SOFT}" stroke="${INK}" stroke-width="3"/><path d="M143 186v38M124 205h38" stroke="${INK}" stroke-width="3"/>
+    <rect x="234" y="120" width="22" height="34" fill="${MID}"/>
+    <g transform="rotate(-35 300 232)"><circle cx="286" cy="232" r="18" fill="none" stroke="${BLUE}" stroke-width="9"/><rect x="300" y="228" width="52" height="9" rx="4" fill="${BLUE}"/><rect x="332" y="236" width="8" height="12" fill="${BLUE}"/><rect x="316" y="236" width="8" height="10" fill="${BLUE}"/></g>`,
+  events: `<rect x="108" y="80" width="184" height="172" rx="16" fill="${WHITE}" stroke="${GREY}" stroke-width="2"/><path d="M108 96 a16 16 0 0 1 16 -16 h152 a16 16 0 0 1 16 16 v30 H108 Z" fill="${INK}"/>
+    <rect x="146" y="66" width="12" height="30" rx="6" fill="${MID}"/><rect x="242" y="66" width="12" height="30" rx="6" fill="${MID}"/>
+    ${[0,1,2].map((r) => [0,1,2,3].map((c) => `<circle cx="${140 + c * 40}" cy="${152 + r * 34}" r="8" fill="${r === 1 && c === 2 ? BLUE : GREY}"/>`).join('')).join('')}
+    <circle cx="292" cy="232" r="36" fill="${BLUE}" stroke="${WHITE}" stroke-width="6"/><path d="M284 218 L306 232 L284 246 Z" fill="${WHITE}"/>`,
+  app: `<rect x="136" y="46" width="128" height="230" rx="24" fill="${INK}"/><rect x="146" y="58" width="108" height="206" rx="16" fill="${WHITE}"/><rect x="178" y="66" width="44" height="8" rx="4" fill="${INK}"/>
+    <rect x="158" y="90" width="84" height="46" rx="10" fill="${INK}"/><rect x="168" y="102" width="30" height="6" rx="3" fill="#c9cfda"/><rect x="168" y="116" width="52" height="8" rx="4" fill="${WHITE}"/>
+    <rect x="158" y="146" width="84" height="24" rx="8" fill="${SOFT}"/><rect x="158" y="178" width="84" height="24" rx="8" fill="${SOFT}"/><rect x="158" y="210" width="84" height="24" rx="8" fill="${SOFT}"/>
+    <circle cx="170" cy="158" r="5" fill="${BLUE}"/><circle cx="170" cy="190" r="5" fill="${BLUE}"/><circle cx="170" cy="222" r="5" fill="${GREY2}"/>
+    ${check(272, 104, 24)}`,
+  chat: `<path d="M78 88 a20 20 0 0 1 20 -20 h150 a20 20 0 0 1 20 20 v40 a20 20 0 0 1 -20 20 h-120 l-32 26 v-26 a20 20 0 0 1 -18 -20 Z" fill="${INK}"/><text x="108" y="126" font-family="Instrument Sans, Arial, sans-serif" font-weight="700" font-size="24" fill="${WHITE}">Hallo!</text>
+    <path d="M132 178 a20 20 0 0 1 20 -20 h150 a20 20 0 0 1 20 20 v40 a20 20 0 0 1 -20 20 h-18 l32 26 v-26 h-164 a20 20 0 0 1 -20 -20 Z" fill="${BLUE}"/><text x="228" y="216" text-anchor="middle" font-family="Noto Sans Arabic, Noto Naskh Arabic, Arial, sans-serif" font-weight="700" font-size="22" fill="${WHITE}" direction="rtl">خوش آمدید</text>`,
+  travel: `<circle cx="200" cy="168" r="94" fill="${SOFT2}"/><ellipse cx="200" cy="168" rx="40" ry="94" fill="none" stroke="${WHITE}" stroke-width="3"/><path d="M106 168h188M120 128h160M120 208h160" stroke="${WHITE}" stroke-width="3"/>
+    <path d="M118 214 C150 120 240 96 300 92" fill="none" stroke="${BLUE}" stroke-width="4" stroke-dasharray="8 8" stroke-linecap="round"/>
+    <path d="M118 194 a14 14 0 1 1 0.1 0 Z" fill="${INK}"/><path d="M104 200 L118 224 L132 200 Z" fill="${INK}"/><circle cx="118" cy="199" r="5" fill="${WHITE}"/>
+    <g transform="rotate(-28 304 90)"><path d="M280 90 h44 l14 -6 v12 l-14 -6 Z" fill="${INK}"/><path d="M296 90 l-14 -18 h10 l18 18 -18 18 h-10 Z" fill="${INK}"/><path d="M280 90 l-8 -6 v12 Z" fill="${MID}"/></g>
+    <circle cx="326" cy="132" r="12" fill="${BLUE}"/><path d="M314 136 L326 156 L338 136 Z" fill="${BLUE}"/>`,
+  team: `<circle cx="120" cy="128" r="26" fill="${SOFT2}" stroke="${INK}" stroke-width="3"/><path d="M78 226 v-34 a42 42 0 0 1 84 0 v34 Z" fill="${SOFT2}" stroke="${INK}" stroke-width="3"/>
+    <circle cx="280" cy="128" r="26" fill="${GREY}" stroke="${INK}" stroke-width="3"/><path d="M238 226 v-34 a42 42 0 0 1 84 0 v34 Z" fill="${GREY}" stroke="${INK}" stroke-width="3"/>
+    <circle cx="200" cy="112" r="30" fill="${BLUE}"/><path d="M150 236 v-42 a50 50 0 0 1 100 0 v42 Z" fill="${BLUE}"/><path d="M186 206 l10 10 20 -22" fill="none" stroke="${WHITE}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`,
+  office: `<rect x="66" y="208" width="268" height="14" rx="7" fill="${INK}"/><rect x="86" y="222" width="12" height="40" rx="4" fill="${MID}"/><rect x="302" y="222" width="12" height="40" rx="4" fill="${MID}"/>
+    <rect x="140" y="112" width="124" height="82" rx="10" fill="${INK}"/><rect x="150" y="122" width="104" height="62" rx="5" fill="${WHITE}"/><rect x="162" y="136" width="40" height="8" rx="4" fill="${BLUE}"/><rect x="162" y="154" width="70" height="6" rx="3" fill="${GREY}"/><rect x="162" y="168" width="52" height="6" rx="3" fill="${GREY}"/>
+    <rect x="190" y="194" width="24" height="14" fill="${MID}"/><rect x="170" y="204" width="64" height="6" rx="3" fill="${MID}"/>
+    <rect x="282" y="176" width="40" height="32" rx="6" fill="${INK}"/><ellipse cx="292" cy="160" rx="14" ry="26" fill="${BLUE}" transform="rotate(-20 292 160)"/><ellipse cx="312" cy="160" rx="14" ry="26" fill="${DEEP}" transform="rotate(20 312 160)"/>
+    <rect x="96" y="184" width="30" height="24" rx="5" fill="${WHITE}" stroke="${INK}" stroke-width="3"/><path d="M126 190 a8 8 0 0 1 0 14" fill="none" stroke="${INK}" stroke-width="3"/>`,
+  money: `<ellipse cx="150" cy="236" rx="60" ry="18" fill="${INK}"/><rect x="90" y="196" width="120" height="40" fill="${INK}"/><ellipse cx="150" cy="196" rx="60" ry="18" fill="${MID}"/><rect x="90" y="176" width="120" height="20" fill="${BLUE}"/><ellipse cx="150" cy="176" rx="60" ry="18" fill="${DEEP}"/><ellipse cx="150" cy="176" rx="40" ry="11" fill="none" stroke="#c9cfda" stroke-width="3"/>
+    <path d="M140 120 C170 66 250 66 292 118" fill="none" stroke="${BLUE}" stroke-width="6" stroke-linecap="round"/><path d="M296 94 l-2 32 -30 -10" fill="none" stroke="${BLUE}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="236" y="168" width="110" height="70" rx="12" fill="${INK}"/><rect x="236" y="186" width="110" height="12" fill="${MID}"/><rect x="250" y="212" width="46" height="9" rx="4.5" fill="#c9cfda"/><rect x="316" y="208" width="16" height="16" rx="4" fill="${BLUE}"/>`,
+  city: `<circle cx="292" cy="92" r="26" fill="${SOFT2}"/>
+    <rect x="70" y="150" width="46" height="92" rx="4" fill="${GREY2}"/><rect x="124" y="118" width="58" height="124" rx="4" fill="${INK}"/><rect x="190" y="164" width="44" height="78" rx="4" fill="${GREY2}"/><rect x="242" y="134" width="60" height="108" rx="4" fill="${INK}"/><rect x="310" y="176" width="34" height="66" rx="4" fill="${GREY2}"/>
+    <rect x="212" y="52" width="10" height="120" rx="3" fill="${BLUE}"/><circle cx="217" cy="100" r="18" fill="${BLUE}"/><rect x="200" y="164" width="34" height="10" rx="3" fill="${DEEP}"/>
+    ${[0,1,2].map((r) => `<rect x="136" y="${132 + r * 26}" width="10" height="12" rx="2" fill="#c9cfda"/><rect x="156" y="${132 + r * 26}" width="10" height="12" rx="2" fill="#c9cfda"/><rect x="256" y="${148 + r * 26}" width="10" height="12" rx="2" fill="#c9cfda"/><rect x="276" y="${148 + r * 26}" width="10" height="12" rx="2" fill="#c9cfda"/>`).join('')}
+    <rect x="60" y="242" width="290" height="14" rx="7" fill="${INK}"/>`,
+  award: `<path d="M162 48 h32 l14 70 h-60 Z" fill="${INK}"/><path d="M206 48 h32 l14 70 h-60 Z" fill="${BLUE}"/>
+    <circle cx="200" cy="176" r="66" fill="${BLUE}" stroke="${WHITE}" stroke-width="6"/><circle cx="200" cy="176" r="48" fill="none" stroke="${WHITE}" stroke-width="3" stroke-dasharray="6 6"/>
+    <path d="M200 142 l11 22 24 4 -17 17 4 24 -22 -12 -22 12 4 -24 -17 -17 24 -4 Z" fill="${WHITE}"/>`,
+};
+---
+<svg class:list={['illo', cls]} viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label={`Illustration: ${name}`} set:html={backdrop + scenes[name]} />
+<style>
+  .illo { display: block; width: 100%; height: auto; }
+</style>

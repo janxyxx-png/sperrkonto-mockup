@@ -1,0 +1,82 @@
+{
+  "slug": "broker-information",
+  "path": "/broker-information",
+  "title": "Broker information | EC Assets",
+  "description": "Statutory information about EC Assets as an insurance broker.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Broker information"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>This is a structural placeholder for the mockup. The final wording must come from EC Assets' legal counsel before publication.</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "Information about EC Assets in its role as an insurance broker, as required by German law."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Company"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets GmbH, Musterstraße 1, 10178 Berlin"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Licence"
+        },
+        {
+          "type": "paragraph",
+          "html": "Licensed as an insurance broker under § 34d (1) of the German Trade Regulation Act. Registration number D-1234-ABCDE-56."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Register"
+        },
+        {
+          "type": "paragraph",
+          "html": "The registration can be checked in the public register of insurance intermediaries maintained by the German Chamber of Industry and Commerce."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Independence"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets holds no direct or indirect share of more than 10 percent in any insurer, and no insurer holds such a share in EC Assets."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Remuneration"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets receives commission from the insurers whose products it brokers. No separate fee is charged to the customer for brokerage."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Complaints"
+        },
+        {
+          "type": "paragraph",
+          "html": "Complaints can be sent to legal@ecassets.com or to the insurance ombudsman, Versicherungsombudsmann e. V., Postfach 08 06 32, 10006 Berlin."
+        }
+      ]
+    }
+  ]
+}

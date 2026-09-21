@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import Illustration from '../components/Illustration.astro';
+import { ILLO_NAMES } from '../lib/illo';
+---
+<Base title="Illustrationen (intern)">
+  <main id="main" class="container">
+    <h1>Illustrationen</h1>
+    <p class="note">Eigener Satz aus 16 Motiven (Inline-SVG, Farbsystem der Seite). Zuordnung nach Stichworten in <code>src/lib/illo.ts</code>.</p>
+    <div class="grid">{ILLO_NAMES.map((n) => <figure><Illustration name={n} /><figcaption>{n}</figcaption></figure>)}</div>
+  </main>
+</Base>
+<style>
+  main { padding: 48px var(--gutter) 96px; }
+  .note { color: var(--color-muted); margin-bottom: 32px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+  figure { margin: 0; background: var(--color-surface); border-radius: var(--radius-m); padding: 12px; }
+  figcaption { font-size: .8rem; color: var(--color-muted); padding: 8px 6px 2px; font-weight: 600; }
+</style>

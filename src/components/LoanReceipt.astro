@@ -1,0 +1,76 @@
+---
+/** Kreditbeleg (Rundgang 20.09.): das Objekt des USP, "Interest ~~€2,150~~ paid by EC Assets, you repay €11,904". Auf der
+ *  Startseite in der USP-Buehne, auf /study-loan neben dem Kostenvergleich. Zeilen erscheinen nacheinander, der Strich zieht
+ *  sich durch die Zinsen, das Etikett springt auf, Betraege zaehlen hoch (motion.ts); Ausloeser ist der Sichtbarkeitsmarker des
+ *  umgebenden Blocks. Ohne JS und bei reduzierter Bewegung steht alles sofort da. Texte: loan-copy.ts (home.object, costs.rows). */
+import Icon from './Icon.astro';
+import type { Locale } from '../lib/i18n';
+import { LOAN } from '../lib/loan-copy';
+interface Props { locale?: Locale; class?: string; story?: boolean; vt?: string }
+// vt (M13): Name fuer den Seitenwechsel (View Transition); dasselbe Objekt auf zwei Seiten reist statt zu blenden
+
+// story (M04): der Beleg antwortet dem Scrollen des Kapitels (data-stage des umgebenden [data-story]) statt der Zeit
+const { locale = 'en', class: cls, story = false, vt } = Astro.props;
+const lc = LOAN[locale] ?? LOAN.en;
+const ob = lc.home.object;
+const depositMoney = lc.costs.rows[0].b, interestMoney = lc.costs.rows[1].a;
+---
+<div class:list={['receipt', cls, { 'is-story': story }]} aria-label={ob.title} style={vt ? `view-transition-name:${vt}` : undefined}>
+  <div class="r-head">
+    <span class="icircle sm"><Icon name="bank" size={18} /></span>
+    <div><h3>{ob.title}</h3><p class="r-meta">{ob.meta}</p></div>
+    <span class="r-pill">{ob.status}</span>
+  </div>
+  <dl class="r-rows">
+    <div style="--i:0"><dt>{ob.paid}</dt><dd><span data-count>{depositMoney}</span></dd></div>
+    <div style="--i:1" class="r-int"><dt>{ob.interest}</dt><dd><s class="strike">{interestMoney}</s><span class="r-tag">{ob.paidBy}</span></dd></div>
+    <div style="--i:2" class="r-total"><dt>{ob.repay}</dt><dd><span data-count>{depositMoney}</span></dd></div>
+  </dl>
+  <p class="r-foot">{ob.foot}</p>
+</div>
+<style>
+  /* Kreditbeleg */
+  .receipt { background: #fff; color: var(--color-text); border-radius: var(--radius-l); padding: 26px 28px 20px; box-shadow: 0 34px 70px -30px rgba(0,0,0,.65); max-width: 440px; margin-inline-start: auto; }
+  .r-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .r-head h3 { font-size: 1.05rem; margin: 0; line-height: 1.2; color: var(--color-text); } /* section--dark faerbt h3 weiss */
+  .receipt :global(.icircle) { background: var(--color-accent-soft); color: var(--color-accent); flex: none; }
+  .r-meta { margin: 2px 0 0; font-size: .8rem; color: var(--color-muted); }
+  .r-pill { margin-inline-start: auto; font-size: .64rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #fff; background: var(--color-accent); border-radius: var(--radius-pill); padding: .45em .85em; white-space: nowrap; }
+  .r-rows { margin: 0; display: grid; }
+  .r-rows div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; border-top: 1px solid var(--color-border); padding: 12px 0; }
+  .r-rows dt { font-size: .9rem; color: var(--color-muted); }
+  .r-rows dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-wrap: wrap; text-align: end; }
+  .r-total { border-top: 2px solid var(--color-ink) !important; }
+  .r-total dd { font-family: var(--font-heading); font-size: 1.35rem; letter-spacing: -.02em; }
+  .strike { text-decoration: none; position: relative; color: var(--color-muted); }
+  .strike::after { content: ""; position: absolute; inset-inline: -3px; top: 52%; height: 2px; background: var(--color-accent); transform-origin: 0 50%; }
+  :global([dir="rtl"]) .strike::after { transform-origin: 100% 50%; }
+  .r-tag { font-size: .66rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--color-accent); background: var(--color-accent-soft); border-radius: var(--radius-pill); padding: .4em .7em; white-space: nowrap; }
+  .r-foot { margin: 12px 0 0; font-size: .8rem; color: var(--color-muted); }
+  /* Erscheinen (Ausloeser: Sichtbarkeitsmarker des Blocks, motion.ts): Zeilen nacheinander, dann der Strich durch die Zinsen,
+     zuletzt das Etikett. Ohne JS und bei reduzierter Bewegung steht alles sofort da. */
+  :global([data-rv]:not(.in)) .r-tag { opacity: 0; }
+  :global([data-rv]:not(.in)) .strike::after { transform: scaleX(0); }
+  :global([data-rv].in) .r-rows div { animation: rowIn .55s var(--ease-out) both; animation-delay: calc(.25s + var(--i, 0) * .2s); }
+  :global([data-rv].in) .r-pill { animation: pillIn .5s cubic-bezier(.2, 1.4, .3, 1) both; animation-delay: .15s; }
+  :global([data-rv].in) .strike::after { animation: strikeIn .45s var(--ease-out) both; animation-delay: 1.15s; }
+  :global([data-rv].in) .r-tag { animation: pillIn .5s cubic-bezier(.2, 1.4, .3, 1) both; animation-delay: 1.45s; }
+  /* Keyframes rowIn, pillIn, strikeIn: motion.css (M01) */
+  /* Signatur-Kapitel (M04): Zustaende statt Zeit. Stufe 1 (Behauptung): Kopf, Pille, erste Zeile. Stufe 2 ("Is this really
+     interest-free?"): der Strich zieht sich durch die Zinsen, das Etikett springt auf. Stufe 3 ("You repay"): Summenzeile und
+     Fussnote. Stufe 0 ist der Moment vor dem Kapitel. Ohne JS steht data-stage 3 im HTML: alles sichtbar. */
+  :global([data-rv].in) .is-story .r-rows div, :global([data-rv].in) .is-story .r-pill, :global([data-rv].in) .is-story .strike::after, :global([data-rv].in) .is-story .r-tag { animation: none; }
+  .is-story .r-rows div, .is-story .r-foot { transition: opacity var(--dur-scene) var(--ease-out-soft), transform var(--dur-scene) var(--ease-out-soft); }
+  .is-story .r-pill { transition: opacity .35s var(--ease-out), transform .5s var(--ease-spring); }
+  .is-story .strike::after { transform: scaleX(0); transition: transform .45s var(--ease-out) .05s; }
+  .is-story .r-tag { opacity: 0; transform: scale(.6); transition: opacity .3s var(--ease-out) .2s, transform .5s var(--ease-spring) .2s; }
+  :global([data-story][data-stage]) .is-story .r-rows div { opacity: .28; transform: translateY(6px); }
+  :global([data-story][data-stage]) .is-story .r-foot { opacity: 0; }
+  :global([data-story][data-stage="0"]) .is-story .r-pill { opacity: 0; transform: scale(.6); }
+  :global([data-story]:is([data-stage="1"], [data-stage="2"], [data-stage="3"])) .is-story .r-rows div:nth-child(1) { opacity: 1; transform: none; }
+  :global([data-story]:is([data-stage="2"], [data-stage="3"])) .is-story .r-rows div:nth-child(2) { opacity: 1; transform: none; }
+  :global([data-story]:is([data-stage="2"], [data-stage="3"])) .is-story .strike::after { transform: scaleX(1); }
+  :global([data-story]:is([data-stage="2"], [data-stage="3"])) .is-story .r-tag { opacity: 1; transform: none; }
+  :global([data-story][data-stage="3"]) .is-story .r-rows div:nth-child(3), :global([data-story][data-stage="3"]) .is-story .r-foot { opacity: 1; transform: none; }
+  @media (max-width: 600px) { .receipt { padding: 20px 18px 16px; } }
+</style>

@@ -1,0 +1,64 @@
+---
+/** Produktbuehne (14-PROMPT Aufgabe 2): Headline, zwei Saetze, ein Button, Objekt gross. Objekt: card | app | doc. */
+import CardMock from './CardMock.astro';
+import AppDuo from './AppDuo.astro';
+import DocObject from './DocObject.astro';
+import CertObject from './CertObject.astro';
+import PhotoStage from './PhotoStage.astro';
+// Objekt auf Foto: je Objekt ein Motiv der Serie (unscharf hinter dem scharfen Objekt); seit M05 in lib/stage-backdrops.ts (teilt ScrollStory)
+import { BACKDROP } from '../lib/stage-backdrops';
+import type { Locale } from '../lib/i18n';
+interface Props { object: 'card' | 'app' | 'doc' | 'cert'; title: string; text: string; cta?: { text: string; href: string }; locale?: Locale; kicker?: string; flip?: boolean; id?: string }
+const { object, title, text, cta, locale = 'en', kicker, flip = false, id } = Astro.props;
+---
+<section class:list={['stage-sec', 'chapter', { flip }]} id={id}>
+  <div class="container two">
+    <div class="obj">
+      <PhotoStage src={BACKDROP[object].src} pos={BACKDROP[object].pos} ratio={object === 'app' ? '5 / 5.2' : '5 / 4.3'} fill={object === 'app'}>
+        {object === 'card' && <CardMock stage={false} vt="obj-card" />}
+        {object === 'app' && <AppDuo locale={locale} bare vt="obj-app" />}
+        {object === 'doc' && <DocObject stage={false} vt="obj-doc" />}
+        {object === 'cert' && <CertObject stage={false} vt="obj-cert" />}
+      </PhotoStage>
+    </div>
+    <div class="txt">
+      <div class="head">
+        {kicker && <p class="kicker chapter-k">{kicker}</p>}
+        <h2 class="chapter">{title}</h2>
+      </div>
+      <div class="body">
+        <p class="lead">{text}</p>
+        {cta && <a class="btn btn-primary" href={cta.href}>{cta.text}</a>}
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .stage-sec { padding: var(--section-y) 0; }
+  /* Das Objekt bekommt 7 von 12 Spalten und ragt ab 1320 px ueber den Container (M03, Apple/Revolut-Mass); Text 5 Spalten */
+  .two { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; align-items: center; }
+  .flip .two { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+  .two > * { min-width: 0; }
+  .flip .obj { order: 2; }
+  /* 21.09.: kein Ueberhang mehr ueber den Container (Kollege: Objekt buendig mit dem Band darueber) */
+  .txt h2 { max-width: 14ch; }
+  .lead { color: var(--color-muted); max-width: 40ch; margin-bottom: 28px; font-size: 1.25rem; }
+  /* Mobil: Kicker und Ueberschrift zuerst, dann das Objekt, dann Text und Button (Ueberschrift kuendigt das Objekt an) */
+  @media (max-width: 800px) {
+    .two { grid-template-columns: 1fr; gap: 24px; }
+    .txt { display: contents; }
+    .head { order: -1; }
+    .head h2 { margin-bottom: 0; max-width: none; }
+    .flip .obj { order: 0; }
+    .body .btn { width: 100%; }
+    .lead { margin-bottom: 20px; }
+  }
+  /* Telefon: Objekt randlos ueber die volle Breite, kompakter Text */
+  @media (max-width: 600px) {
+    .stage-sec { padding: var(--section-y) 0; }
+    .obj { margin: 0 calc(-1 * var(--gutter)); }
+    .obj :global(.photo-stage) { border-radius: 0; max-width: none; }
+    .head h2 { font-size: 1.6rem; }
+    .body .lead { font-size: .95rem; }
+  }
+</style>

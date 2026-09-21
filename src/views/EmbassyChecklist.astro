@@ -1,0 +1,132 @@
+---
+/**
+ * Botschafts-Checkliste /embassy-checklist (18-NAECHSTES-LEVEL Hebel 3): Ablauf fuer den Visumantrag in Islamabad oder
+ * Karachi, Dokumentenliste je Visumart (Studium oder Fachkraft, aus funnel-copy.ts, dieselbe wie im Funnel) zum Abhaken, im Browser gespeichert,
+ * druckbar. Wartezeiten und Gebuehrenstand sind Platzhalter, bis sie am Stichtag geprueft sind.
+ */
+import Base from '../layouts/Base.astro';
+import ClosingCta from '../components/ClosingCta.astro';
+import { type Locale, localePath, t } from '../lib/i18n';
+import { FUNNEL } from '../lib/funnel-copy';
+import { markPh } from '../lib/placeholders';
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const lp = (p: string) => localePath(locale, p);
+const f = FUNNEL[locale] ?? FUNNEL.en;
+const C = {
+  en: { kicker: 'Visa appointment', title: 'The embassy checklist for Pakistan', lead: 'What the German missions in Islamabad and Karachi expect, in the order you need it. Pick your visa type and mission; tick things off as you go.', purpose: 'Visa type', mission: 'Mission', groups: { study: 'Student visa', work: 'Opportunity Card or job seeker' },
+    stepsTitle: 'The process, step by step', steps: [
+      ['Book the appointment first', 'Appointments are booked through the mission\'s online system, in the student or national-visa category. Waiting time: [PLACEHOLDER: weeks]. Book as soon as your admission is confirmed; you can prepare the file while you wait.'],
+      ['Get your degrees attested', 'HEC attestation for degree certificates and transcripts (Islamabad, Karachi, Lahore, Peshawar, Quetta offices). Allow [PLACEHOLDER: days] for walk-in, longer by courier. Intermediate certificates go through the respective board.'],
+      ['Order certified translations', 'Documents in Urdu need certified English or German translations. The missions publish a list of accepted translators; keep originals and copies together.'],
+      ['Open your Blocked Account and insurance', 'The confirmation letter and the insurance certificates come from your EC Assets portal the day your deposit arrives. Print both; embassies want paper.'],
+      ['Fill in VIDEX and assemble the file', 'Complete the VIDEX form online, print and sign it. Put the documents in the order of the checklist below, originals and one copy each.'],
+      ['Appointment day', 'Arrive early with the appointment confirmation; only the applicant enters. Biometrics are taken on the spot. The visa fee is paid in rupees at the counter.'],
+      ['After the appointment', 'Processing takes [PLACEHOLDER: weeks] on average. The passport comes back through the mission\'s courier arrangement; keep your confirmation letter valid by leaving the deposit untouched.'],
+    ], docsTitle: 'Documents, in file order', saved: 'Progress is saved on this device.', print: 'Print the list', reset: 'Reset', funnel: 'Get your personal plan with dates', missions: f.embassy },
+  ur: { kicker: 'ویزا اپائنٹمنٹ', title: 'پاکستان کے لیے سفارت خانے کی چیک لسٹ', lead: 'اسلام آباد اور کراچی کے جرمن مشن کیا توقع کرتے ہیں، اسی ترتیب میں جس میں آپ کو چاہیے۔ اپنی ویزا قسم اور مشن چنیں؛ ساتھ ساتھ ٹک لگاتے جائیں۔', purpose: 'ویزا کی قسم', mission: 'مشن', groups: { study: 'اسٹوڈنٹ ویزا', work: 'آپرچونٹی کارڈ یا جاب سیکر' },
+    stepsTitle: 'مرحلہ وار عمل', steps: [
+      ['پہلے اپائنٹمنٹ بک کریں', 'اپائنٹمنٹ مشن کے آن لائن نظام سے بک ہوتی ہے، اسٹوڈنٹ یا نیشنل ویزا زمرے میں۔ انتظار: [PLACEHOLDER: weeks]۔ داخلہ پکا ہوتے ہی بک کریں؛ انتظار کے دوران فائل تیار کریں۔'],
+      ['اپنی ڈگریاں تصدیق کروائیں', 'ڈگری سرٹیفکیٹ اور ٹرانسکرپٹ کی HEC تصدیق (اسلام آباد، کراچی، لاہور، پشاور، کوئٹہ دفاتر)۔ خود جانے پر [PLACEHOLDER: days]، کورئیر سے زیادہ۔ انٹرمیڈیٹ سرٹیفکیٹ متعلقہ بورڈ سے۔'],
+      ['مصدقہ ترجمے کروائیں', 'اردو دستاویزات کے مصدقہ انگریزی یا جرمن ترجمے چاہئیں۔ مشن منظور شدہ مترجمین کی فہرست شائع کرتے ہیں؛ اصل اور نقول ساتھ رکھیں۔'],
+      ['بلاکڈ اکاؤنٹ اور انشورنس کھولیں', 'تصدیقی خط اور انشورنس سرٹیفکیٹ رقم پہنچتے ہی آپ کے EC Assets پورٹل سے آتے ہیں۔ دونوں پرنٹ کریں؛ سفارت خانے کاغذ مانگتے ہیں۔'],
+      ['VIDEX بھریں اور فائل ترتیب دیں', 'VIDEX فارم آن لائن بھریں، پرنٹ اور دستخط کریں۔ دستاویزات نیچے دی چیک لسٹ کی ترتیب میں رکھیں، اصل اور ایک ایک نقل۔'],
+      ['اپائنٹمنٹ کا دن', 'اپائنٹمنٹ کی تصدیق کے ساتھ جلدی پہنچیں؛ صرف درخواست گزار اندر جاتا ہے۔ بایومیٹرکس موقع پر لیے جاتے ہیں۔ ویزا فیس کاؤنٹر پر روپوں میں۔'],
+      ['اپائنٹمنٹ کے بعد', 'پروسیسنگ اوسطاً [PLACEHOLDER: weeks] لیتی ہے۔ پاسپورٹ مشن کے کورئیر انتظام سے واپس آتا ہے؛ رقم کو ہاتھ نہ لگائیں تاکہ تصدیقی خط کارآمد رہے۔'],
+    ], docsTitle: 'دستاویزات، فائل کی ترتیب میں', saved: 'پیش رفت اسی آلے پر محفوظ رہتی ہے۔', print: 'فہرست پرنٹ کریں', reset: 'دوبارہ شروع', funnel: 'تاریخوں کے ساتھ اپنا ذاتی منصوبہ لیں', missions: f.embassy },
+  pa: { kicker: 'ویزا اپائنٹمنٹ', title: 'پاکستان لئی سفارت خانے دی چیک لسٹ', lead: 'اسلام آباد تے کراچی دے جرمن مشن کیہ توقع کردے نیں، اوسے ترتیب وچ جس وچ تہانوں چاہیدا اے۔ آپݨی ویزا قسم تے مشن چݨو؛ نال نال ٹک لاندے جاؤ۔', purpose: 'ویزے دی قسم', mission: 'مشن', groups: { study: 'سٹوڈنٹ ویزا', work: 'آپرچونٹی کارڈ یا جاب سیکر' },
+    stepsTitle: 'قدم بہ قدم عمل', steps: [
+      ['پہلاں اپائنٹمنٹ بک کرو', 'اپائنٹمنٹ مشن دے آن لائن سسٹم توں بک ہوندی اے، سٹوڈنٹ یا نیشنل ویزا زمرے وچ۔ انتظار: [PLACEHOLDER: weeks]۔ داخلہ پکا ہوندیاں ای بک کرو؛ انتظار وچ فائل تیار کرو۔'],
+      ['آپݨیاں ڈگریاں تصدیق کراؤ', 'ڈگری سرٹیفکیٹ تے ٹرانسکرپٹ دی HEC تصدیق (اسلام آباد، کراچی، لاہور، پشاور، کوئٹہ دفتر)۔ آپ جاؤ تے [PLACEHOLDER: days]، کورئیر نال ودھ۔ انٹرمیڈیٹ سرٹیفکیٹ متعلقہ بورڈ توں۔'],
+      ['مصدقہ ترجمے کراؤ', 'اردو دستاویزاں دے مصدقہ انگریزی یا جرمن ترجمے چاہیدے نیں۔ مشن منظور مترجماں دی لسٹ چھاپدے نیں؛ اصل تے نقلاں نال رکھو۔'],
+      ['بلاکڈ اکاؤنٹ تے انشورنس کھولو', 'تصدیقی خط تے انشورنس سرٹیفکیٹ رقم پہنچدیاں ای تہاڈے EC Assets پورٹل توں آندے نیں۔ دوویں پرنٹ کرو؛ سفارت خانے کاغذ منگدے نیں۔'],
+      ['VIDEX بھرو تے فائل ترتیب دیو', 'VIDEX فارم آن لائن بھرو، پرنٹ تے دستخط کرو۔ دستاویزاں تھلے دی چیک لسٹ دی ترتیب وچ رکھو، اصل تے اک اک نقل۔'],
+      ['اپائنٹمنٹ دا دن', 'اپائنٹمنٹ دی تصدیق نال چھیتی پہنچو؛ صرف درخواست دیݨ والا اندر جاندا اے۔ بایومیٹرکس موقعے تے لیندے نیں۔ ویزا فیس کاؤنٹر تے روپیاں وچ۔'],
+      ['اپائنٹمنٹ توں بعد', 'پروسیسنگ اوسطاً [PLACEHOLDER: weeks] لیندی اے۔ پاسپورٹ مشن دے کورئیر انتظام توں واپس آندا اے؛ رقم نوں ہتھ نہ لاؤ تاں جو تصدیقی خط کارآمد رہوے۔'],
+    ], docsTitle: 'دستاویزاں، فائل دی ترتیب وچ', saved: 'پیش رفت ایسے ڈیوائس تے محفوظ رہندی اے۔', print: 'لسٹ پرنٹ کرو', reset: 'دوبارہ شروع', funnel: 'تاریخاں نال آپݨا ذاتی منصوبہ لوو', missions: f.embassy },
+}[locale];
+const data = { docsCommon: f.docsCommon, docs: f.docs, missions: C.missions };
+---
+<Base title={`${C.title} | EC Assets`} description={C.lead} locale={locale} path="/embassy-checklist">
+  <main id="main" class="emb">
+    <section class="hero"><div class="container">
+      <p class="kicker">{C.kicker}</p>
+      <h1>{C.title}</h1>
+      <p class="lead">{C.lead}</p>
+      <div class="pick" data-pick>
+        <!-- Segment-Schalter wie ueberall sonst seit 27 (M10): Schieber mit Feder statt loser Pillen; data-group/data-mission und .is-on bleiben -->
+        <div class="seg"><span class="caps">{C.purpose}</span><div class="seg-ctl" role="group" aria-label={C.purpose}><span class="seg-thumb" aria-hidden="true"></span>{(Object.entries(C.groups) as [string, string][]).map(([k, v], i) => <button type="button" class:list={{ 'is-on': i === 0 }} data-group={k} aria-pressed={i === 0 ? 'true' : 'false'}>{v}</button>)}</div></div>
+        <div class="seg"><span class="caps">{C.mission}</span><div class="seg-ctl" role="group" aria-label={C.mission}><span class="seg-thumb" aria-hidden="true"></span><button type="button" class="is-on" data-mission="islamabad" aria-pressed="true">{f.fromIslamabad}</button><button type="button" data-mission="karachi" aria-pressed="false">{f.fromKarachi}</button></div></div>
+        <p class="muted small" data-out="mission">{C.missions.islamabad}</p>
+      </div>
+    </div></section>
+
+    <section class="section"><div class="container two">
+      <div>
+        <h2>{C.stepsTitle}</h2>
+        <ol class="steps">{C.steps.map(([h, p], i) => <li><span class="n">{String(i + 1).padStart(2, '0')}</span><div><h3>{h}</h3><p set:html={markPh(p)} /></div></li>)}</ol>
+      </div>
+      <div class="docs-card" data-docs={JSON.stringify(data)}>
+        <h2>{C.docsTitle}</h2>
+        <p class="muted small">{C.saved}</p>
+        <ul class="docs" data-out="docs"></ul>
+        <div class="btns"><button class="btn btn-outline" type="button" data-print>{C.print}</button><button class="btn btn-link" type="button" data-reset>{C.reset}</button></div>
+        <p><a class="btn btn-primary" href={lp('/app/start')}>{C.funnel}</a></p>
+      </div>
+    </div></section>
+    <ClosingCta title={t(locale, 'closing.title')} cta={t(locale, 'getValuePackage')} href={lp('/app/start')} tone="surface" />
+  </main>
+  <script>
+    const bind = () => {
+      const card = document.querySelector<HTMLElement>('[data-docs]:not([data-bound])'); if (!card) return; card.dataset.bound = '1';
+      const d = JSON.parse(card.dataset.docs!);
+      let group = 'study', mission = 'islamabad';
+      const saved: Record<string, boolean> = (() => { try { return JSON.parse(localStorage.getItem('ec-docs') || '{}'); } catch { return {}; } })();
+      const render = () => {
+        const ul = card.querySelector<HTMLElement>('[data-out=docs]')!; ul.innerHTML = '';
+        [...d.docsCommon, ...(d.docs[group] ?? [])].forEach((txt: string, k: number) => {
+          const id = `${group}-${k}`; const li = document.createElement('li');
+          li.innerHTML = `<label><input type="checkbox" ${saved[id] ? 'checked' : ''}><span>${txt}</span></label>`;
+          li.querySelector('input')!.addEventListener('change', (e) => { saved[id] = (e.target as HTMLInputElement).checked; try { localStorage.setItem('ec-docs', JSON.stringify(saved)); } catch {} });
+          ul.appendChild(li);
+        });
+        document.querySelector<HTMLElement>('[data-out=mission]')!.textContent = d.missions[mission];
+      };
+      document.querySelectorAll<HTMLElement>('[data-group]').forEach((b) => b.addEventListener('click', () => { group = b.dataset.group!; document.querySelectorAll('[data-group]').forEach((x) => { x.classList.toggle('is-on', x === b); x.setAttribute('aria-pressed', String(x === b)); }); render(); }));
+      document.querySelectorAll<HTMLElement>('[data-mission]').forEach((b) => b.addEventListener('click', () => { mission = b.dataset.mission!; document.querySelectorAll('[data-mission]').forEach((x) => { x.classList.toggle('is-on', x === b); x.setAttribute('aria-pressed', String(x === b)); }); render(); }));
+      card.querySelector('[data-print]')!.addEventListener('click', () => window.print());
+      card.querySelector('[data-reset]')!.addEventListener('click', () => { for (const k of Object.keys(saved)) delete saved[k]; try { localStorage.removeItem('ec-docs'); } catch {} render(); });
+      render();
+    };
+    bind(); document.addEventListener('astro:page-load', bind);
+  </script>
+</Base>
+<style>
+  .hero { padding: 64px 0 24px; }
+  .hero h1 { margin-bottom: .3em; max-width: 18ch; }
+  .lead { color: var(--color-muted); font-size: var(--fs-body); max-width: 62ch; }
+  .pick { margin-top: 28px; display: grid; gap: 16px; }
+  .seg { display: grid; gap: 8px; }
+  .seg .caps { color: var(--color-muted); font-size: .72rem; }
+  .seg :global(.seg-ctl) { justify-self: start; width: max-content; max-width: 100%; }
+  @media (max-width: 600px) { .seg :global(.seg-ctl) { display: grid; grid-template-columns: 1fr 1fr; width: 100%; } .seg :global(.seg-ctl > button) { white-space: normal; padding: 8px 10px; font-size: .8rem; min-height: 44px; } }
+  .muted { color: var(--color-muted); } .small { font-size: .88rem; }
+  .section { padding: var(--section-y) 0; }
+  .two { display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: start; }
+  .steps { list-style: none; margin: 24px 0 0; padding: 0; }
+  .steps li { display: grid; grid-template-columns: 40px 1fr; gap: 16px; padding: 18px 0; border-top: 1px solid var(--color-border); }
+  .steps .n { width: 36px; height: 36px; border-radius: 50%; background: var(--color-surface-strong); display: grid; place-items: center; font-weight: 600; font-size: .85rem; }
+  .steps h3 { font-size: 1.1rem; margin: calc((36px - 1lh) / 2) 0 .3em; } /* Titelzeile mittig zur Nummer (Symmetrie) */
+  .steps p { color: var(--color-muted); margin: 0; }
+  .steps p :global(.ph-num) { font-size: .78rem; }
+  /* Klebt unter dem gescrollten Header (M10: --hdr-sticky statt --hdr-h) und passt in den Bildschirm, die Liste scrollt innen */
+  .docs-card { background: var(--color-surface); border-radius: var(--radius-l); padding: 32px; position: sticky; top: calc(var(--hdr-sticky) + 16px); max-height: calc(100vh - var(--hdr-sticky) - 32px); overflow: auto; overscroll-behavior: contain; }
+  .docs { list-style: none; margin: 14px 0 0; padding: 0; }
+  .docs :global(li) { border-top: 1px solid var(--color-border); }
+  .docs :global(label) { display: flex; gap: 12px; align-items: flex-start; padding: 11px 0; cursor: pointer; font-size: .95rem; }
+  .docs :global(input) { margin-top: 4px; width: 18px; height: 18px; accent-color: var(--color-ink); flex: none; }
+  .docs :global(input:checked + span) { color: var(--color-muted); text-decoration: line-through; }
+  .btns { display: flex; gap: 12px; align-items: center; margin: 18px 0 14px; flex-wrap: wrap; }
+  @media (max-width: 900px) { .two { grid-template-columns: 1fr; gap: 32px; } .docs-card { position: static; padding: 24px 20px; } }
+  @media print { .pick, .btns, .docs-card .btn-primary, :global(header), :global(footer), :global(.topbar), :global(.mobile-cta), :global(.closing) { display: none !important; } .two { grid-template-columns: 1fr; } .docs-card { background: none; padding: 0; } }
+</style>

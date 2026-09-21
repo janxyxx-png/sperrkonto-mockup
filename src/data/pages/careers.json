@@ -1,0 +1,61 @@
+{
+  "slug": "careers",
+  "path": "/careers",
+  "title": "Careers | EC Assets",
+  "description": "Join EC Assets in Berlin. We are an international team building the simplest way to move to Germany, and we are hiring.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Careers"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>An international team, based in Berlin.</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets is a growing company with short decision paths and real ownership from the first week. Most of us moved to Germany ourselves, which is why we care about getting this right."
+        },
+        {
+          "type": "paragraph",
+          "html": "We look for people who take initiative, ask good questions and enjoy working with colleagues from many countries."
+        }
+      ],
+      "photo": "/img/photos/cine-rooftop-friends-sunset.jpg"
+    },
+    {
+      "id": 1,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Open positions"
+        },
+        {
+          "type": "paragraph",
+          "html": "Roles in engineering, customer support, partnerships and marketing open regularly. Have a look at what is currently available and apply online."
+        },
+        {
+          "type": "button",
+          "text": "See all open positions",
+          "href": "/#positions",
+          "style": "btn btn-m btn-solid btn-white text-base fill-base btn-icon btn-icon-back"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Life at EC Assets"
+        }
+      ],
+      "anchor": "positions"
+    }
+  ]
+}

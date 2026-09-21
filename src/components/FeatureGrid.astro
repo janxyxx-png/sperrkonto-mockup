@@ -1,0 +1,32 @@
+---
+/** Merkmalsraster (Rundgang 20.09.): eine flache Haken-Liste als Karten mit Icon, z. B. "Banking that moves with you" auf
+ *  /german-bank-account. Icon je Eintrag nach Stichwort der englischen Referenz; Text bleibt die Sprachkopie. */
+import Icon from './Icon.astro';
+import type { Block } from '../lib/content';
+import { rewriteHtml, stripTags } from '../lib/content';
+import type { Locale } from '../lib/i18n';
+interface Props { heading: string; items: { html: string }[]; refItems?: { html: string }[]; locale: Locale; bg?: boolean }
+const { heading, items, refItems = items, locale, bg = false } = Astro.props;
+const iconFor = (s: string) => /atm|withdraw/i.test(s) ? 'euro' : /physical/i.test(s) ? 'wallet' : /card/i.test(s) ? 'card' : /manage|salary|wherever/i.test(s) ? 'phone' : /visa|essentials/i.test(s) ? 'doc' : /open|free after|stays/i.test(s) ? 'clock' : /support|urdu/i.test(s) ? 'chat' : /protect|€100/i.test(s) ? 'shield' : 'check';
+---
+<section class:list={['section', 'feat-sec', { alt: bg }]}>
+  <div class="container">
+    <h2>{heading}</h2>
+    <ul class="feat-grid">
+      {items.map((it, i) => <li class="card feat"><span class="icircle sm"><Icon name={iconFor(stripTags(refItems[i]?.html ?? it.html))} size={18} /></span><p set:html={rewriteHtml(it.html, locale)} /></li>)}
+    </ul>
+  </div>
+</section>
+<style>
+  .feat-sec { padding: var(--section-y) 0; }
+  .feat-sec.alt { background: var(--color-surface); }
+  h2 { margin-bottom: 36px; max-width: 18ch; }
+  .feat-grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap); }
+  .feat { display: flex; flex-direction: column; gap: 16px; padding: 26px 26px 28px; }
+  .feat-sec.alt .feat { background: var(--color-bg); }
+  .feat .icircle { background: var(--color-accent-soft); color: var(--color-accent); }
+  .feat p { margin: 0; font-size: .98rem; line-height: 1.5; color: var(--color-muted); }
+  .feat p :global(strong) { color: var(--color-text); font-weight: 600; }
+  @media (max-width: 900px) { .feat-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .feat-grid { grid-template-columns: 1fr; gap: 12px; } .feat { padding: 20px 18px; flex-direction: row; align-items: flex-start; } .feat p { padding-top: calc((36px - 1lh) / 2); } h2 { margin-bottom: 24px; } }
+</style>

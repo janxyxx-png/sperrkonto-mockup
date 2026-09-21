@@ -1,0 +1,49 @@
+---
+import type { Post } from '../lib/content';
+import Pic from './Pic.astro';
+import { tagSlug, tagLabel, BRAND, readMinutes } from '../lib/content';
+import { photoForPost, focusFor } from '../lib/photos';
+import { type Locale, localePath, t } from '../lib/i18n';
+const { post, locale = 'en', photo: photoProp } = Astro.props as { post: Post; locale?: Locale; photo?: string };
+const lp = (p: string) => localePath(locale, p);
+// Foto je Artikel: ueber alle Artikel verteilt (photos.ts), Reihen ohne Doppel; Zuschnitt auf den Bildschwerpunkt
+const photo = photoProp ?? photoForPost(post);
+---
+<article class="post card">
+  <a href={lp(`/guides/${post.slug}`)} class="img" tabindex="-1" aria-hidden="true"><Pic src={photo} alt="" sizes="(max-width: 640px) 104px, (max-width: 1000px) 50vw, 400px" style={`object-position:${focusFor(photo)}`} /></a>
+  <div class="body">
+    <div class="tags">{post.tags.map((x) => <a href={lp(`/guides/tag/${tagSlug(x)}`)}>{tagLabel(x, locale)}</a>)}</div>
+    <h3><a href={lp(`/guides/${post.slug}`)}>{post.title}</a></h3>
+    <p>{post.description.length <= 150 ? post.description : post.description.slice(0, 150).replace(/\s+\S*$/, '') + '\u2026'}</p>
+    <div class="meta">{BRAND} · {t(locale, 'blog.readMin').replace('{n}', String(readMinutes(post)))}</div>
+  </div>
+</article>
+<style>
+  .post { padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+  .post:hover { transform: translateY(-2px); }
+  .img { display: grid; place-items: center; aspect-ratio: 16/9; background: var(--color-surface-strong); overflow: hidden; }
+  .img :global(img) { width: 100%; height: 100%; object-fit: cover; filter: var(--photo-grade); transition: transform .5s var(--ease-out); }
+  .post:hover .img :global(img) { transform: scale(1.03); }
+  .body { display: flex; flex-direction: column; flex: 1; padding: var(--card-pad); }
+  .tags { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+  .tags a { font-size: .8rem; font-weight: 500; text-decoration: none; color: var(--color-muted); }
+  @media (max-width: 600px) { .tags a { padding-block: 10px; margin-block: -10px; } } /* M10: Tippflaeche */
+  h3 { font-size: 1.2rem; margin-bottom: .5em; line-height: 1.25; }
+  h3 a { text-decoration: none; color: var(--color-text); transition: color .2s; }
+  h3 a:hover { color: var(--color-muted); }
+  @media (hover: none) { .post:hover { transform: none; } .post:hover .img :global(img) { transform: none; } h3 a:hover { color: var(--color-text); } } /* M10 */
+  p { margin: 0 0 16px; color: var(--color-muted); font-size: var(--fs-small); line-height: var(--lh-lead); }
+  .meta { margin-top: auto; color: var(--color-muted); font-size: .78rem; letter-spacing: .02em; padding-top: 12px; border-top: 1px solid var(--color-border); }
+  /* Mobil in Listen: Zeile mit Bild links (quadratisch), Titel und Datum rechts; ohne Teaser (Artikel-Index mit 37 Eintraegen bleibt ueberschaubar) */
+  @media (max-width: 640px) {
+    :global(.grid) > .post { flex-direction: row; align-items: stretch; background: none; border: 0; border-bottom: 1px solid var(--color-border); border-radius: 0; box-shadow: none; }
+    :global(.grid) > .post:hover { transform: none; }
+    :global(.grid) > .post .img { flex: 0 0 104px; aspect-ratio: 1; border-radius: var(--radius-m); align-self: flex-start; margin: 14px 0; }
+    :global(.grid) > .post .body { padding: 14px 0 14px 16px; }
+    :global([dir="rtl"]) :global(.grid) > .post .body { padding: 14px 16px 14px 0; }
+    :global(.grid) > .post .tags { display: none; }
+    :global(.grid) > .post h3 { font-size: 1.02rem; margin-bottom: .35em; }
+    :global(.grid) > .post p { display: none; }
+    :global(.grid) > .post .meta { border: 0; padding-top: 0; }
+  }
+</style>

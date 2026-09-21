@@ -1,0 +1,261 @@
+{
+  "slug": "partners/international-payments",
+  "path": "/partners/international-payments",
+  "title": "بین الاقوامی پیمنٹ پارٹنر | EC Assets",
+  "description": "ہمارے بین الاقوامی پیمنٹ پارٹنر کے ذریعے بیرونِ ملک سے اپنے بلاکڈ اکاؤنٹ میں رقم کیسے ڈالیں: مقامی کرنسیاں، شفاف فیس، ٹریکنگ اور معاونت۔",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "کہیں سے بھی اپنے بلاکڈ اکاؤنٹ میں رقم ڈالیں"
+        },
+        {
+          "type": "paragraph",
+          "html": "بڑی رقم سرحد پار بھیجنا <strong>محفوظ، سادہ اور قابلِ پیش گوئی</strong> محسوس ہونا چاہیے۔ اسی لیے آپ کے بلاکڈ اکاؤنٹ کے ڈپازٹ ہمارے بین الاقوامی پیمنٹ پارٹنر کے ذریعے جاتے ہیں، ایک عالمی پیمنٹ کمپنی جو بالکل اسی کام کی ماہر ہے۔"
+        },
+        {
+          "type": "paragraph",
+          "html": "مل کر ہم یقینی بناتے ہیں کہ آپ کی رقم <strong>تیزی اور محفوظ طریقے سے پہنچے</strong>، تاکہ آپ اپنی منتقلی کے باقی کاموں پر توجہ دے سکیں۔"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ],
+      "figure": "/img/photos/cine-car-night-woman.jpg"
+    },
+    {
+      "id": 1,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "paragraph",
+          "html": "<strong>اپنی کرنسی میں ادائیگی کریں</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "بہت سی کرنسیاں سپورٹ ہوتی ہیں، اور تصدیق سے پہلے شرحِ تبادلہ اور فیس دکھائی جاتی ہے۔"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>محفوظ اور ریگولیٹڈ</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "ہمارا پارٹنر ایک لائسنس یافتہ پیمنٹ ادارہ ہے اور بہت سے ملکوں میں یونیورسٹیاں اور ادارے اسے استعمال کرتے ہیں۔"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>ٹریکنگ اور معاونت</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "اپنی ادائیگی کو ریئل ٹائم میں دیکھیں، اور سوال ہونے پر کثیر لسانی معاونت ٹیم سے رابطہ کریں۔"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ٹرانسفر شروع کریں"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets پورٹل میں اپنی ادائیگی شروع کریں اور اپنا ڈپازٹ محفوظ، شفاف طریقے سے بھیجیں۔"
+        },
+        {
+          "type": "button",
+          "text": "ابھی ٹرانسفر کریں",
+          "href": "/app/login",
+          "style": "btn btn-m btn-solid btn-white text-base fill-base btn-icon btn-icon-back"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ٹرانسفر کیسے ہوتا ہے"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "ادائیگی شروع کریں"
+        },
+        {
+          "type": "paragraph",
+          "html": "اپنے <a href=\"/app/login\">EC Assets پورٹل</a> میں بلاکڈ اکاؤنٹ کے تحت <strong>میری ادائیگیاں</strong> کھولیں۔ آپ زیرِ التوا ادائیگیاں دیکھتے ہیں اور <strong>ادائیگی شروع کریں</strong> سے نئی ادائیگی شروع کر سکتے ہیں۔"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "بھیجنے والا ملک چنیں"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>وہ ملک منتخب کریں جہاں سے آپ ادائیگی کر رہے ہیں۔</strong> ٹرانسفر اسی ملک کے بینک اکاؤنٹ سے آنا چاہیے۔"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "رقم چنیں"
+        },
+        {
+          "type": "paragraph",
+          "html": "آپ کے بلاکڈ اکاؤنٹ کے لیے مطلوبہ پوری رقم، یا اس کا ایک حصہ اگر آپ اقساط میں ادا کرنا چاہیں۔"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "پیمنٹ پارٹنر چنیں"
+        },
+        {
+          "type": "paragraph",
+          "html": "طریقے کے طور پر ہمارا پیمنٹ پارٹنر منتخب کریں اور اپنی مقامی کرنسی کا آپشن چنیں۔ <br>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "ادائیگی کا طریقہ چنیں"
+        },
+        {
+          "type": "paragraph",
+          "html": "بینک ٹرانسفر، کریڈٹ یا ڈیبٹ کارڈ، یا آپ کے ملک میں دستیاب مقامی ادائیگی کے طریقوں میں سے کوئی ایک۔"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "تصدیق وصول کریں"
+        },
+        {
+          "type": "paragraph",
+          "html": "جیسے ہی رقم آپ کے بلاکڈ اکاؤنٹ میں پہنچتی ہے EC Assets آپ کو ای میل کرتا ہے۔"
+        },
+        {
+          "type": "button",
+          "text": "ابھی ٹرانسفر کریں",
+          "href": "/app/login",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ہمارے صارفین کیا کہتے ہیں"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "EC Assets بلاگ کے رہنما مضامین"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "جرمنی میں بین الاقوامی طلبہ کے لیے مکمل فنڈڈ اسکالرشپ (2026)"
+        },
+        {
+          "type": "paragraph",
+          "html": "21 جنوری 2026"
+        },
+        {
+          "type": "paragraph",
+          "html": "سرکاری یونیورسٹیاں ٹیوشن نہیں لیتیں، لیکن رہنے کے اخراجات باقی رہتے ہیں۔ کون سی اسکالرشپ انہیں پورا کور کرتی ہیں، کون اہل ہے اور درخواست کیسے دیں..."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "پاکستان کے طلبہ کے لیے اسکالرشپ (2026)"
+        },
+        {
+          "type": "paragraph",
+          "html": "3 مارچ 2025"
+        },
+        {
+          "type": "paragraph",
+          "html": "جرمنی پاکستانی طلبہ کے لیے سب سے سستی منزلوں میں سے ایک ہے۔ وہ فنڈنگ پروگرام جو لاگو ہوتے ہیں اور درخواست کو مضبوط کیسے بنائیں..."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "جرمنی میں ٹیوشن فری یونیورسٹیاں"
+        },
+        {
+          "type": "paragraph",
+          "html": "27 فروری 2025"
+        },
+        {
+          "type": "paragraph",
+          "html": "جرمنی ان چند ممالک میں سے ہے جہاں سرکاری یونیورسٹیاں ٹیوشن نہیں لیتیں۔ عملی طور پر اس کا کیا مطلب ہے، اور آپ اس کے بجائے کیا ادا کرتے ہیں..."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "براہِ راست درخواستیں قبول کرنے والی یونیورسٹیاں (2026/2027)"
+        },
+        {
+          "type": "paragraph",
+          "html": "24 فروری 2025"
+        },
+        {
+          "type": "paragraph",
+          "html": "ہر یونیورسٹی مرکزی درخواستی سروس استعمال نہیں کرتی۔ ان اداروں کی فہرست جہاں آپ براہِ راست درخواست دیتے ہیں، اور عمل میں کیا بدلتا ہے..."
+        },
+        {
+          "type": "button",
+          "text": "بلاگ پڑھیں",
+          "href": "/guides",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        }
+      ]
+    }
+  ]
+}

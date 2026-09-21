@@ -1,0 +1,105 @@
+---
+/** Das Foto kommt aus Pic.astro (eigene Scope-ID), deshalb .phero :global(.photo).
+ *  Hero auf Foto oder dunkler Flaeche (03-KOMPONENTEN 3.1). size "home" = 88 px H1, "page" = 58 px H1.
+ *  underHeader: Foto laeuft unter Topbar und Header durch (Header transparent, siehe Header.astro overPhoto).
+ *  Ohne photo: Flaeche --color-dark, nie weiss. Text links, bis zwei CTAs, bis vier Checkpunkte (HTML erlaubt). */
+import Icon from './Icon.astro';
+import Pic from './Pic.astro';
+interface Cta { text: string; href: string; ghost?: boolean; icon?: string }
+interface Props { size?: 'home' | 'page'; kicker?: string; title: string; lead?: string; sub?: string; ctas?: Cta[]; checks?: string[]; photo?: { src: string; pos?: string; alt?: string; flip?: boolean; rtl?: { flip?: boolean; pos?: string } }; underHeader?: boolean }
+const { size = 'page', kicker, title, lead, sub, ctas = [], checks = [], photo, underHeader = false } = Astro.props;
+// Headline Wort fuer Wort (Jan 18.09. spaet, Revolut-Muster): jedes Wort ein Span mit eigener Verzoegerung; <br> bleibt,
+// Zeilen mit anderem HTML bleiben ein Stueck. Arabische Schrift verbindet nur innerhalb eines Worts, Trennung an Leerzeichen ist sicher.
+let wi = 0;
+const words = (html: string) => html.split(/(<br\s*\/?>)/i).map((part) => /^<br/i.test(part) ? part : /<[^>]+>/.test(part) ? `<span class="w" style="--i:${wi++}">${part}</span>` : part.trim().split(/\s+/).filter(Boolean).map((w) => `<span class="w" style="--i:${wi++}">${w}</span>`).join(' ')).join('');
+const titleHtml = words(title);
+---
+<section class:list={['phero', 'on-dark', size, { 'has-photo': !!photo, 'under-header': underHeader }]}>
+  {photo && <div class="photo-wrap" aria-hidden="true"><Pic class="photo" src={photo.src} alt={photo.alt ?? ''} style={[photo.pos ? `--pos:${photo.pos}` : '', photo.rtl?.pos ? `--pos-rtl:${photo.rtl.pos}` : '', photo.mobilePos ? `--pos-m:${photo.mobilePos}` : '', photo.zoom ? `--zoom:${photo.zoom};--zoom-origin:${photo.pos ?? '50% 50%'};--zoom-origin-rtl:${photo.rtl?.origin ?? photo.rtl?.pos ?? photo.pos ?? '50% 50%'}` : ''].filter(Boolean).join(';') || undefined} data-noflip={photo.rtl?.flip === false ? '' : undefined} data-rtlflip={photo.rtl?.flip === true ? '' : undefined} data-flip={photo.flip ? '' : undefined} eager priority sizes="100vw" /></div>}
+  {photo && <div class="scrim" aria-hidden="true"></div>}
+  <div class="container">
+    <div class="text rise">
+      {kicker && <p class="kicker">{kicker}</p>}
+      <h1 set:html={titleHtml} />
+      {lead && <p class="lead" set:html={lead} />}
+      {sub && <p class="sub" set:html={sub} />}
+      {ctas.length > 0 && (
+        <div class="ctas">
+          {ctas.map((c) => <a class:list={['btn', c.ghost ? 'btn-ghost-dark' : 'btn-on-dark']} href={c.href} data-astro-prefetch="viewport" data-commit={c.ghost ? undefined : ''}>{c.icon && <Icon name={c.icon} size={16} />}{c.text}</a>)}
+        </div>
+      )}
+      {checks.length > 0 && <ul class="checklist">{checks.map((x) => <li class="ok" set:html={x} />)}</ul>}
+    </div>
+  </div>
+</section>
+<style>
+  .phero { position: relative; isolation: isolate; background: var(--color-ink); /* Fallback hinter dem Foto, nicht das Markenrot */ color: var(--color-on-dark); padding: 88px 0 116px; overflow: hidden; }  /* unten Platz fuer die Trust-Karte, die 44 px in das Foto ragt */
+  .phero.under-header { margin-top: calc(-1 * var(--hdr-h)); padding-top: calc(var(--hdr-h) + 64px); }
+  .phero.home { min-height: min(84vh, 840px); display: flex; align-items: center; }
+  /* Ken Burns auf dem Rahmen, die Spiegelung fuer RTL auf dem Bild selbst: so bleibt der Bildausschnitt gleich und das Motiv wandert auf die Gegenseite des Textes */
+  /* Ken Burns: langsamer Zug ueber 16 s (M01, vorher 24), danach steht das Bild (Jan 18.09. spaet) */
+  .photo-wrap { position: absolute; inset: 0; z-index: -2; transform: scale(1.18); transform-origin: 85% 55%; animation: kb 16s cubic-bezier(.2, .5, .3, 1) forwards; }
+  .phero :global(.photo) { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--pos, 100% 45%); filter: var(--photo-grade); transform: scale(var(--zoom, 1)); transform-origin: var(--zoom-origin, center); }
+  .photo-wrap::after { content: ""; position: absolute; inset: 0; background: var(--photo-warm); mix-blend-mode: multiply; pointer-events: none; }
+  /* flip: Motiv seitenverkehrt, damit die Person rechts vom Text steht (nur ohne lesbare Schrift im Bild); in RTL dann unveraendert */
+  .phero :global(.photo)[data-flip] { transform: scaleX(-1) scale(var(--zoom, 1)); }
+  :global([dir="rtl"]) .phero :global(.photo) { transform: scaleX(-1) scale(var(--zoom, 1)); object-position: var(--pos-rtl, var(--pos, 100% 45%)); transform-origin: var(--zoom-origin-rtl, center); }
+  :global([dir="rtl"]) .phero :global(.photo)[data-noflip], :global([dir="rtl"]) .phero :global(.photo)[data-flip] { transform: scale(var(--zoom, 1)); }
+  /* rtl.flip=true: auch in RTL gespiegelt (Startseite: das Paar sitzt im Original mittig, gespiegelt mit pos-rtl 100 % links vom Text) */
+  :global([dir="rtl"]) .phero :global(.photo)[data-rtlflip] { transform: scaleX(-1) scale(var(--zoom, 1)); }
+  :global([dir="rtl"]) .photo-wrap { transform-origin: 15% 55%; }
+  @keyframes kb { to { transform: scale(1.06); } }
+  h1 :global(.w) { display: inline-block; animation: wordIn .7s var(--ease-out) both; animation-delay: calc(.12s + var(--i, 0) * .07s); animation-play-state: paused; }
+  /* M14: die Woerter warten auf die Schrift (html.fonts-ready aus Base.astro, spaetestens nach 800 ms), damit die Headline nicht
+     in der Ersatzschrift einblendet und dann umbricht; ohne JS (html.no-js) laufen sie sofort */
+  :global(html.fonts-ready) h1 :global(.w), :global(html.no-js) h1 :global(.w) { animation-play-state: running; }
+  @keyframes wordIn { from { opacity: 0; transform: translateY(.35em); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { h1 :global(.w) { animation: none; } }
+  .scrim { position: absolute; inset: 0; z-index: -1; background: var(--scrim); }
+  .scrim::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(11,15,25,.5) 0%, rgba(11,15,25,.08) 60%), var(--vignette); }
+  .container { width: 100%; }
+  .text { max-width: 780px; }
+  .kicker { color: rgba(255,255,255,.72); }
+  h1 { color: #fff; margin-bottom: 24px; max-width: 22ch; }
+  .home h1 { font-size: var(--fs-h1); max-width: 12ch; }
+  .page h1 { font-size: var(--fs-h1-page); }
+  .lead { color: rgba(255,255,255,.88); max-width: 48ch; margin-bottom: 18px; font-size: var(--fs-body); }
+  .sub { color: rgba(255,255,255,.78); max-width: 52ch; margin-bottom: 28px; font-size: var(--fs-small); line-height: var(--lh-lead); }
+  .sub :global(strong) { color: #fff; font-weight: 600; }
+  .lead:last-of-type, .sub:last-of-type { margin-bottom: 32px; }
+  .ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 36px; }
+  /* Eine Spalte (28): in zwei Spalten brachen alle vier Punkte in zwei Zeilen um */
+  .checklist { display: grid; grid-template-columns: 1fr; gap: 2px; max-width: 560px; }
+  .checklist li { color: rgba(255,255,255,.9); font-size: var(--fs-small); }
+  :global([dir="rtl"]) .scrim::after { background: linear-gradient(270deg, rgba(11,15,25,.5) 0%, rgba(11,15,25,.08) 60%), var(--vignette); }
+  @media (max-width: 800px) {
+    .phero { padding: 48px 0 68px; }
+    .phero.under-header { padding-top: calc(var(--hdr-h) + 32px); }
+    .phero.home { min-height: 0; }
+    .phero :global(.photo) { object-position: 60% 30%; }
+    .checklist { grid-template-columns: 1fr; gap: 0; }
+    .checklist li { font-size: .95rem; margin: .35em 0; }
+    h1 { margin-bottom: 16px; }
+    .ctas { margin-bottom: 24px; }
+    .lead:last-of-type, .sub:last-of-type { margin-bottom: 24px; }
+  }
+  @media (max-width: 600px) {
+    /* Mobil (Jan 18.09. 22:30): ein Button, der zweite als Textlink; Headline kleiner; Haken kompakt */
+    .phero { padding: 40px 0 60px; }
+    .phero.under-header { padding-top: calc(var(--hdr-h) + 16px); }
+    /* Telefonmass (M03): das Display-Moment der Zielgruppe ist der Telefon-Hero; Revolut 44 bis 48 px */
+    .home h1 { font-size: 2.6rem; letter-spacing: -.03em; line-height: 1; }
+    .page h1 { font-size: 2.1rem; }
+    .lead, .sub { font-size: 1rem; }
+    .kicker { font-size: .8rem; margin-bottom: 12px; }
+    .ctas { gap: 6px; }
+    .ctas .btn { flex: 1 1 100%; }
+    .ctas .btn-ghost-dark { background: none; border: 0; min-height: 40px; font-weight: 500; justify-content: flex-start; padding: 0; }
+    .checklist li { font-size: .9rem; margin: .25em 0; }
+    h1 :global(.w) { animation-duration: .5s; }
+    /* Telefon: kein Zoom (der schob Gesichter aus dem schmalen Ausschnitt), Ausschnitt aus --pos-m, sonst --pos; Spiegelung bleibt */
+    .phero :global(.photo) { --zoom: 1 !important; object-position: var(--pos-m, var(--pos, 100% 45%)); }
+    :global([dir="rtl"]) .phero :global(.photo) { object-position: var(--pos-m, var(--pos-rtl, var(--pos, 100% 45%))); }
+  }
+  @media (prefers-reduced-motion: reduce) { .photo-wrap { animation: none; transform: scale(1.08); } }
+</style>

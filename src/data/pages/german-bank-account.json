@@ -1,0 +1,407 @@
+{
+  "slug": "german-bank-account",
+  "path": "/german-bank-account",
+  "title": "German Bank Account for newcomers | Included with your Blocked Account",
+  "description": "Open a German Bank Account with IBAN before you arrive, without a residence permit. No account fees, a digital debit card for Apple Pay and Google Pay, and your Blocked Account payouts delivered automatically.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "German Bank Account"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "A German Bank Account, ready before you land"
+        },
+        {
+          "type": "paragraph",
+          "html": "Open it with your Blocked Account. Use it for everything else."
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Everyday banking for your new life in Germany. <br></strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Pay, receive and manage your money in one app. The EC Assets Bank Account is part of the {{product}} at no extra cost.</strong>"
+        },
+        {
+          "type": "button",
+          "text": "{{product.start}}",
+          "href": "/app/start",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "A German account with IBAN, no account fees.",
+              "mark": "ok"
+            },
+            {
+              "html": "Opened together with your Blocked Account, before you have a residence permit.",
+              "mark": "ok"
+            },
+            {
+              "html": "Digital debit card included, deposits protected up to €100,000.",
+              "mark": "ok"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "An IBAN before you have an address"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Add it to your Blocked Account"
+        },
+        {
+          "type": "paragraph",
+          "html": "The Bank Account is opened together with your Blocked Account or the {{product}}. Nothing extra to fill in, no residence permit needed."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Land with a card in your phone"
+        },
+        {
+          "type": "paragraph",
+          "html": "Your German IBAN is ready before you fly. The debit card sits in your phone wallet from day one; the plastic card follows to your German address."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Watch the first payout arrive"
+        },
+        {
+          "type": "paragraph",
+          "html": "When you activate your Blocked Account in Germany, the monthly amount moves into this account on its own. Rent, phone, groceries: paid from here."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Keep it after the deposit is gone"
+        },
+        {
+          "type": "paragraph",
+          "html": "The account stays open once your Blocked Account payouts end, still without monthly fees. Send us your visa or residence permit and it carries on as your everyday account."
+        }
+      ],
+      "anchor": "how-it-works"
+    },
+    {
+      "id": 4,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Banking that moves with you"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "<strong>Three free ATM withdrawals a month</strong> in Germany and across the EU.",
+              "mark": "ok"
+            },
+            {
+              "html": "Activate your <strong>digital debit card</strong> on arrival and use it anywhere.",
+              "mark": "ok"
+            },
+            {
+              "html": "<strong>Physical card on request</strong> for a small delivery fee.",
+              "mark": "ok"
+            },
+            {
+              "html": "Manage your money <strong>whenever and wherever you like</strong>: salary, card payments, direct debits and more.",
+              "mark": "ok"
+            },
+            {
+              "html": "Get your <strong>visa essentials and your Bank Account</strong> in one go with the <strong>{{product}}.</strong>",
+              "mark": "ok"
+            },
+            {
+              "html": "<strong>Stays open and free</strong> after your Blocked Account payouts have finished.",
+              "mark": "ok"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ],
+      "anchor": "what-you-get"
+    },
+    {
+      "id": 15,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "What it costs"
+        },
+        {
+          "type": "paragraph",
+          "html": "The account comes with the Blocked Account and the {{product}} at no extra charge. The only optional cost is the delivery of a physical card."
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Account fees</strong>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "€0"
+        },
+        {
+          "type": "paragraph",
+          "html": "no minimum balance either"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Free ATM withdrawals</strong>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "3"
+        },
+        {
+          "type": "paragraph",
+          "html": "a month in Germany and across the EU"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Deposit protection</strong>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "€100,000"
+        },
+        {
+          "type": "paragraph",
+          "html": "under the European deposit guarantee scheme"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Physical card</strong>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "€7"
+        },
+        {
+          "type": "paragraph",
+          "html": "standard delivery; express €10; the card itself is free"
+        }
+      ],
+      "anchor": "costs"
+    },
+    {
+      "id": 3,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Banking built for people who have just arrived"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>A German account without the German paperwork.</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "Student, employee, job seeker or simply starting over: everyone who moves to Germany needs a <strong>local account that just works</strong>. Landlords and employers ask for a German IBAN, and paying with a foreign card gets expensive quickly. <br> <br> With EC Assets you <strong>skip the branch visit and the forms</strong> and get an account that is <strong>designed around the first year in a new country</strong>. Receive your salary, pay your rent and shop without foreign transaction fees."
+        },
+        {
+          "type": "paragraph",
+          "html": "Open <strong>your Blocked Account and your Bank Account in the same application, and add the health insurance your visa requires</strong>, all within a few minutes, through the <strong>{{product}}. <br> <br></strong> You will not need a second German account."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Why the EC Assets Bank Account"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "<strong>No account fees.</strong> Send, receive and manage your money in one place. No minimum balance.",
+              "mark": "ok"
+            },
+            {
+              "html": "<strong>Opened with your Blocked Account</strong> in a few minutes, fully online, before you have a residence permit. <sup>2</sup>",
+              "mark": "ok"
+            },
+            {
+              "html": "<strong>Protected up to €100,000</strong> under the European deposit guarantee scheme.",
+              "mark": "ok"
+            },
+            {
+              "html": "<strong>Made for newcomers.</strong> Support in English, Urdu and Punjabi, a few taps away.",
+              "mark": "ok"
+            },
+            {
+              "html": "<strong>Digital debit card included.</strong> Add it to Apple Pay or Google Pay and pay by phone straight away. Accepted worldwide.",
+              "mark": "ok"
+            }
+          ]
+        }
+      ],
+      "collapse": true,
+      "photo": "/img/photos/kitchen-laptop.jpg",
+      "anchor": "about",
+      "more": "the Bank Account"
+    },
+    {
+      "id": 2,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "What customers say about the account"
+        },
+        {
+          "type": "quote",
+          "text": "\"Rent, phone bill, groceries: everything ran through the account from week one. The card was in my wallet app before the physical one arrived.\"",
+          "author": "Salma B.",
+          "role": "Master's student, Multan"
+        },
+        {
+          "type": "quote",
+          "text": "\"Setting it up took no extra effort because it came with the Blocked Account. The app is simple and the payouts arrive on time.\"",
+          "author": "Hamza D.",
+          "role": "Software engineer, Lahore"
+        },
+        {
+          "type": "quote",
+          "text": "\"It behaves like any German current account. Transfers are quick and my employer had no issue paying my salary into it.\"",
+          "author": "Danish M.",
+          "role": "Trainee, Faisalabad"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Frequently asked questions"
+        },
+        {
+          "type": "faq",
+          "items": [
+            {
+              "q": "What is the difference between the Blocked Account and the Bank Account?",
+              "a": "The Blocked Account is for your visa; the Bank Account is for daily life. <br> <br> <strong>Blocked Account:</strong> <br> It holds the deposit that proves your funds to the German authorities. The money is released to you in monthly instalments after you arrive, which is why it is called blocked. <br> <br> <strong>Bank Account:</strong> <br> A current account (<em>Girokonto</em>) for rent, groceries, insurance premiums and salary. It comes with a digital debit card, and a physical card is available on request. <br> <br> After arrival, your monthly payout moves automatically from the Blocked Account to the Bank Account. <br> <br> With EC Assets you get both, so there is no need to open another German account."
+            },
+            {
+              "q": "Why do I need this account?",
+              "a": "To receive your monthly Blocked Account payouts and to pay for health insurance, rent and everyday costs while you are in Germany. <br> <br> It is a German account with a <a href=\"http://bundesbank.de/en/tasks/payment-systems/services/iban-rules/iban-rules-626476\">German IBAN</a>, which landlords, employers and insurers will ask for. <br> <br> Using a local account also avoids the transaction fees and friction that come with paying from a foreign card."
+            },
+            {
+              "q": "Is the account safe?",
+              "a": "Yes. <br> The account is held by a fully licensed and regulated bank in the European Union, which acts as our banking partner. <br> <br> Deposits are protected up to €100,000 under the European deposit guarantee scheme. <br> <a href=\"https://www.eba.europa.eu/activities/single-rulebook/regulatory-activities/depositor-protection/deposit-guarantee-schemes\">More about deposit protection in the EU.</a> <br> <br>"
+            },
+            {
+              "q": "How do I open the account?",
+              "a": "It is included for every customer who orders the {{product}} or a Blocked Account.<br><br>Complete the application <a href=\"/app/start\">here</a> and the Bank Account is set up as part of it."
+            },
+            {
+              "q": "Does the account cost anything?",
+              "a": "No. There are no account fees. <br> <br> Details of optional costs, such as card delivery, are listed <a href=\"/help\">in our Help Center.</a> <br>"
+            },
+            {
+              "q": "Can I get a physical card?",
+              "a": "Yes, you can order one in the app:<br><br>Standard delivery, €7 <br> Up to ten business days, no tracking <br> <br><br><br><strong>Recommended:</strong> Express delivery, €10 <br> Up to three business days, with tracking<br><br>The card itself is free; you only pay for delivery.<br><br>Every account also comes with a digital debit card for your phone wallet."
+            },
+            {
+              "q": "Who can get the account?",
+              "a": "Customers who order the {{product}} or a Blocked Account."
+            },
+            {
+              "q": "Can I add the card to Apple Pay or Google Pay?",
+              "a": "Yes. Add your debit card to Apple Wallet or Google Wallet and pay contactless wherever those methods are accepted."
+            },
+            {
+              "q": "Can I keep the account after my Blocked Account payouts end?",
+              "a": "Yes. The account stays open and free once the payouts are complete, so you can keep using it as your everyday account in Germany."
+            }
+          ]
+        }
+      ],
+      "anchor": "faq"
+    },
+    {
+      "id": 14,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Footnotes"
+        },
+        {
+          "type": "paragraph",
+          "html": "[2] To keep your Bank Account active you will need to provide a valid visa <strong>or</strong> residence permit after arrival. We will tell you the deadline for submitting these documents."
+        }
+      ]
+    }
+  ]
+}

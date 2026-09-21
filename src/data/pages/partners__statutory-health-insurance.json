@@ -1,0 +1,142 @@
+{
+  "slug": "partners/statutory-health-insurance",
+  "path": "/partners/statutory-health-insurance",
+  "title": "Our statutory health insurance partner | EC Assets",
+  "description": "Meet the statutory health insurer behind the public cover in the EC Assets {{product}}: a large, highly rated insurer with English-speaking service, a bonus programme and dental cover.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Our statutory health insurance partner"
+        },
+        {
+          "type": "paragraph",
+          "html": "The public cover in our packages comes from one of Germany's large statutory health insurers, an organisation that serves a large share of the country's international students and professionals."
+        },
+        {
+          "type": "paragraph",
+          "html": "Because so many of our customers end up as its members, we think it deserves a proper introduction. <em>Here is what to expect from the insurer that may become part of your everyday life in Germany.</em>"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ],
+      "figure": "/img/photos/cine-rooftop-fog-woman.jpg"
+    },
+    {
+      "id": 1,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "About the insurer"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>One of the leading statutory health insurers in Germany</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "It is known for practical things: service in several languages, an app that works in English, and fast responses."
+        },
+        {
+          "type": "paragraph",
+          "html": "The reputation rests on practical things: service in several languages, an app that works in English, reliable cover for employees, families and students, and fast responses."
+        },
+        {
+          "type": "paragraph",
+          "html": "Service is the focus, and that is what keeps the insurer at the top of the German rankings."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Public or private?"
+        },
+        {
+          "type": "paragraph",
+          "html": "Public."
+        },
+        {
+          "type": "paragraph",
+          "html": "Under German federal law the insurer provides statutory cover, including doctor and dentist visits and prescription medication."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "How do I join the bonus programme?"
+        },
+        {
+          "type": "paragraph",
+          "html": "The <a href=\"/guides\">bonus programme</a> is open to every member. You collect points for check-ups, vaccinations and sport, and convert them into rewards."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "What does the app do?"
+        },
+        {
+          "type": "paragraph",
+          "html": "Certificates, claims, appointments and messages to the insurer, all in English, on your phone."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Is dental treatment covered?"
+        },
+        {
+          "type": "paragraph",
+          "html": "Yes. Check-ups are covered in full, and the insurer contributes to fillings, crowns and dentures. Complex procedures may involve a co-payment, but routine dental work is included."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Which vaccinations are covered?"
+        },
+        {
+          "type": "paragraph",
+          "html": "All vaccinations recommended by the German standing committee on vaccination, plus travel vaccinations for private trips under the standard tariff."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "How do I become a member?"
+        },
+        {
+          "type": "paragraph",
+          "html": "The quickest way is through EC Assets. Start on our <a href=\"/health-insurance\">health insurance page</a>. If you also need a Blocked Account for your visa, the <a href=\"/complete-setup\">{{product}}</a> covers both in one application."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Get your health insurance"
+        },
+        {
+          "type": "paragraph",
+          "html": "The EC Assets health insurance bundle combines this cover with travel health insurance and a few extras chosen for newcomers."
+        },
+        {
+          "type": "button",
+          "text": "Get health insurance",
+          "href": "/app/start",
+          "style": "btn btn-m btn-solid btn-white text-base fill-base btn-icon btn-icon-back"
+        }
+      ]
+    }
+  ]
+}

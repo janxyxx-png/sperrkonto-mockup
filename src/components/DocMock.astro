@@ -1,0 +1,43 @@
+---
+/** Dokument-Mockup (Bestaetigung/Checkliste) fuer Visa- und Antragsthemen. Inhalt je nach Kontext. */
+import Icon from './Icon.astro';
+import Wordmark from './Wordmark.astro';
+import type { Locale } from '../lib/i18n';
+interface Props { title?: string; items?: string[]; status?: string; class?: string; locale?: Locale }
+const { title = 'Visa application', items = ['Blocked Account confirmation', 'Health Insurance certificate', 'Travel Health Insurance', 'Bank Account'], status = 'Complete', class: cls, locale = 'en' } = Astro.props;
+// Die Texte kommen aus Section.astro (englische Heuristik); hier die Uebersetzung fuer Urdu und Punjabi
+const TR: Record<'ur' | 'pa', Record<string, string>> = {
+  ur: { 'Visa application': 'ویزا درخواست', 'Insurance certificate': 'انشورنس سرٹیفکیٹ', 'Opportunity Card': 'اپرچونٹی کارڈ', 'University admission': 'یونیورسٹی داخلہ',
+    'Blocked Account confirmation': 'بلاکڈ اکاؤنٹ کی تصدیق', 'Health Insurance certificate': 'ہیلتھ انشورنس سرٹیفکیٹ', 'Travel Health Insurance': 'ٹریول ہیلتھ انشورنس', 'Bank Account': 'بینک اکاؤنٹ',
+    'Statutory health insurance': 'سرکاری ہیلتھ انشورنس', 'Valid from arrival': 'آمد سے مؤثر', 'Travel cover for your first weeks': 'پہلے ہفتوں کے لیے ٹریول کوریج', 'English-speaking service': 'انگریزی میں سروس',
+    'Recognised qualification': 'تسلیم شدہ قابلیت', 'Proof of funds': 'مالی ثبوت', 'Health insurance': 'ہیلتھ انشورنس', 'Points: 6 of 6': 'پوائنٹس: 6 میں سے 6',
+    'Admission letter': 'داخلہ خط', 'Language certificate': 'زبان کا سرٹیفکیٹ', 'Complete': 'مکمل', 'Issued': 'جاری', 'Eligible': 'اہل' },
+  pa: { 'Visa application': 'ویزا درخواست', 'Insurance certificate': 'انشورنس سرٹیفکیٹ', 'Opportunity Card': 'اپرچونٹی کارڈ', 'University admission': 'یونیورسٹی داخلہ',
+    'Blocked Account confirmation': 'بلاکڈ اکاؤنٹ دی تصدیق', 'Health Insurance certificate': 'ہیلتھ انشورنس سرٹیفکیٹ', 'Travel Health Insurance': 'ٹریول ہیلتھ انشورنس', 'Bank Account': 'بینک اکاؤنٹ',
+    'Statutory health insurance': 'سرکاری ہیلتھ انشورنس', 'Valid from arrival': 'آون توں لاگو', 'Travel cover for your first weeks': 'پہلے ہفتیاں لئی ٹریول کوریج', 'English-speaking service': 'انگریزی وچ سروس',
+    'Recognised qualification': 'تسلیم شدہ قابلیت', 'Proof of funds': 'مالی ثبوت', 'Health insurance': 'ہیلتھ انشورنس', 'Points: 6 of 6': 'پوائنٹ: 6 وچوں 6',
+    'Admission letter': 'داخلہ خط', 'Language certificate': 'زبان دا سرٹیفکیٹ', 'Complete': 'مکمل', 'Issued': 'جاری', 'Eligible': 'اہل' },
+};
+const L = (s: string) => (locale === 'en' ? s : TR[locale][s] ?? s);
+---
+<div class:list={['docmock', cls]} aria-hidden="true">
+  <div class="sheet">
+    <div class="top"><Wordmark size=".9rem" /><span class="ref" dir="ltr">No. 2026-04871</span></div>
+    <div class="head"><Icon name="doc" /><span>{L(title)}</span><span class="pill">{L(status)}</span></div>
+    <ul class="checklist">{items.map((i) => <li class="ok">{L(i)}</li>)}</ul>
+    <div class="lines"><i></i><i></i><i style="width: 60%"></i></div>
+  </div>
+</div>
+<style>
+  .docmock { width: min(100%, 400px); position: relative; }
+  .docmock::before { content: ""; position: absolute; inset: 14px -10px -10px 14px; border-radius: var(--radius-m); background: var(--color-surface-strong); }
+  .sheet { position: relative; background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-m); padding: 24px 26px 26px; box-shadow: 0 30px 60px -30px rgba(11,15,25,.3); }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .ref { font-size: .72rem; color: var(--color-muted); letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+  .head { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-bottom: 14px; }
+  .head :global(svg) { color: var(--color-text); }
+  .pill { margin-inline-start: auto; background: var(--color-surface-strong); color: var(--color-text); font-size: .72rem; font-weight: 600; padding: 4px 10px; border-radius: var(--radius-pill); }
+  .checklist { margin: 0 0 18px; font-size: .92rem; }
+  .lines { display: flex; flex-direction: column; gap: 8px; }
+  .lines i { display: block; height: 8px; border-radius: 4px; background: var(--color-surface-strong); }
+</style>

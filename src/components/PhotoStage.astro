@@ -1,0 +1,25 @@
+---
+/** Objekt auf Foto (Jan 18.09. spaet, Revolut-Muster): das Produktobjekt liegt scharf vor einem unscharfen Motiv der Serie,
+ *  statt auf grauer Buehne. overflow: clip statt hidden, damit die Scroll-Zeitleisten der Objekte (CardMock) den Viewport
+ *  als Scroller behalten und der Ueberstand des Fotos nicht in die Seitenbreite zaehlt (clip-path tat das). ratio wie die bisherigen Buehnen (5 / 4.3). */
+import Pic from './Pic.astro';
+interface Props { src: string; pos?: string; ratio?: string; class?: string; fill?: boolean }
+// fill: das Objekt fuellt die ganze Flaeche (AppDuo positioniert seine Geraete selbst)
+const { src, pos = '50% 50%', ratio = '5 / 4.3', class: cls, fill = false } = Astro.props;
+---
+<div class:list={['photo-stage', cls, { 'is-fill': fill }]} style={`--pos:${pos};--ratio:${ratio}`}>
+  <div class="bg" aria-hidden="true"><Pic src={src} alt="" sizes="(max-width: 800px) 100vw, 50vw" /></div>
+  <div class="scrim" aria-hidden="true"></div>
+  <div class:list={['obj', { fill }]}><slot /></div>
+</div>
+<style>
+  .photo-stage { position: relative; width: 100%; max-width: none; margin: 0 auto; aspect-ratio: var(--ratio); border-radius: var(--radius-l); overflow: clip; display: grid; place-items: center; isolation: isolate; background: var(--color-ink); }
+  .bg { position: absolute; inset: -6%; z-index: -2; }
+  .bg :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: var(--pos); filter: var(--photo-grade) blur(4px); transform: scale(1.04); }
+  .scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(11,15,25,.05) 0%, rgba(11,15,25,.35) 100%), radial-gradient(70% 60% at 30% 20%, rgba(255,255,255,.12), transparent 60%); }
+  .obj { width: 100%; height: 100%; display: grid; place-items: center; padding: 6%; }
+  .obj.fill { padding: 0; }
+  @media (max-width: 600px) { .photo-stage { aspect-ratio: 4 / 3.6; } .photo-stage.is-fill { aspect-ratio: 4 / 4.4; } .obj { padding: 5%; } }
+  .obj > :global(.app-stage) { width: 100%; height: 100%; }
+  .obj > :global(*) { max-width: 100%; }
+</style>

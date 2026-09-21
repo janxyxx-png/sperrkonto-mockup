@@ -1,0 +1,43 @@
+---
+/** Foto aus der Serie (public/img/photos, Quellen in public/img/QUELLEN.md). Rahmen mit Radius, cover-Zuschnitt,
+ *  globale Farbanpassung ueber --photo-grade/--photo-warm. ratio z. B. "4 / 3" oder "1 / 1". */
+import Pic from './Pic.astro';
+interface Props { src: string; alt?: string; ratio?: string; pos?: string; class?: string; eager?: boolean; sizes?: string }
+import { focusFor } from '../lib/photos';
+const { src: rawSrc, alt = '', ratio = '4 / 3', pos: posProp, class: cls, eager = false, sizes = '(max-width: 800px) 100vw, 600px' } = Astro.props;
+// Rundgang 18.09. spaet: die hellen Tagesmotive der ersten Serie stehen in den Daten (photo-Feld) und fielen neben den
+// cineastischen Heros auf. Statt die Datendateien anzufassen (dort arbeitet die Abloesung 16-PROMPT), tauscht die
+// Komponente sie beim Rendern gegen Motive derselben Stimmung. Ein eigener Shoot ersetzt diese Tabelle.
+const SWAP: Record<string, string> = {
+  '/img/photos/kitchen-document.jpg': '/img/photos/cine-rooftop-night-woman.jpg',
+  '/img/photos/kitchen-laptop.jpg': '/img/photos/cine-ledge-night-man.jpg',
+  '/img/photos/kitchen-phone-laptop.jpg': '/img/photos/cine-rooftop-couple-night.jpg',
+  '/img/photos/chair-laptop.jpg': '/img/photos/cine-golden-profile-man.jpg',
+  '/img/photos/kitchen-macbook.jpg': '/img/photos/cine-rooftop-night-woman.jpg',
+  '/img/photos/kitchen-cooking.jpg': '/img/photos/cine-rooftop-friends-sunset.jpg',
+  '/img/photos/kitchen-couple.jpg': '/img/photos/cine-dusk-friends.jpg',
+  '/img/photos/couch-suitcase.jpg': '/img/photos/cine-plane-wing.jpg',
+  '/img/photos/floor-suitcase.jpg': '/img/photos/cine-airport-silhouettes.jpg',
+  '/img/photos/packing-overhead.jpg': '/img/photos/cine-plane-wing.jpg',
+  '/img/photos/station-backpack.jpg': '/img/photos/cine-train-sunset.jpg',
+  '/img/photos/campus-walk.jpg': '/img/photos/cine-rooftop-fog-woman.jpg',
+  '/img/photos/library-books.jpg': '/img/photos/library-old.jpg',
+  '/img/photos/airport-board.jpg': '/img/photos/cine-terminal-golden.jpg',
+  '/img/photos/airport-window.jpg': '/img/photos/cine-airport-silhouettes.jpg',
+  '/img/photos/moving-boxes.jpg': '/img/photos/cine-speicherstadt-night.jpg',
+  '/img/photos/berlin-tram.jpg': '/img/photos/cine-berlin-dusk.jpg',
+  '/img/photos/berlin-tower.jpg': '/img/photos/cine-berlin-tower-sunset.jpg',
+  '/img/photos/phone-outdoors.jpg': '/img/photos/cine-phone-night.jpg',
+};
+const src = SWAP[rawSrc] ?? rawSrc;
+const pos = posProp ?? focusFor(src);
+---
+<figure class:list={['photo-frame', cls]} style={`--ratio:${ratio};--pos:${pos}`}>
+  <Pic src={src} alt={alt} eager={eager} sizes={sizes} />
+</figure>
+<style>
+  .photo-frame { position: relative; margin: 0; width: 100%; aspect-ratio: var(--ratio); border-radius: var(--radius-l); overflow: hidden; background: var(--color-surface-strong); isolation: isolate; }
+  .photo-frame :global(img) { display: block; width: 100%; height: 100%; object-fit: cover; object-position: var(--pos); filter: var(--photo-grade); }
+  .photo-frame::after { content: ""; position: absolute; inset: 0; background: var(--photo-warm); mix-blend-mode: multiply; pointer-events: none; }
+  .photo-frame.round { border-radius: 50%; }
+</style>

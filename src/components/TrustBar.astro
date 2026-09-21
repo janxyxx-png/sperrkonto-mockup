@@ -1,0 +1,78 @@
+---
+/** Trust-Leiste, kompakte Variante A (03-KOMPONENTEN 3.2): Haarlinie, vier Belege mit Icon. Keine erfundenen Zahlen:
+ *  Bewertung und Nutzerzahl sind Platzhalter-Chips, Einlagensicherung und Partnerbank sind Aussagen ohne Zahl. */
+import Icon from './Icon.astro';
+import Mark from './Mark.astro';
+import { isPh, markPh } from '../lib/placeholders';
+import { localePath } from '../lib/i18n';
+import { type Locale, t as tr } from '../lib/i18n';
+/** bridge: unter einem Foto-Hero ragt die Leiste als weisse Karte in das Foto (weicher Uebergang statt Kante, Jan 18.09. spaet) */
+interface Props { locale?: Locale; bridge?: boolean }
+const { locale = 'en', bridge = false } = Astro.props;
+const t = (k: Parameters<typeof tr>[1]) => tr(locale, k);
+// 09-PROMPT C2: die Claims (Erstattung, 0 Euro Finanzierung) und die Sprachen stehen hier statt in einer eigenen Sektion
+// 18-NAECHSTES-LEVEL Hebel 2: nur Belege, die man pruefen kann (Bank mit Einlagensicherung, Verifikation fuer Botschaften,
+// Produktversprechen); Bewertung und Nutzerzahl waren erfunden und sind weg. Platzhalter erscheinen als Chip.
+const items: { icon: string; big: string; sub: string; mark?: 'trustpilot' | 'eu'; href?: string }[] = [
+  // Bankname als Platzhalter-Chip steht in der Logo-Reihe der Startseite, nicht hier (Rundgang 18.09. spaet: wirkte kalt)
+  { icon: 'shield', mark: 'eu', big: t('trust.deposit'), sub: t('trust.depositAt') },
+  { icon: 'doc', big: t('trust.verify'), sub: t('trust.verifySub'), href: '/authorities' },
+  { icon: 'shield', big: t('claim.v1'), sub: t('claim.l1') },
+  { icon: 'bank', big: t('claim.v2'), sub: t('claim.l2') },
+  // "3 languages" (M08) entfaellt: das Versprechen steht im Header, vier Spalten atmen
+];
+---
+<section class:list={['trust', { bridge }]}>
+  <div class="container">
+    <div class="grid" data-spot style="--spot: rgba(142,45,47,.055)">
+      {items.map((it) => { const Tag = it.href ? 'a' : 'div'; return (
+        <Tag class="item" href={it.href ? localePath(locale, it.href) : undefined}>
+          <span class="icircle">{it.mark ? <Mark name={it.mark} label={false} size={20} /> : <Icon name={it.icon} size={22} />}</span>
+          <div>
+            <div class="num">{isPh(it.big) ? <span class="ph-num">{it.big}</span> : <span data-count>{it.big}</span>}</div>
+            <div class="txt" set:html={markPh(it.sub)} />
+          </div>
+        </Tag>
+      ); })}
+    </div>
+  </div>
+</section>
+<style>
+  .trust { padding: 36px 0 40px; }
+  .trust .container { border-top: 1px solid var(--color-border); padding-top: 32px; }
+  /* Bruecke: weisse Karte, die in den Foto-Hero ragt; danach beginnt die Seite ohne harte Kante */
+  .trust.bridge { padding: 0 0 8px; position: relative; z-index: 2; margin-top: -44px; }
+  .trust.bridge .container { border-top: 0; padding-top: 0; }
+  /* Feinschliff 27: Icon ueber der Zahl statt daneben, Haarlinien zwischen den fuenf Spalten, engere Typo. Vorher brach schon
+     "Up to €100,000" in zwei Zeilen und der Text in vier; jetzt hat jede Spalte ihre volle Breite. Der warme Lichtfleck
+     (data-spot) folgt dem Zeiger ueber die Karte. */
+  .trust.bridge .grid { background: var(--color-bg); border-radius: var(--radius-l); padding: 30px 12px; box-shadow: 0 30px 60px -30px rgba(11,15,25,.35), 0 0 0 1px rgba(11,15,25,.04); gap: 0; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+  @media (max-width: 1100px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 20px 0; } }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr 1fr; } }
+  .item { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; color: inherit; text-decoration: none; padding: 2px 24px; border-inline-start: 1px solid var(--color-border); }
+  .item:first-child { border-inline-start: 0; }
+  @media (max-width: 1100px) { .item { border-inline-start: 0; } .item:nth-child(2n) { border-inline-start: 1px solid var(--color-border); } }
+  @media (max-width: 760px) { .item:nth-child(n) { border-inline-start: 0; } .item:nth-child(2n) { border-inline-start: 1px solid var(--color-border); } }
+  a.item:hover .num { color: var(--color-accent); }
+  .num { transition: color .2s var(--ease-out); }
+  .txt :global(.ph-num) { font-size: .78rem; }
+  .item > :global(.icircle) { width: 36px; height: 36px; background: var(--color-accent-soft); color: var(--color-accent); }
+  .item > :global(.icircle svg) { width: 18px; height: 18px; }
+  .num { font-size: 1.35rem; font-weight: 600; letter-spacing: -.025em; line-height: 1.15; font-variant-numeric: tabular-nums; }
+  .txt { font-size: .86rem; color: var(--color-muted); line-height: 1.4; text-wrap: pretty; }
+  /* Mobil (Jan 18.09. 22:30: nichts Gewischtes, nichts Abgeschnittenes): 2x2 als weisse Karte, das fuenfte Element entfaellt */
+  @media (max-width: 600px) {
+    .trust { padding: 16px 0 8px; }
+    .trust .container { border-top: 0; padding-top: 0; }
+    .trust.bridge { margin-top: -28px; padding: 0 0 4px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; background: var(--color-bg); border-radius: var(--radius-m); padding: 6px; box-shadow: 0 16px 30px -18px rgba(11,15,25,.35), 0 0 0 1px rgba(11,15,25,.05); }
+    .trust:not(.bridge) .grid { box-shadow: none; background: var(--color-surface); }
+    .item, .item:nth-child(2n) { flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px 12px 10px; border: 0; }
+    .item:nth-child(n+5) { display: none; }
+    .item > :global(.icircle) { width: 32px; height: 32px; margin: 0; }
+    .item > :global(.icircle svg) { width: 16px; height: 16px; }
+    .num { font-size: 1rem; }
+    .txt { font-size: .74rem; line-height: 1.3; }
+  }
+</style>

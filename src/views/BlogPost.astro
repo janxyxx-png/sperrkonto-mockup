@@ -1,0 +1,90 @@
+---
+import Base from '../layouts/Base.astro';
+import Pic from '../components/Pic.astro';
+import PostCard from '../components/PostCard.astro';
+import { photoForPost, photosForPosts, focusFor } from '../lib/photos';
+import { posts, postIn, postsIn, rewriteHtml, tagSlug, tagLabel, BRAND, readMinutes, type Post } from '../lib/content';
+import { type Locale, localePath, t as tr } from '../lib/i18n';
+interface Props { post: Post; locale?: Locale }
+const { post: enPost, locale = 'en' } = Astro.props;
+// Uebersetzte Fassung, wenn es sie gibt (src/data/<locale>/blog); sonst Englisch mit Hinweisbalken
+const { post, translated } = postIn(enPost.slug, locale);
+const t = (k: Parameters<typeof tr>[1]) => tr(locale, k);
+const related = postsIn(locale).filter((p) => p.slug !== post.slug && p.tags.some((t) => post.tags.includes(t))).slice(0, 3);
+const heroPhoto = photoForPost(post);
+const relatedPhotos = photosForPosts(related, [heroPhoto]);
+const headings = [...post.html.matchAll(/<h2[^>]*>(.*?)<\/h2>/g)].map((m) => m[1].replace(/<[^>]+>/g, ''));
+---
+<Base title={post.title} description={post.description} locale={locale} path={`/guides/${post.slug}`} translated={translated} cta={false}>
+  <main id="main">
+    <!-- Lesefortschritt als duenne Linie unter dem Header (Jan 20.09., Accessoire) -->
+    <div class="readbar" role="progressbar" aria-label={t('readProgress')} aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-readbar><i></i></div>
+    <header class="head">
+      <div class="container">
+        <div class="tags">{post.tags.map((x) => <a href={localePath(locale, `/guides/tag/${tagSlug(x)}`)}>{tagLabel(x, locale)}</a>)}</div>
+        <h1>{post.title}</h1>
+        <div class="meta">{BRAND} · {t('blog.readMin').replace('{n}', String(readMinutes(post)))}</div>
+        <div class="hero" aria-hidden="true"><Pic src={heroPhoto} alt="" eager priority sizes="(max-width: 1240px) 100vw, 1200px" style={`object-position:${focusFor(heroPhoto)}`} /></div>
+      </div>
+    </header>
+    <div class="container body">
+      <aside class="toc">
+        <h3 class="caps">{t('blog.contents')}</h3>
+        <ol>{headings.map((h) => <li>{h}</li>)}</ol>
+      </aside>
+      <article class="prose" lang="en" dir="ltr" set:html={rewriteHtml(post.html, locale)} />
+    </div>
+    {related.length > 0 && (
+      <section class="container related">
+        <h2>{t('blog.related')}</h2>
+        <div class="grid">{related.map((p, i) => <PostCard post={p} locale={locale} photo={relatedPhotos[i]} />)}</div>
+      </section>
+    )}
+  </main>
+  <script>
+    // Lesefortschritt: Breite folgt der Scrollposition innerhalb des Artikels
+    const bindRead = () => {
+      const bar = document.querySelector<HTMLElement>('[data-readbar]:not([data-bound])'); const art = document.querySelector<HTMLElement>('article.prose'); if (!bar || !art) return; bar.dataset.bound = '1';
+      const fill = bar.querySelector<HTMLElement>('i')!;
+      const upd = () => { const r = art.getBoundingClientRect(); const total = r.height - window.innerHeight * .6; const done = Math.min(1, Math.max(0, (-r.top + window.innerHeight * .4) / Math.max(1, total))); fill.style.transform = `scaleX(${done})`; bar.setAttribute('aria-valuenow', String(Math.round(done * 100))); };
+      addEventListener('scroll', upd, { passive: true }); addEventListener('resize', upd); upd();
+    };
+    bindRead(); document.addEventListener('astro:page-load', bindRead);
+  </script>
+</Base>
+<style>
+  .readbar { position: fixed; top: var(--hdr-h, 64px); inset-inline: 0; height: 3px; z-index: 60; pointer-events: none; }
+  .readbar i { display: block; height: 100%; background: var(--color-accent); transform: scaleX(0); transform-origin: 0 50%; transition: transform .12s linear; }
+  :global([dir="rtl"]) .readbar i { transform-origin: 100% 50%; }
+  .head { text-align: start; padding: 56px 0 8px; }
+  .head .container { max-width: 960px; }
+  .head h1 { max-width: 20ch; margin: 0 0 .4em; }
+  .tags { display: flex; gap: 16px; justify-content: flex-start; margin-bottom: 18px; flex-wrap: wrap; }
+  .tags a { font-size: .82rem; font-weight: 500; color: var(--color-muted); text-decoration: none; }
+  .meta { color: var(--color-muted); font-size: .88rem; margin-bottom: 32px; }
+  .hero { width: 100%; border-radius: var(--radius-l); aspect-ratio: 2 / 1; background: var(--color-surface); display: grid; place-items: center; overflow: hidden; }
+  .hero :global(img) { width: 100%; height: 100%; object-fit: cover; filter: var(--photo-grade); }
+  .body { display: grid; grid-template-columns: 240px minmax(0, 720px); gap: 64px; justify-content: center; padding-top: 48px; }
+  .toc { position: sticky; top: 100px; align-self: start; font-size: .88rem; }
+  .toc h3 { font-size: .68rem; color: var(--color-muted); margin-bottom: 12px; }
+  .toc ol { padding-inline-start: 1.4em; color: var(--color-muted); margin: 0; }
+  .toc li { margin: 6px 0; padding-inline-start: 4px; }
+  .prose { font-size: 1.08rem; line-height: 1.7; }
+  .prose :global(h2) { margin-top: 1.8em; font-size: 1.7rem; }
+  .prose :global(h3) { margin-top: 1.5em; }
+  .prose :global(p) { margin-bottom: 1.2em; }
+  @media (max-width: 600px) { .prose :global(a) { padding-block: 6px; margin-block: -6px; } } /* M10: Tippflaechen der Textlinks */
+  .prose :global(img) { border-radius: var(--radius-m); margin: .5em 0; }
+  .prose :global(blockquote) { margin: 1.5em 0; padding: 4px 0 4px 22px; border-inline-start: 3px solid var(--color-text); font-size: 1.08em; color: var(--color-muted); }
+  .prose :global(table) { border-collapse: collapse; width: 100%; font-size: .93rem; margin: 1.2em 0; }
+  .prose :global(td), .prose :global(th) { border: 1px solid var(--color-border); padding: 10px 12px; text-align: start; vertical-align: top; }
+  .prose :global(th) { background: var(--color-surface); font-weight: 600; }
+  .prose :global(tr:nth-child(even) td) { background: var(--color-surface); }
+  .prose :global(.btn), .prose :global(a.cta) { text-decoration: none; }
+  .related { margin-top: 88px; padding-top: 48px; border-top: 1px solid var(--color-border); }
+  .related h2 { margin-bottom: 1em; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap); }
+  @media (max-width: 1000px) { .grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; gap: 0; border-top: 1px solid var(--color-border); } }
+  @media (max-width: 900px) { .body { grid-template-columns: 1fr; gap: 24px; padding-top: 32px; } .toc { position: static; } }
+</style>

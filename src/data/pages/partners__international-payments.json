@@ -1,0 +1,261 @@
+{
+  "slug": "partners/international-payments",
+  "path": "/partners/international-payments",
+  "title": "International payments partner | EC Assets",
+  "description": "How to fund your Blocked Account from abroad through our international payments partner: local currencies, transparent fees, tracking and support.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Fund your Blocked Account from anywhere"
+        },
+        {
+          "type": "paragraph",
+          "html": "Sending a large sum across borders should feel <strong>safe, simple and predictable</strong>. That is why deposits to your Blocked Account run through our international payments partner, a global payment company that specialises in exactly this."
+        },
+        {
+          "type": "paragraph",
+          "html": "Together we make sure your money <strong>arrives quickly and securely</strong>, so you can concentrate on the rest of your move."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ],
+      "figure": "/img/photos/cine-car-night-woman.jpg"
+    },
+    {
+      "id": 1,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "paragraph",
+          "html": "<strong>Pay in your own currency</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "Many currencies are supported, with the exchange rate and fee shown before you confirm."
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Secure and regulated</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "Our partner is licensed as a payment institution and used by universities and institutions in many countries."
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Tracking and support</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "Follow your payment in real time, and reach a multilingual support team if you have a question."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Start a transfer"
+        },
+        {
+          "type": "paragraph",
+          "html": "Begin your payment in the EC Assets portal and send your deposit the secure, transparent way."
+        },
+        {
+          "type": "button",
+          "text": "Transfer now",
+          "href": "/app/login",
+          "style": "btn btn-m btn-solid btn-white text-base fill-base btn-icon btn-icon-back"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "How a transfer works"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Start the payment"
+        },
+        {
+          "type": "paragraph",
+          "html": "In your <a href=\"/app/login\">EC Assets portal</a>, open <strong>My payments</strong> under Blocked Account. You see pending payments and can start a new one with <strong>Initiate payment</strong>."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Choose the sending country"
+        },
+        {
+          "type": "paragraph",
+          "html": "Select the <strong>country you are paying from.</strong> The transfer must come from a bank account in that country."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Choose the amount"
+        },
+        {
+          "type": "paragraph",
+          "html": "The full amount required for your Blocked Account, or a part of it if you prefer to pay in instalments."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Choose the payments partner"
+        },
+        {
+          "type": "paragraph",
+          "html": "Select our payments partner as the method and pick your local-currency option. <br>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Choose how to pay"
+        },
+        {
+          "type": "paragraph",
+          "html": "Bank transfer, credit or debit card, or one of the local payment methods available in your country."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Receive confirmation"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets emails you as soon as the funds have arrived in your Blocked Account."
+        },
+        {
+          "type": "button",
+          "text": "Transfer now",
+          "href": "/app/login",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "What our customers say"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Guides from the EC Assets blog"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Fully funded scholarships for international students in Germany (2026)"
+        },
+        {
+          "type": "paragraph",
+          "html": "Jan 21, 2026"
+        },
+        {
+          "type": "paragraph",
+          "html": "Public universities charge no tuition, but living costs remain. Which scholarships cover them in full, who qualifies and how to apply..."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Scholarships for students from Pakistan (2026)"
+        },
+        {
+          "type": "paragraph",
+          "html": "Mar 3, 2025"
+        },
+        {
+          "type": "paragraph",
+          "html": "Germany is one of the most affordable destinations for Pakistani students. The funding programmes that apply and how to strengthen an application..."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Tuition-free universities in Germany"
+        },
+        {
+          "type": "paragraph",
+          "html": "Feb 27, 2025"
+        },
+        {
+          "type": "paragraph",
+          "html": "Germany is one of the few countries where public universities charge no tuition. What that means in practice, and what you pay instead..."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Universities that accept direct applications (2026/2027)"
+        },
+        {
+          "type": "paragraph",
+          "html": "Feb 24, 2025"
+        },
+        {
+          "type": "paragraph",
+          "html": "Not every university uses the central application service. A list of institutions where you apply directly, and what changes in the process..."
+        },
+        {
+          "type": "button",
+          "text": "Read the blog",
+          "href": "/guides",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        }
+      ]
+    }
+  ]
+}

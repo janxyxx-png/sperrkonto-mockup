@@ -1,0 +1,232 @@
+{
+  "slug": "partners",
+  "path": "/partners",
+  "title": "Partners | EC Assets",
+  "description": "The banks, insurers and service providers behind EC Assets products, and why we chose them.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Partners"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets does not run a bank or an insurance company. What we do is choose partners that are good at serving people who have just arrived in Germany, and connect their products into one application."
+        },
+        {
+          "type": "paragraph",
+          "html": "Each partner covers one piece of the move. We make sure the pieces fit together, so that you deal with one interface instead of five companies."
+        },
+        {
+          "type": "paragraph",
+          "html": "Below you can see who does what, and why we work with them."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ],
+      "figure": "/img/photos/cine-rooftop-skyline-man.jpg"
+    },
+    {
+      "id": 1,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Student network partner"
+        },
+        {
+          "type": "paragraph",
+          "html": "We work with a nationwide network for international students that runs events, mentoring and career programmes in university cities across Germany. Members meet people in the same situation, find study groups and get access to internships and graduate roles."
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets supports the network as a founding sponsor."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Statutory health insurance partner"
+        },
+        {
+          "type": "paragraph",
+          "html": "Our statutory partner is one of Germany's large public health insurers with a long record of serving international members. Members get English-speaking service, a digital appointment service and a bonus programme."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Private health insurance partner"
+        },
+        {
+          "type": "paragraph",
+          "html": "Students who prefer private cover can choose the student plan from our digital private insurance partner. Private cover is the alternative to the statutory system and typically includes glasses and contact lenses, dental treatment, a free choice of doctors including private practices, a two-bed hospital room and worldwide cover."
+        },
+        {
+          "type": "paragraph",
+          "html": "The plan is priced for students, and everything from booking a doctor to submitting an invoice happens in the insurer's app."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Travel insurance partner"
+        },
+        {
+          "type": "paragraph",
+          "html": "Our travel insurance partner is a specialist broker for stays abroad, from language students and au-pairs to expatriates and business travellers. It provides the travel health insurance that covers your first weeks in Germany."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Who is behind the Blocked Account"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>A regulated bank, a payments provider and us.</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "A Blocked Account must comply with the German Residence Act (<em>Aufenthaltsgesetz</em>): it has to be <strong>in your name</strong> and held at a <strong>bank that is licensed to operate in Germany</strong>."
+        },
+        {
+          "type": "paragraph",
+          "html": "To fund the account from abroad you can transfer the money yourself or use our <strong>international payments partner</strong>, which accepts many local currencies at transparent rates."
+        },
+        {
+          "type": "paragraph",
+          "html": "The account itself sits with our <strong>banking partner</strong>, a licensed EU bank whose infrastructure allows us to open accounts quickly and process payouts reliably."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Banking partner"
+        },
+        {
+          "type": "paragraph",
+          "html": "Our banking partner is a licensed and regulated bank operating in several European countries, including Germany."
+        },
+        {
+          "type": "paragraph",
+          "html": "It provides secure banking services to millions of customers. Deposits are protected under the European deposit guarantee scheme."
+        },
+        {
+          "type": "paragraph",
+          "html": "The bank provides the licence and the payment technology behind the EC Assets Blocked Account and Bank Account. <br> <br>"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "International payments partner"
+        },
+        {
+          "type": "paragraph",
+          "html": "Our payments partner is a licensed payment institution that moves money safely between countries, with the exchange rate and fee shown before you confirm. Deposits to your Blocked Account are processed quickly and the service is built into the EC Assets portal, so there is nothing extra to set up."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "The result"
+        },
+        {
+          "type": "paragraph",
+          "html": "Opening a Blocked Account is a decision that shapes your whole stay. We have spent years refining how these partners work together, so that from your side it feels like one product."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Accommodation partner"
+        },
+        {
+          "type": "paragraph",
+          "html": "Our accommodation partner runs a rental platform for international students and young professionals with listings across Germany. Many universities recommend it to their incoming students."
+        },
+        {
+          "type": "paragraph",
+          "html": "All German listings from the platform are available inside the EC Assets app, so customers can browse rooms, studios and flats anywhere in Germany and book directly."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "paragraph",
+          "html": "Partner names and logos are shown in the customer portal. EC Assets receives no commission from links on this page."
+        }
+      ]
+    }
+  ]
+}

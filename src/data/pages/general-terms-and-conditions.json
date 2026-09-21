@@ -1,0 +1,109 @@
+{
+  "slug": "general-terms-and-conditions",
+  "path": "/general-terms-and-conditions",
+  "title": "General Terms and Conditions | EC Assets",
+  "description": "The general terms and conditions that apply to EC Assets products and services.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "General Terms and Conditions"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>This is a structural placeholder for the mockup. The final wording must come from EC Assets' legal counsel before publication.</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "These terms apply to every contract between EC Assets and its customers for the Blocked Account, health insurance brokerage, the Bank Account and related services."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "1. Scope"
+        },
+        {
+          "type": "paragraph",
+          "html": "These terms govern the use of the EC Assets platform and all products ordered through it."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "2. Conclusion of contract"
+        },
+        {
+          "type": "paragraph",
+          "html": "A contract is formed when EC Assets confirms your application by email. Until then, your application is an offer."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "3. Services"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets opens the Blocked Account with its partner bank, arranges insurance as a broker and provides the customer portal. The banking and insurance contracts themselves are concluded with the respective partner."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "4. Fees and payment"
+        },
+        {
+          "type": "paragraph",
+          "html": "The fees for each product are shown before you order and in your customer portal. Fees are due as stated in the price list."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "5. Customer obligations"
+        },
+        {
+          "type": "paragraph",
+          "html": "You must provide accurate information, keep your login details safe and inform us of changes to your visa or residence status."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "6. Refund in case of visa refusal"
+        },
+        {
+          "type": "paragraph",
+          "html": "If your visa is refused, EC Assets refunds the deposit and the service fees on presentation of the refusal letter."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "7. Liability"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets is liable for intent and gross negligence and, in cases of simple negligence, only for the breach of essential contractual duties, limited to foreseeable damage."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "8. Termination"
+        },
+        {
+          "type": "paragraph",
+          "html": "Either party may terminate the contract in text form with the notice periods stated in the product description."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "9. Final provisions"
+        },
+        {
+          "type": "paragraph",
+          "html": "German law applies. The place of jurisdiction for merchants is Berlin. Should a provision be invalid, the remaining provisions remain in force."
+        }
+      ]
+    }
+  ]
+}

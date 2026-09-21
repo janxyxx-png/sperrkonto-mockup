@@ -1,0 +1,135 @@
+{
+  "slug": "partners/travel-insurance-plans",
+  "path": "/partners/travel-insurance-plans",
+  "title": "Travel and incoming insurance plans | EC Assets",
+  "description": "The private insurance plans for newcomers to Germany offered by our travel insurance partner: four levels of cover, direct billing, flexibility and free cancellation if your visa is refused.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Incoming insurance plans for newcomers"
+        },
+        {
+          "type": "paragraph",
+          "html": "Our travel insurance partner offers a private incoming insurance for people arriving in Germany."
+        },
+        {
+          "type": "paragraph",
+          "html": "It is recognised by embassies, priced fairly and comes with practical advantages: direct billing with doctors, flexible duration and cover even if you take a side job. If your visa is refused, the policy can be cancelled free of charge."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ],
+      "figure": "/img/photos/cine-airport-silhouettes.jpg"
+    },
+    {
+      "id": 1,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "The four plans"
+        },
+        {
+          "type": "paragraph",
+          "html": "Cover is available in four levels, from basic health insurance to a bundle that adds accident, liability and dental cover."
+        },
+        {
+          "type": "paragraph",
+          "html": "The plans at a glance:"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "<strong>Essential</strong> covers health insurance only."
+            },
+            {
+              "html": "<strong>Standard</strong> bundles international health insurance with accident insurance, personal liability insurance and cover for deportation costs."
+            },
+            {
+              "html": "<strong>Extended</strong> adds dental treatment to everything in Standard."
+            },
+            {
+              "html": "<strong>Complete</strong> is designed for <strong>students who cannot join statutory insurance</strong>, for example because they are 30 or older or have exceeded the maximum number of semesters. It includes benefits modelled on the statutory system up to €500 per insurance year."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Why these plans"
+        },
+        {
+          "type": "paragraph",
+          "html": "Six reasons customers choose them:"
+        },
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            {
+              "html": "<strong>They meet the legal requirements. <br></strong> Insurance for foreign guests must satisfy EU regulations and German residence law. The plans provide unlimited cover for medical costs, well above the €30,000 minimum."
+            },
+            {
+              "html": "<strong>No deductible <br></strong> A deductible is the part of a bill you pay yourself. These plans have none."
+            },
+            {
+              "html": "<strong>Direct billing</strong> <br> Show your insurance card at the practice or hospital and the insurer settles the bill directly."
+            },
+            {
+              "html": "<strong>Flexible duration</strong> <br> Stays rarely go exactly to plan. Cover can be extended up to four years, and if you leave early the premium is calculated to the day."
+            },
+            {
+              "html": "<strong>Side jobs are fine</strong> <br> A job alongside your studies does not affect the cover. Check with your employer whether social insurance contributions apply."
+            },
+            {
+              "html": "<strong>One contact for everything</strong> <br> Advice, contract, payment and claims are handled by the same team at the insurer."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Who can take out the plans"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "Age and maximum duration limits apply; the insurer shows them before you buy"
+            },
+            {
+              "html": "You hold a nationality other than German"
+            },
+            {
+              "html": "The policy is taken out before arrival or within the first month after entering the country or starting your course, studies, internship or research",
+              "mark": "ok"
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Where the cover applies"
+        },
+        {
+          "type": "paragraph",
+          "html": "In all EU countries plus Liechtenstein, Switzerland, Norway, Iceland, Andorra, Monaco, San Marino and Vatican City, which makes it suitable for a Schengen visa. Trips elsewhere in the world are covered for up to six weeks, so a holiday visit home is included."
+        }
+      ]
+    }
+  ]
+}

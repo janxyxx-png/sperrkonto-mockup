@@ -1,0 +1,24 @@
+{
+  "slug": "guides",
+  "path": "/guides",
+  "title": "Guides for studying, working and living in Germany",
+  "description": "Guides and stories about studying, working and living in Germany, written for people who are about to make the move.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Guides"
+        },
+        {
+          "type": "paragraph",
+          "html": "Guides and stories about studying, working and living in Germany, written for people who are about to make the move."
+        }
+      ]
+    }
+  ]
+}

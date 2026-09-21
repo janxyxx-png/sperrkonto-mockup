@@ -1,0 +1,22 @@
+---
+/** App-Store- und Google-Play-Badges: die offiziellen Markenassets (public/img/badges, Quellen in public/img/QUELLEN.md),
+ *  seit 20.09. statt der nachgebauten Knoepfe (Jan: "nicht echt, nur nachgezeichnet"). Groesse ueber --badge-h. */
+import { localePath, type Locale } from '../lib/i18n';
+interface Props { locale?: Locale; href?: string; height?: number; class?: string }
+const { locale = 'en', href, height = 40, class: cls } = Astro.props;
+const to = href ?? localePath(locale, '/app/start');
+---
+<div class:list={['stores', cls]} aria-label="App download" style={`--badge-h:${height}px`}>
+  <a class="store" href={to}><img src="/img/badges/app-store.svg" alt="Download on the App Store" loading="lazy" decoding="async" /></a>
+  <a class="store" href={to}><img src="/img/badges/google-play.svg" alt="Get it on Google Play" loading="lazy" decoding="async" /></a>
+</div>
+<style>
+  .stores { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 20px 0 8px; }
+  .store { display: inline-flex; line-height: 0; border-radius: 7px; transition: transform .2s var(--ease-out), opacity .2s; }
+  @media (hover: hover) { .store:hover { transform: translateY(-1px); opacity: .92; } }
+  .store:active { transform: scale(.97); transition-duration: var(--dur-press); }
+  /* Bildboxen (M10): die Badges haben feste Seitenverhaeltnisse (120x40 App Store, 135x40 Google Play), kein Sprung beim Laden */
+  .store img { height: var(--badge-h); width: auto; display: block; }
+  .store:first-child img { aspect-ratio: 120 / 40; }
+  .store:last-child img { aspect-ratio: 135 / 40; }
+</style>

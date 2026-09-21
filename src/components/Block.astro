@@ -1,0 +1,177 @@
+---
+import type { Block } from '../lib/content';
+import Pic from './Pic.astro';
+import { route, rewriteHtml } from '../lib/content';
+import Icon from './Icon.astro';
+import Illustration from './Illustration.astro';
+import Photo from './Photo.astro';
+import { initials } from '../lib/portraits';
+import { photoFor } from '../lib/photos';
+import { illoFor, type IlloName } from '../lib/illo';
+import { type Locale, t } from '../lib/i18n';
+interface Props { block: Block; locale?: Locale; refBlock?: Block; variant?: 'primary' | 'outline' | 'secondary' | 'link'; headingClass?: string; pull?: boolean }
+// variant: Section.astro setzt im Hero die Button-Rolle (erster Bordeaux, weitere Outline), unabhaengig von der Klasse im Original
+// headingClass (M03): Display-Stufe der H2 ("chapter" 72 px, "util" 34 px); pull: ein einzelnes Zitat als Pull Quote statt Karte
+const { block, locale = 'en', refBlock, variant, headingClass, pull = false } = Astro.props;
+// Englischer Referenzblock fuer Textmuster (uebersetzte Seiten haben dieselbe Struktur)
+const ref = refBlock ?? block;
+const rw = (h: string) => rewriteHtml(h, locale);
+// Original-Klassen -> Mockup-Buttons. btn-link ist im Original ein Textlink mit Pfeil (244 von 263 "unbekannten"),
+// btn-white ein gefuellter Button auf farbigem Grund, hier als Markenbutton.
+const btnClass = (style = '', href = '') =>
+  /btn-link/.test(style) ? 'btn btn-link'
+  : /^\/?#/.test(href) ? 'btn btn-outline'
+  : /btn-primary|btn-cta/.test(style) ? 'btn btn-primary'
+  : /outline/.test(style) ? 'btn btn-outline'
+  : /btn-secondary|btn-white/.test(style) ? 'btn btn-secondary'
+  : 'btn btn-primary';
+const isIcon = (src: string) => /icn|icon|width=(\d{1,2}|1\d\d)&/.test(src) || /badge-/.test(src);
+// Vergleichstabellen kommen als Liste "<strong>Label</strong>: Wert A / Wert B / Wert C" an
+const tableRows = (items: { html: string }[]) => {
+  const rows = items.map((i) => { const m = i.html.match(/^<strong>(?:<strong>)?(.*?)(?:<\/strong>)?<\/strong>\s*:\s*(.*)$/s); return m ? { label: m[1].replace(/<[^>]+>/g, ''), cells: m[2].split(/\s+\/\s+/) } : null; });
+  return rows.length >= 2 && rows.every((r) => r && r.cells.length >= 2) ? (rows as { label: string; cells: string[] }[]) : null;
+};
+---
+{block.type === 'heading' && (
+  block.level === 1 ? <h1 set:html={block.text} /> :
+  block.level === 2 ? <h2 class={headingClass} set:html={block.text} /> :
+  block.level === 3 ? <h3 set:html={block.text} /> :
+  <h4 set:html={block.text} />
+)}
+{block.type === 'paragraph' && <p class:list={{ tip: block.tip || (ref.type === 'paragraph' && /^<strong>\s*Tipp?[!:]?\s*<\/strong>/i.test(ref.html.trim())) }} set:html={rw(block.html)} />}
+{block.type === 'list' && (() => {
+  const rows = !block.ordered && !block.items.some((i) => i.mark) ? tableRows(block.items) : null;
+  const refRows = ref.type === 'list' ? tableRows(ref.items) : null;
+  return rows
+    ? <div class="cmp"><table>{rows.map((r, ri) => ri === 0 && !/^\s*$/.test(r.label) && /feature|→/i.test((refRows?.[0] ?? r).label)
+        ? <thead><tr><th></th>{r.cells.map((c) => <th set:html={rw(c)} />)}</tr></thead>
+        : <tr><th scope="row">{r.label || ''}</th>{r.cells.map((c) => <td set:html={rw(c) || '<span class="tick">✓</span>'} />)}</tr>)}</table></div>
+    : block.ordered
+      ? <ol>{block.items.map((i) => <li set:html={rw(i.html)} />)}</ol>
+      : <ul class="checklist">{block.items.map((i) => <li class={i.mark ?? ''} set:html={rw(i.html)} />)}</ul>;
+})()}
+{block.type === 'button' && <a class={variant ? `btn btn-${variant}` : btnClass(block.style, block.href)} href={route(block.href, locale)}>{block.text}</a>}
+{block.type === 'image' && (
+  isIcon(block.src)
+    ? <span class="icon-box"><Icon name="spark" /></span>
+    : block.photo ? <Photo src={block.photo} ratio="16 / 10" class="ph-photo" />
+    : <figure class="ph" aria-hidden="true"><Illustration name={(block.illo as IlloName) ?? illoFor(block.alt || '', 'travel')} /></figure>
+)}
+{block.type === 'embed' && (block.src
+  ? <div class="embed"><iframe src={block.src} title="Video" loading="lazy" allowfullscreen /></div>
+  : <div class="embed video-ph" aria-hidden="true"><Pic src={photoFor('story video watch', `video:${Astro.url.pathname}`)} alt="" sizes="(max-width: 800px) 100vw, 600px" /><span class="play"><Icon name="play" size={44} /></span></div>)}
+{block.type === 'faq' && (
+  <div class="faq">
+    {block.items.map((i) => <details><summary><span>{i.q}</span><i class="plus" aria-hidden="true"></i></summary><div class="answer" set:html={rw(i.a)} /></details>)}
+  </div>
+)}
+{block.type === 'quote' && (
+  <blockquote class:list={['quote', pull ? 'pull' : 'card']}>
+    <p>{block.text}</p>
+    <footer><span class="avatar initials" aria-hidden="true">{initials(ref.type === 'quote' ? ref.author : block.author)}</span><span class="who"><strong>{block.author}</strong><span>{block.role}</span></span></footer>
+  </blockquote>
+)}
+{block.type === 'pricing' && (block.cta ? (
+  <a class:list={['pricing card is-link', { featured: !!block.badge }]} href={route(block.cta.href, locale)}>
+    {block.badge && <div class="badge">{block.badge}</div>}
+    <h3>{block.title}</h3>
+    {block.subtitle && <p class="sub">{block.subtitle}</p>}
+    <ul class="checklist">{block.features.map((f) => <li class={f.mark ?? ''} set:html={rw(f.html)} />)}</ul>
+    <span class="arrow-row"><span class="arrow-label">{block.cta.text}</span><span class="card-arrow"><Icon name="arrow" size={18} /></span></span>
+  </a>
+) : (
+  <div class:list={['pricing card', { featured: !!block.badge }]}>
+    {block.badge && <div class="badge">{block.badge}</div>}
+    <h3>{block.title}</h3>
+    {block.subtitle && <p class="sub">{block.subtitle}</p>}
+    <ul class="checklist">{block.features.map((f) => <li class={f.mark ?? ''} set:html={rw(f.html)} />)}</ul>
+  </div>
+))}
+<style>
+  figure { margin: 0 0 1em; }
+  figure img { border-radius: var(--radius-l); display: block; max-height: 560px; width: auto; max-width: 100%; margin: 0 auto; }
+  /* Illustrationsflaeche (eigene SVG-Motive, siehe Illustration.astro) */
+  /* Illustrationsflaeche mit Licht wie die Dokument-Buehne (27), statt flachem Grau */
+  .ph { aspect-ratio: 4/3; max-height: 420px; border-radius: var(--radius-l); background: radial-gradient(110% 80% at 30% 20%, #ffffff 0%, var(--color-surface) 48%, var(--color-surface-strong) 100%); display: grid; place-items: center; overflow: hidden; }
+  .ph :global(svg) { height: 100%; width: auto; max-width: 100%; }
+  .icon-box { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--color-surface-strong); color: var(--color-text); margin: 0 0 18px; }
+  .icon-box :global(svg) { width: 22px; height: 22px; }
+
+  .cmp { overflow-x: auto; margin: 8px 0 28px; border: 0; border-radius: var(--radius-m); background: var(--color-surface); }
+  .cmp table { width: 100%; border-collapse: collapse; font-size: .93rem; }
+  .cmp th, .cmp td { text-align: start; vertical-align: top; padding: 12px 16px; border-bottom: 1px solid var(--color-border); }
+  .cmp thead th { background: var(--color-surface); font-size: .74rem; text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-muted); }
+  .cmp th[scope="row"] { width: 28%; font-weight: 600; color: var(--color-text); background: var(--color-surface); }
+  .cmp tr:last-child th, .cmp tr:last-child td { border-bottom: 0; }
+  .cmp .tick { color: var(--color-text); font-weight: 600; }
+  .embed { aspect-ratio: 16/9; border-radius: var(--radius-l); overflow: hidden; background: #000; margin-bottom: 1.5em; }
+  .embed iframe { width: 100%; height: 100%; border: 0; }
+  /* Standbild aus der Fotoserie statt schwarzer Flaeche (Rundgang 18.09. spaet) */
+  .video-ph { position: relative; isolation: isolate; background: var(--color-ink); display: grid; place-items: center; color: #fff; }
+  .video-ph :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: var(--photo-grade); z-index: -1; }
+  .video-ph::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(11,15,25,.15), rgba(11,15,25,.55)), var(--photo-warm); }
+  .video-ph .play { display: grid; place-items: center; width: 84px; height: 84px; border-radius: 50%; background: rgba(255,255,255,.16); backdrop-filter: blur(6px); }
+
+  .faq { border-top: 1px solid var(--color-border); margin-top: 8px; }
+  .faq details { border-bottom: 1px solid var(--color-border); }
+  .faq summary { list-style: none; cursor: pointer; font-weight: 600; font-size: 1.08rem; padding: 22px 0; display: flex; align-items: center; justify-content: space-between; gap: 20px; transition: color .2s; letter-spacing: -.01em; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary:hover { color: var(--color-muted); }
+  .plus { position: relative; flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--color-surface); transition: transform .35s var(--ease-spring), background-color .2s var(--ease-out), color .2s var(--ease-out); }
+  .faq summary:hover .plus { background: var(--color-surface-strong); }
+  @media (hover: none) { .faq summary:hover { color: inherit; } .faq summary:hover .plus { background: var(--color-surface); } } /* M10 */
+  .plus::before, .plus::after { content: ""; position: absolute; left: 50%; top: 50%; background: currentColor; transform: translate(-50%, -50%); }
+  .plus::before { width: 11px; height: 1.75px; }
+  .plus::after { width: 1.75px; height: 11px; transition: opacity .2s; }
+  .faq details[open] .plus::after { opacity: 0; }
+  .faq details[open] .plus { transform: rotate(180deg); background: var(--color-accent-soft); color: var(--color-accent); }
+  .answer { padding: 0 0 22px; color: var(--color-muted); max-width: 72ch; }
+  .faq details[open] .answer { animation: answer-in .35s var(--ease-out) both; }
+  @keyframes answer-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  /* Weiches Aufklappen der Hoehe (Jan 18.09. spaet); Browser ohne ::details-content behalten die Einblendung oben */
+  @supports (interpolate-size: allow-keywords) {
+    .faq details::details-content { block-size: 0; overflow-y: clip; transition: block-size .35s var(--ease-out), content-visibility .35s allow-discrete; }
+    .faq details[open]::details-content { block-size: auto; }
+    .faq details { interpolate-size: allow-keywords; }
+  }
+  .answer :global(p:last-child) { margin-bottom: 0; }
+  @media (max-width: 600px) { .answer :global(a) { padding-block: 6px; margin-block: -6px; } } /* M10: Tippflaechen */
+
+  /* Stimmen (28): groesseres Zitat in 500, Initialen in Akzent-Hellrot, wie auf der Startseite */
+  .quote { margin: 0; display: flex; flex-direction: column; padding: 28px 28px 24px; }
+  .quote p { font-size: 1.18rem; line-height: 1.45; font-weight: 500; letter-spacing: -.012em; margin-bottom: 1.3em; text-wrap: pretty; hanging-punctuation: first; }
+  .quote footer { margin-top: auto; display: flex; align-items: center; gap: 12px; font-size: .9rem; }
+  .quote .who { display: flex; flex-direction: column; gap: 2px; }
+  .quote .avatar { width: 44px; height: 44px; border-radius: 50%; flex: none; display: inline-grid; place-items: center; background: var(--color-accent-soft); color: var(--color-accent); font-weight: 600; font-size: .85rem; }
+  .quote .stars { color: var(--color-accent); letter-spacing: .1em; font-size: .85rem; margin-bottom: 10px; }
+  .quote footer span { color: var(--color-muted); }
+  /* Pull Quote (M03): ein Zitat ohne Kasten in Display-Groesse, wie ein Zwischenruf im Kapitel */
+  .quote.pull { padding: 0; background: none; border-radius: 0; max-width: 820px; }
+  .quote.pull p { font-size: clamp(1.5rem, 2.6vw, 2.125rem); line-height: 1.2; letter-spacing: -.02em; font-weight: 500; max-width: 26ch; margin-bottom: 1em; }
+  .quote.pull footer { font-size: 1rem; }
+  @media (max-width: 600px) { .quote.pull p { font-size: 1.35rem; } }
+
+  .pricing { position: relative; display: flex; flex-direction: column; height: 100%; padding: 32px var(--card-pad) var(--card-pad); background: #fff; border: 0; text-decoration: none; color: inherit; }
+  .pricing.is-link { padding-bottom: 84px; }
+  .pricing .arrow-row { position: absolute; inset-inline: var(--card-pad); bottom: var(--card-pad); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .pricing .arrow-label { font-weight: 500; font-size: var(--fs-small); }
+  .pricing .arrow-row :global(.card-arrow) { position: static; }
+  .pricing.featured .arrow-row :global(.card-arrow) { background: #fff; color: var(--color-accent); }
+  .pricing h3 { font-size: 1.5rem; margin-bottom: .2em; }
+  @media (max-width: 600px) { .pricing { padding: 22px var(--card-pad) var(--card-pad); } .pricing.is-link { padding-bottom: 72px; } .pricing h3 { font-size: 1.3rem; } .pricing .arrow-row { bottom: 18px; } }
+  .pricing.featured { background: var(--color-dark); color: #fff; }
+  .pricing.featured .sub { color: rgba(255,255,255,.65); }
+  .pricing.featured :global(.checklist li.label) { color: rgba(255,255,255,.55); }
+  .pricing.featured :global(.checklist li.ok::before) { background-color: rgba(255,255,255,.14); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8.5l3.2 3L13 4.5'/%3E%3C/svg%3E"); }
+  .pricing.featured :global(.checklist li.no) { color: rgba(255,255,255,.55); }
+  .pricing.featured :global(.checklist li.no::before) { background-color: rgba(255,255,255,.1); }
+  /* Badge im Fluss ueber dem Titel statt absolut in der Ecke (ueberdeckte den Titel bei schmalen Karten, Jan 18.09. spaet) */
+  .pricing .badge { display: inline-block; align-self: flex-start; background: #fff; color: var(--color-accent); font-size: .72rem; font-weight: 600; letter-spacing: .06em; padding: 6px 12px; border-radius: var(--radius-pill); text-transform: uppercase; margin: -8px 0 14px; }
+  .pricing .sub { color: var(--color-muted); font-size: .95rem; }
+  .pricing .checklist { flex: 1; font-size: .94rem; margin-top: 8px; }
+  .pricing .btn { align-self: stretch; margin-top: 20px; }
+  .pricing.featured .btn { background: #fff; color: var(--color-ink); }
+  .pricing.featured .btn:hover { background: #e8eaf0; }
+  .pricing:not(.featured) .btn { background: var(--color-bg); color: var(--color-text); border-color: var(--color-border); }
+  .pricing:not(.featured) .btn:hover { border-color: var(--color-text); }
+</style>

@@ -1,0 +1,35 @@
+---
+/** Die App als Objekt (14-PROMPT Aufgabe 2): zwei Geraete versetzt auf einer Buehne, Dashboard vorn, Auszahlung hinten. */
+import PhoneMock, { type Variant } from './PhoneMock.astro';
+import type { Locale } from '../lib/i18n';
+interface Props { class?: string; front?: Variant; back?: Variant; locale?: Locale; stage?: boolean; bare?: boolean; vt?: string }
+// vt (M13): Name fuer den Seitenwechsel (View Transition); dasselbe Objekt auf zwei Seiten reist statt zu blenden
+
+// bare: ohne eigene Buehne (steht in PhotoStage), fuellt dann die Breite des Elternteils
+const { class: cls, front = 'setup', back = 'money', locale = 'en', stage: stageProp = true, bare = false, vt } = Astro.props;
+const stage = bare ? false : stageProp;
+---
+<div class:list={['app-stage', cls, { stage, bare }]} aria-hidden="true" style={vt ? `view-transition-name:${vt}` : undefined}>
+  <div class="back"><PhoneMock variant={back} locale={locale} /></div>
+  <div class="front"><PhoneMock variant={front} locale={locale} tone="dark" /></div>
+</div>
+<style>
+  .app-stage { position: relative; width: 100%; max-width: 560px; margin: 0 auto; aspect-ratio: 5 / 5.2; container-type: inline-size; }
+  .app-stage.stage { border-radius: var(--radius-l); background: radial-gradient(110% 80% at 30% 20%, #ffffff 0%, var(--color-surface) 48%, var(--color-surface-strong) 100%); overflow: hidden; }
+  .back, .front { position: absolute; }
+  /* Geraete skalieren mit der Buehne (PhoneMock ist 300 px breit) */
+  .back { left: 52%; top: 7%; transform: scale(.68); transform-origin: top left; opacity: .95; }
+  .front { left: 12%; top: 9%; transform: scale(.78); transform-origin: top left; }
+  /* Kleine Buehnen (mobil): Geraete groesser, die Buehne etwas hoeher; der untere Rand des vorderen Geraets darf anschneiden */
+  /* Grosse Buehnen (M03, 7 von 12 Spalten): Geraete groesser, damit die Schrift lesbar bleibt */
+  @container (min-width: 640px) { .back { transform: scale(.78); left: 54%; top: 6%; } .front { transform: scale(.9); left: 10%; top: 7%; } }
+  @container (max-width: 480px) { .back { transform: scale(.58); left: 47%; top: 5%; } .front { transform: scale(.68); left: 5%; top: 9%; } }
+  @container (max-width: 360px) { .back { transform: scale(.5); } .front { transform: scale(.58); } }
+  @media (max-width: 800px) { .app-stage { aspect-ratio: 5 / 5.6; } }
+  /* Mobil ein Geraet, mittig; das zweite wuerde angeschnitten (Jan 18.09. 22:30) */
+  @media (max-width: 600px) { .app-stage { aspect-ratio: 5 / 5.4; } .back { display: none; } .front { left: 50%; right: auto; top: 5%; transform: translateX(-50%) scale(.64); transform-origin: top center; } :global([dir="rtl"]) .front { left: 50%; right: auto; transform: translateX(-50%) scale(.64); transform-origin: top center; } }
+  .app-stage.bare { max-width: none; aspect-ratio: auto; height: 100%; min-height: 100%; }
+  .app-stage :global(.phone) { box-shadow: 0 30px 50px -22px rgba(11,15,25,.55), 0 10px 22px -12px rgba(11,15,25,.35); }
+  [dir="rtl"] .back { left: auto; right: 50%; transform-origin: top right; }
+  [dir="rtl"] .front { left: auto; right: 12%; transform-origin: top right; }
+</style>

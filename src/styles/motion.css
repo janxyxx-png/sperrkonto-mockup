@@ -1,0 +1,27 @@
+/* ============================================================================
+   motion.css - gemeinsame Bewegung (Runde 29, Bewegungsfundament M01)
+   Eine Quelle fuer die Keyframes, die vorher dreimal in Komponenten standen (Dokumentkarte, Zertifikat, Kreditbeleg,
+   Bonus-Toast), die Staffel-Hilfe fuer Zeilen, und die Parallax der Fotobaender als CSS-Scroll-Zeitleiste, wo der
+   Browser sie kann (motion.ts parallax() bleibt nur als Ersatz fuer aeltere Browser).
+   Hausregel siehe tokens.css (Haptik): Druck 70 ms, Zeigen 160, Erscheinen 750, Szene 420, Morph 500, Scrub linear.
+   ============================================================================ */
+
+/* Zeilen erscheinen von unten, Etiketten springen auf, der Strich zieht sich durch, der Toast landet */
+@keyframes rowIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes pillIn { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
+@keyframes strikeIn { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes toastIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+/* Staffel: Kinder mit --i (0, 1, 2 ...) laufen um --stagger-step versetzt, ab --stagger-base */
+[data-stagger] > * { animation-delay: calc(var(--stagger-base, .2s) + var(--i, 0) * var(--stagger-step)); }
+
+/* Parallax der Fotos in Baendern und Buehnen (bis 6 % der Flaechenhoehe gegen die Laufrichtung) als Scroll-Zeitleiste:
+   kein Scroll-Listener, kein Ruckeln, und der Nutzer treibt sie selbst (Stufe "scrubbed", auch bei reduzierter Bewegung
+   erlaubt; wer sie nicht will, bekommt sie unten trotzdem abgeschaltet, weil das Foto sonst leicht "schwimmt"). */
+@keyframes px { from { translate: 0 -6%; } to { translate: 0 6%; } }
+@supports (animation-timeline: view()) {
+  .band img, .usp-photo .photo, .p-photo .photo { animation: px linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .band img, .usp-photo .photo, .p-photo .photo { animation: none; translate: none; }
+}

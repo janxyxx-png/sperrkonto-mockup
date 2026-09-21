@@ -1,0 +1,152 @@
+---
+/**
+ * Help Center als Funktion (18-NAECHSTES-LEVEL Hebel 6): alle FAQ-Bloecke der Datenseiten (in der Sprache der Seite)
+ * an einem Ort, mit Suche und Kategorien (clientseitig, ohne Server), Deep-Links je Frage, WhatsApp und Rueckrufwunsch.
+ * Inhalte bleiben in src/data; hier wird nur gesammelt und gefiltert.
+ */
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { pages, pageIn, tagSlug } from '../lib/content';
+import { type Locale, localePath, t as tr } from '../lib/i18n';
+import { markPh } from '../lib/placeholders';
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const t = (k: Parameters<typeof tr>[1]) => tr(locale, k);
+const lp = (p: string) => localePath(locale, p);
+const C = {
+  en: { kicker: 'Support', title: 'Help Center', lead: 'Every question we answer on the site, in one place. Search, or pick a topic.', search: 'Search questions', all: 'All topics', results: '{n} answers', one: '1 answer', none: 'Nothing found. Try another word or write to us below.', general: 'General', contactTitle: 'Still stuck? Talk to a person.', contactLead: 'We answer in English, Urdu and Punjabi. WhatsApp is fastest.', whatsapp: 'WhatsApp us', whatsappNote: 'Number: [PLACEHOLDER: WhatsApp business number]', email: 'Write an email', callback: 'Request a call back', name: 'Your name', phone: 'Phone (with country code)', when: 'When suits you?', slots: ['Morning (PKT)', 'Afternoon (PKT)', 'Evening (PKT)'], send: 'Request call', sent: 'Thanks. We call you back within 24 hours.' },
+  ur: { kicker: 'سپورٹ', title: 'ہیلپ سینٹر', lead: 'سائٹ پر ہمارے تمام جوابات ایک جگہ۔ تلاش کریں یا موضوع چنیں۔', search: 'سوال تلاش کریں', all: 'تمام موضوعات', results: '{n} جوابات', one: '1 جواب', none: 'کچھ نہیں ملا۔ کوئی اور لفظ آزمائیں یا نیچے ہمیں لکھیں۔', general: 'عمومی', contactTitle: 'پھر بھی الجھن؟ کسی انسان سے بات کریں۔', contactLead: 'ہم انگریزی، اردو اور پنجابی میں جواب دیتے ہیں۔ واٹس ایپ سب سے تیز ہے۔', whatsapp: 'واٹس ایپ کریں', whatsappNote: 'نمبر: [PLACEHOLDER: WhatsApp business number]', email: 'ای میل لکھیں', callback: 'کال بیک کی درخواست', name: 'آپ کا نام', phone: 'فون (ملکی کوڈ کے ساتھ)', when: 'کب مناسب ہے؟', slots: ['صبح (PKT)', 'دوپہر (PKT)', 'شام (PKT)'], send: 'کال کی درخواست', sent: 'شکریہ۔ ہم 24 گھنٹوں کے اندر آپ کو کال کریں گے۔' },
+  pa: { kicker: 'سپورٹ', title: 'ہیلپ سینٹر', lead: 'سائٹ تے ساڈے سارے جواب اک تھاں۔ لبھو یا موضوع چݨو۔', search: 'سوال لبھو', all: 'سارے موضوع', results: '{n} جواب', one: '1 جواب', none: 'کجھ نہیں لبھا۔ کوئی ہور لفظ اجماؤ یا تھلے ساہنوں لکھو۔', general: 'عام', contactTitle: 'ہالے وی الجھن؟ کسے بندے نال گل کرو۔', contactLead: 'اسیں انگریزی، اردو تے پنجابی وچ جواب دیندے آں۔ واٹس ایپ سب توں تیز اے۔', whatsapp: 'واٹس ایپ کرو', whatsappNote: 'نمبر: [PLACEHOLDER: WhatsApp business number]', email: 'ای میل لکھو', callback: 'کال بیک دی درخواست', name: 'تہاڈا ناں', phone: 'فون (ملکی کوڈ نال)', when: 'کدوں ٹھیک اے؟', slots: ['سویر (PKT)', 'دوپہر (PKT)', 'شام (PKT)'], send: 'کال دی درخواست', sent: 'شکریہ۔ اسیں 24 گھنٹیاں دے اندر تہانوں کال کراں گے۔' },
+}[locale];
+// FAQ-Bloecke aller Datenseiten in dieser Sprache; Kategorie = Seitentitel bis zum ersten Trennzeichen
+const catOf = (slug: string, title: string) => (slug === 'home' ? C.general : title.split(/\s[|·]\s|:/)[0].trim());
+type Item = { q: string; a: string; cat: string; slug: string; id: string };
+const items: Item[] = [];
+const seen = new Set<string>();
+// Nur echte Fragen (englische Referenz endet mit "?"); die Laenderliste der Visafrei-Seite ist ein FAQ-Block ohne Fragen
+for (const en of pages) {
+  const { page } = pageIn(en.slug, locale);
+  let n = 0;
+  en.sections.forEach((es, si) => es.blocks.forEach((eb, bi) => {
+    if (eb.type !== 'faq') return;
+    const lb = page.sections[si]?.blocks[bi]; const loc = lb && lb.type === 'faq' ? lb.items : eb.items;
+    eb.items.forEach((eit, k) => {
+      if (!/\?\s*$/.test(eit.q)) return;
+      const it = loc[k] ?? eit;
+      const key = eit.q.trim().toLowerCase(); if (seen.has(key)) return; seen.add(key);
+      items.push({ q: it.q, a: it.a, cat: catOf(en.slug, page.title), slug: en.slug, id: `${en.slug}-${++n}` });
+    });
+  }));
+}
+const cats = [...new Set(items.map((i) => i.cat))];
+---
+<Base title={C.title} description={C.lead ?? C.title} locale={locale} path="/help" cta={false}>
+  <main id="main" class="help">
+    <div class="container head">
+      <p class="kicker">{C.kicker}</p>
+      <h1>{C.title}</h1>
+      <p class="lead">{C.lead}</p>
+      <label class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" placeholder={C.search} data-q autocomplete="off" /></label>
+      <div class="cats" data-cats>
+        <button class="chip is-on" data-cat="">{C.all}</button>
+        {cats.map((c) => <button class="chip" data-cat={tagSlug(c)}>{c}</button>)}
+      </div>
+      <p class="count" data-results data-one={C.one}>{C.results.replace('{n}', String(items.length))}</p>
+    </div>
+    <div class="container">
+      <div class="list" data-list>
+        {items.map((it) => <details class="q" id={`faq-${it.id}`} data-cat={tagSlug(it.cat)} data-text={(it.q + ' ' + it.a).replace(/<[^>]+>/g, ' ').toLowerCase()}>
+          <summary><span class="qt">{it.q}</span><span class="cat">{it.cat}</span><i class="plus" aria-hidden="true" /></summary>
+          <div class="a" set:html={it.a} />
+          <a class="deep" href={`#faq-${it.id}`} aria-label="Link">#</a>
+        </details>)}
+      </div>
+      <p class="none" data-none hidden>{C.none}</p>
+    </div>
+    <div class="container">
+      <section class="contact">
+        <div>
+          <h2>{C.contactTitle}</h2>
+          <p class="muted">{C.contactLead}</p>
+          <div class="btns">
+            <a class="btn btn-primary" href="https://wa.me/" target="_blank" rel="noopener"><Icon name="chat" size={18} /> {C.whatsapp}</a>
+            <a class="btn btn-outline" href={lp('/help/contact')}>{C.email}</a>
+          </div>
+          <p class="muted small" set:html={markPh(C.whatsappNote)} />
+        </div>
+        <form class="cb" data-callback onsubmit="return false">
+          <h3>{C.callback}</h3>
+          <label class="field"><span>{C.name}</span><input type="text" autocomplete="name" /></label>
+          <label class="field"><span>{C.phone}</span><input type="tel" placeholder="+92" autocomplete="tel" /></label>
+          <label class="field"><span>{C.when}</span><select>{C.slots.map((s) => <option>{s}</option>)}</select></label>
+          <button class="btn btn-secondary" type="submit">{C.send}</button>
+          <p class="muted small" data-sent hidden>{C.sent}</p>
+        </form>
+      </section>
+    </div>
+  </main>
+  <script>
+    // Suche und Kategorien: reine Filterung im DOM; ein Treffer aus der URL (#faq-...) wird geoeffnet
+    // Der Zaehler heisst data-results, nicht data-count: data-count ist der Haken der Zahlen-Animation (motion.ts), die den Text
+    // eine Sekunde lang ueberschrieb (Rundgang 20.09.: "42 answers" bei 48 Fragen, die Filterzahl blieb stehen).
+    const bind = () => {
+      const q = document.querySelector<HTMLInputElement>('[data-q]'); if (!q || q.dataset.bound) return; q.dataset.bound = '1';
+      const items = [...document.querySelectorAll<HTMLDetailsElement>('[data-list] .q')];
+      const count = document.querySelector<HTMLElement>('[data-results]')!, none = document.querySelector<HTMLElement>('[data-none]')!;
+      const tpl = count.textContent!.replace(/\d+/, '{n}');
+      let cat = '';
+      const apply = () => {
+        const words = q.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+        let n = 0;
+        for (const it of items) { const ok = (!cat || it.dataset.cat === cat) && words.every((w) => it.dataset.text!.includes(w)); it.hidden = !ok; if (ok) n++; if (ok && words.length) it.open = true; }
+        count.textContent = n === 1 ? count.dataset.one! : tpl.replace('{n}', String(n)); none.hidden = n > 0;
+      };
+      q.addEventListener('input', apply);
+      document.querySelectorAll<HTMLElement>('[data-cats] .chip').forEach((b) => b.addEventListener('click', () => { cat = b.dataset.cat || ''; document.querySelectorAll('[data-cats] .chip').forEach((x) => x.classList.toggle('is-on', x === b)); apply(); }));
+      if (location.hash.startsWith('#faq-')) { const el = document.querySelector<HTMLDetailsElement>(location.hash); if (el) { el.open = true; el.scrollIntoView({ block: 'center' }); } }
+      const f = document.querySelector<HTMLFormElement>('[data-callback]'); f?.addEventListener('submit', () => { f.querySelector<HTMLElement>('[data-sent]')!.hidden = false; });
+    };
+    bind(); document.addEventListener('astro:page-load', bind);
+  </script>
+</Base>
+<style>
+  .help { padding: 56px 0 96px; }
+  .head { max-width: 800px; }
+  .head h1 { margin-bottom: .3em; }
+  .lead { color: var(--color-muted); font-size: var(--fs-body); margin-bottom: 28px; }
+  .search { display: flex; align-items: center; gap: 12px; height: 56px; padding: 0 18px; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-bg); color: var(--color-muted); }
+  .search:focus-within { border-color: var(--color-ink); }
+  .search input { flex: 1; border: 0; background: none; font: inherit; font-size: 1.05rem; outline: none; color: var(--color-text); }
+  .cats { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 6px; }
+  .chip { font: inherit; font-size: .84rem; font-weight: 500; padding: 8px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-bg); color: var(--color-text); cursor: pointer; min-height: 40px; }
+  .chip.is-on { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+  .count { color: var(--color-muted); font-size: .85rem; margin: 10px 0 0; }
+  .list { max-width: 860px; margin: 24px 0 0; border-top: 1px solid var(--color-border); }
+  .q { border-bottom: 1px solid var(--color-border); position: relative; }
+  .q[hidden] { display: none; }
+  .q summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 1fr auto 24px; align-items: center; gap: 16px; padding: 18px 0; font-weight: 600; font-size: 1.05rem; }
+  .q summary::-webkit-details-marker { display: none; }
+  .q .cat { font-size: .72rem; font-weight: 600; color: var(--color-muted); text-transform: uppercase; letter-spacing: var(--tracking-caps); }
+  .plus { position: relative; width: 24px; height: 24px; border-radius: 50%; background: var(--color-surface); }
+  .plus::before, .plus::after { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--color-text); width: 10px; height: 2px; }
+  .plus::after { width: 2px; height: 10px; }
+  .q[open] .plus::after { display: none; }
+  .a { padding: 0 0 20px; max-width: 70ch; color: var(--color-muted); line-height: var(--lh-lead); }
+  .a :global(a) { color: var(--color-text); }
+  .deep { position: absolute; inset-inline-end: -28px; top: 20px; color: var(--color-border); text-decoration: none; font-size: .85rem; }
+  .q:hover .deep { color: var(--color-muted); }
+  .none { color: var(--color-muted); margin-top: 20px; }
+  .contact { margin-top: 64px; display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; background: var(--color-surface); border-radius: var(--radius-l); padding: 40px; }
+  .contact h2 { margin-bottom: .3em; }
+  .muted { color: var(--color-muted); } .small { font-size: .82rem; }
+  .btns { display: flex; gap: 12px; flex-wrap: wrap; margin: 18px 0 12px; }
+  .btns .btn { display: inline-flex; align-items: center; gap: 8px; }
+  .cb { background: var(--color-bg); border-radius: var(--radius-m); padding: 24px; display: grid; gap: 14px; }
+  .cb h3 { font-size: 1.15rem; margin: 0; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field span { font-size: .78rem; font-weight: 600; color: var(--color-muted); text-transform: uppercase; letter-spacing: var(--tracking-caps); }
+  .field input, .field select { height: 48px; border-radius: var(--radius-s); border: 1px solid var(--color-border); padding: 0 14px; font: inherit; background: var(--color-bg); }
+  @media (max-width: 900px) { .contact { grid-template-columns: 1fr; padding: 28px 22px; } .q summary { grid-template-columns: 1fr 24px; } .q .cat { display: none; } .deep { display: none; } }
+  /* Telefon (Rundgang 20.09.): die Themen-Chips standen in sieben Zeilen; jetzt eine scrollende Reihe mit Verlauf am Rand */
+  @media (max-width: 600px) { .cats { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter) 40px; mask-image: linear-gradient(90deg, #000 90%, transparent); } .cats::-webkit-scrollbar { display: none; } .cats .chip { flex: none; } :global([dir="rtl"]) .cats { mask-image: linear-gradient(270deg, #000 90%, transparent); } }
+</style>

@@ -1,0 +1,181 @@
+{
+  "topbar": [
+    {
+      "label": "اسیں انگریزی، اردو تے پنجابی وچ جواب دیندے آں، 24 گھنٹیاں دے اندر۔",
+      "href": "/help/contact"
+    },
+    {
+      "label": "ہیلپ سینٹر",
+      "href": "/help"
+    },
+    {
+      "label": "کیریئر",
+      "href": "/careers"
+    },
+    {
+      "label": "پارٹنر",
+      "href": "/partner/login"
+    },
+    {
+      "label": "لاگ اِن",
+      "href": "/app/login"
+    }
+  ],
+  "menu": [
+    {
+      "label": "{{product}}",
+      "href": "/complete-setup",
+      "children": []
+    },
+    {
+      "label": "تعلیمی قرضہ",
+      "href": "/study-loan",
+      "children": []
+    },
+    {
+      "label": "قیمتاں",
+      "href": "/pricing",
+      "children": []
+    },
+    {
+      "label": "گائیڈ",
+      "href": "/guides",
+      "children": []
+    },
+    {
+      "label": "مدد",
+      "href": "/help",
+      "children": []
+    }
+  ],
+  "headerCta": {
+    "label": "{{product.start}}",
+    "href": "/app/start"
+  },
+  "footerCols": [
+    {
+      "heading": "کمپنی",
+      "links": [
+        {
+          "label": "ساڈے بارے",
+          "href": "/about-us"
+        },
+        {
+          "label": "کیریئر",
+          "href": "/careers"
+        },
+        {
+          "label": "پریس",
+          "href": "/press"
+        },
+        {
+          "label": "پارٹنر",
+          "href": "/partners"
+        },
+        {
+          "label": "پارٹنر لاگ اِن",
+          "href": "/partner/login"
+        }
+      ]
+    },
+    {
+      "heading": "پراڈکٹ",
+      "links": [
+        {
+          "label": "بلاکڈ اکاؤنٹ",
+          "href": "/blocked-account"
+        },
+        {
+          "label": "تعلیمی قرضہ",
+          "href": "/study-loan"
+        },
+        {
+          "label": "ہیلتھ انشورنس",
+          "href": "/health-insurance"
+        },
+        {
+          "label": "بینک اکاؤنٹ",
+          "href": "/german-bank-account"
+        },
+        {
+          "label": "{{product}}",
+          "href": "/complete-setup"
+        },
+        {
+          "label": "قیمتاں",
+          "href": "/pricing"
+        }
+      ]
+    },
+    {
+      "heading": "گائیڈ",
+      "links": [
+        {
+          "label": "جرمنی وچ رہنا",
+          "href": "/guides/tag/living-in-germany"
+        },
+        {
+          "label": "جرمنی وچ پڑھنا",
+          "href": "/guides/tag/studying-in-germany"
+        },
+        {
+          "label": "جرمنی وچ کم کرنا",
+          "href": "/guides/tag/working-in-germany"
+        },
+        {
+          "label": "جرمنی وچ کرائے تے رہنا",
+          "href": "/guides/renting-germany"
+        }
+      ]
+    },
+    {
+      "heading": "وسیلے",
+      "links": [
+        {
+          "label": "سارے گائیڈ",
+          "href": "/guides"
+        },
+        {
+          "label": "سفارت خانے دی چیک لسٹ",
+          "href": "/embassy-checklist"
+        },
+        {
+          "label": "عام سوال",
+          "href": "/help"
+        },
+        {
+          "label": "حکام لئی تصدیق",
+          "href": "/authorities"
+        },
+        {
+          "label": "خبراں",
+          "href": "/guides/tag/news"
+        }
+      ]
+    }
+  ],
+  "legal": [
+    {
+      "label": "قانونی نوٹس",
+      "href": "/legal-notice"
+    },
+    {
+      "label": "شرطاں تے ضابطے",
+      "href": "/general-terms-and-conditions"
+    },
+    {
+      "label": "پرائیویسی پالیسی",
+      "href": "/privacy-policy"
+    },
+    {
+      "label": "بروکر دی جانکاری",
+      "href": "/broker-information"
+    }
+  ],
+  "copyright": "© 2026 EC Assets | اکاؤنٹ یورپی یونین دے لائسنس یافتہ پارٹنر بینک وچ رکھے جاندے نیں",
+  "languages": [
+    "English",
+    "اردو",
+    "پنجابی"
+  ]
+}

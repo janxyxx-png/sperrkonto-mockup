@@ -1,0 +1,149 @@
+[
+  {
+    "slug": "about-us",
+    "path": "/about-us",
+    "title": "About EC Assets | Who we are",
+    "description": "EC Assets sets up the financial and insurance requirements of a German visa for people who apply from abroad. Meet the team, our story and what we stand for.",
+    "sections": 10
+  },
+  {
+    "slug": "blocked-account",
+    "path": "/blocked-account",
+    "title": "Blocked Account for your German visa | Open online in minutes",
+    "description": "Open a Blocked Account for your German visa with EC Assets: fully online, recognised by every German authority, with a confirmation letter the day your deposit arrives and a refund if your visa is refused.",
+    "sections": 9
+  },
+  {
+    "slug": "broker-information",
+    "path": "/broker-information",
+    "title": "Broker information | EC Assets",
+    "description": "Statutory information about EC Assets as an insurance broker.",
+    "sections": 1
+  },
+  {
+    "slug": "careers",
+    "path": "/careers",
+    "title": "Careers | EC Assets",
+    "description": "Join EC Assets in Berlin. We are an international team building the simplest way to move to Germany, and we are hiring.",
+    "sections": 2
+  },
+  {
+    "slug": "complete-setup",
+    "path": "/complete-setup",
+    "title": "{{product}} | Blocked Account, Health Insurance and Bank Account in one",
+    "description": "The {{product}} combines a Blocked Account, health insurance and a German Bank Account in a single online application, with extras included. Prepare your German visa in one go.",
+    "sections": 11
+  },
+  {
+    "slug": "general-terms-and-conditions",
+    "path": "/general-terms-and-conditions",
+    "title": "General Terms and Conditions | EC Assets",
+    "description": "The general terms and conditions that apply to EC Assets products and services.",
+    "sections": 1
+  },
+  {
+    "slug": "german-bank-account",
+    "path": "/german-bank-account",
+    "title": "German Bank Account for newcomers | Included with your Blocked Account",
+    "description": "Open a German Bank Account with IBAN before you arrive, without a residence permit. No account fees, a digital debit card for Apple Pay and Google Pay, and your Blocked Account payouts delivered automatically.",
+    "sections": 10
+  },
+  {
+    "slug": "guides",
+    "path": "/guides",
+    "title": "Guides for studying, working and living in Germany",
+    "description": "Guides and stories about studying, working and living in Germany, written for people who are about to make the move.",
+    "sections": 1
+  },
+  {
+    "slug": "health-insurance",
+    "path": "/health-insurance",
+    "title": "Health Insurance for internationals in Germany | Public or private, visa-ready",
+    "description": "Visa-ready health insurance for students and professionals moving to Germany. Choose public or private cover, get travel health insurance for your first weeks included, and combine it with a Blocked Account in the {{product}}.",
+    "sections": 13
+  },
+  {
+    "slug": "home",
+    "path": "/",
+    "title": "Blocked Account, Health Insurance and Bank Account for your move to Germany",
+    "description": "Moving to Germany? EC Assets bundles the three things your visa application needs, a Blocked Account, Health Insurance and a German Bank Account, into one online application. Fast, clear and fairly priced.",
+    "sections": 16
+  },
+  {
+    "slug": "legal-notice",
+    "path": "/legal-notice",
+    "title": "Legal notice | EC Assets",
+    "description": "Legal notice and imprint of EC Assets.",
+    "sections": 1
+  },
+  {
+    "slug": "partner-agencies",
+    "path": "/partner-agencies",
+    "title": "Partner agencies | EC Assets",
+    "description": "EC Assets works with education agencies in many countries. What agency partners do, and how their students get the Blocked Account, health insurance and {{product}}.",
+    "sections": 7
+  },
+  {
+    "slug": "partners",
+    "path": "/partners",
+    "title": "Partners | EC Assets",
+    "description": "The banks, insurers and service providers behind EC Assets products, and why we chose them.",
+    "sections": 7
+  },
+  {
+    "slug": "partners/international-payments",
+    "path": "/partners/international-payments",
+    "title": "International payments partner | EC Assets",
+    "description": "How to fund your Blocked Account from abroad through our international payments partner: local currencies, transparent fees, tracking and support.",
+    "sections": 6
+  },
+  {
+    "slug": "partners/statutory-health-insurance",
+    "path": "/partners/statutory-health-insurance",
+    "title": "Our statutory health insurance partner | EC Assets",
+    "description": "Meet the statutory health insurer behind the public cover in the EC Assets {{product}}: a large, highly rated insurer with English-speaking service, a bonus programme and dental cover.",
+    "sections": 4
+  },
+  {
+    "slug": "partners/travel-insurance-plans",
+    "path": "/partners/travel-insurance-plans",
+    "title": "Travel and incoming insurance plans | EC Assets",
+    "description": "The private insurance plans for newcomers to Germany offered by our travel insurance partner: four levels of cover, direct billing, flexibility and free cancellation if your visa is refused.",
+    "sections": 2
+  },
+  {
+    "slug": "partners/travel-insurance",
+    "path": "/partners/travel-insurance",
+    "title": "Our travel insurance partner | EC Assets",
+    "description": "The specialist broker behind the travel and incoming insurance in EC Assets packages: decades of experience with students, au-pairs and travellers, and award-winning service.",
+    "sections": 3
+  },
+  {
+    "slug": "payment-authorisation",
+    "path": "/payment-authorisation",
+    "title": "Power of attorney for payments | EC Assets",
+    "description": "Power of attorney granted to EC Assets for payment processing with its e-money partner.",
+    "sections": 1
+  },
+  {
+    "slug": "press",
+    "path": "/press",
+    "title": "Press | EC Assets",
+    "description": "Media information about EC Assets. Logo files and press enquiries.",
+    "sections": 2
+  },
+  {
+    "slug": "privacy-policy",
+    "path": "/privacy-policy",
+    "title": "Privacy Policy | EC Assets",
+    "description": "How EC Assets handles personal data: what we collect, why, for how long, and the rights you have.",
+    "sections": 1
+  },
+  {
+    "slug": "package-terms",
+    "path": "/package-terms",
+    "title": "Special terms for packages | EC Assets",
+    "description": "Special terms and conditions for EC Assets product packages.",
+    "sections": 1
+  }
+]

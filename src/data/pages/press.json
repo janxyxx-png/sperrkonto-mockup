@@ -1,0 +1,63 @@
+{
+  "slug": "press",
+  "path": "/press",
+  "title": "Press | EC Assets",
+  "description": "Media information about EC Assets. Logo files and press enquiries.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Press"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Media information</strong>"
+        }
+      ],
+      "photo": "/img/photos/cine-speicherstadt-night.jpg"
+    },
+    {
+      "id": 1,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Logo files"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "EC Assets logo, dark version (available on request)",
+              "mark": "ok"
+            },
+            {
+              "html": "EC Assets logo, light version (available on request)",
+              "mark": "ok"
+            },
+            {
+              "html": "EC Assets mark (available on request)",
+              "mark": "ok"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>For press enquiries:</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "<a href=\"/\">press@ecassets.com</a>"
+        }
+      ]
+    }
+  ]
+}

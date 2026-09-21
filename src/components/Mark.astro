@@ -1,0 +1,31 @@
+---
+/** Vertrauens-, Store-, Social- und Zahlungsmarken als Inline-SVG. Seit 20.09. die exakten Markenformen aus Simple Icons
+ *  (Paket simple-icons, CC0) statt nachgezeichneter Pfade (Jan: "nicht echt, nur nachgezeichnet"); nur die EU-Sterne bleiben
+ *  eigene Zeichnung. Trustpilot behaelt seine Markenfarbe, alles andere laeuft in currentColor (brand={true} schaltet die
+ *  Markenfarbe ein). Die farbigen Store-Badges sind offizielle Assets in StoreBadges.astro. */
+import { siApple, siGoogleplay, siTrustpilot, siWhatsapp, siInstagram, siYoutube, siX, siTiktok, siFacebook, siApplepay, siGooglepay, siVisa, siMastercard, siGoogle } from 'simple-icons';
+type Name = 'trustpilot' | 'eu' | 'applepay' | 'googlepay' | 'apple' | 'googleplay' | 'google' | 'whatsapp' | 'instagram' | 'youtube' | 'x' | 'tiktok' | 'facebook' | 'visa' | 'mastercard';
+interface Props { name: Name; label?: boolean; size?: number; class?: string; brand?: boolean }
+const { name, label = true, size = 22, class: cls, brand = false } = Astro.props;
+const icons = { apple: siApple, googleplay: siGoogleplay, trustpilot: siTrustpilot, whatsapp: siWhatsapp, instagram: siInstagram, youtube: siYoutube, x: siX, tiktok: siTiktok, facebook: siFacebook, applepay: siApplepay, googlepay: siGooglepay, visa: siVisa, mastercard: siMastercard, google: siGoogle } as const;
+const labels: Record<Name, string> = { trustpilot: 'Trustpilot', eu: 'EU deposit protection', applepay: 'Apple Pay', googlepay: 'Google Pay', apple: 'App Store', googleplay: 'Google Play', google: 'Google', whatsapp: 'WhatsApp', instagram: 'Instagram', youtube: 'YouTube', x: 'X', tiktok: 'TikTok', facebook: 'Facebook', visa: 'Visa', mastercard: 'Mastercard' };
+// EU-Sterne aus der Scheibe ausgestanzt (Maske), damit die Marke in currentColor auf hellem und dunklem Grund lesbar bleibt
+const euStars = [...Array(12)].map((_, i) => { const a = (i / 12) * Math.PI * 2; return `<circle cx="${(12 + 7.2 * Math.sin(a)).toFixed(2)}" cy="${(12 - 7.2 * Math.cos(a)).toFixed(2)}" r="1.5" fill="#000"/>`; }).join('');
+const euMask = `eu-m-${size}`;
+const open = `<svg width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true">`;
+// Fuellfarbe und Pfad vorab bestimmen (verschachtelte Ausdruecke im Template-String verwirren den Astro-Compiler)
+const icon = name === 'eu' ? null : icons[name];
+const fill = icon && (name === 'trustpilot' || brand) ? '#' + icon.hex : 'currentColor';
+const glyph = icon ? icon.path : '';
+const euSvg = open + '<mask id="' + euMask + '"><rect width="24" height="24" fill="#fff"/>' + euStars + '</mask><circle cx="12" cy="12" r="12" fill="currentColor" mask="url(#' + euMask + ')"/></svg>';
+const svg = name === 'eu' ? euSvg : open + '<path d="' + glyph + '" fill="' + fill + '"/></svg>';
+---
+<span class:list={['mk', name, cls]} title={labels[name]}>
+  <span class="ic" set:html={svg} />
+  {label && <span class="lbl">{labels[name]}</span>}
+</span>
+<style>
+  .mk { display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-small); font-weight: 600; color: inherit; line-height: 1; }
+  .ic { display: inline-flex; flex: none; }
+  .ic :global(svg) { display: block; }
+</style>

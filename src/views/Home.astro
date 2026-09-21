@@ -1,0 +1,518 @@
+---
+/**
+ * Startseite, von Hand komponiert (Richtung Revolut/N26). Texte kommen aus src/data/pages/home.json,
+ * die Anordnung ist entworfen statt aus den Bloecken geraten. Bilder: CSS-Mockups und eigene Illustrationen.
+ * Seit 20.09. (design-upgrade/25-EIN-PRODUKT-ZWEI-WEGE.md): ein Produkt, ein Preis, zwei Finanzierungswege.
+ * Keine Paketkarten mehr, kein Kicker und kein Videolink im Hero. Reihenfolge seit Jans Durchsicht am 20.09.: Triptychon mit
+ * Preiszeile, dann der Kredit als USP-Buehne (vollflaechiges Foto, Kreditbeleg, zwei Wege als Glaskarten), dann die offene Logo-Reihe;
+ * das Dokument-Objekt traegt die Stage-Texte des Sperrkontos (ui-strings stage.doc.*).
+ */
+import Base from '../layouts/Base.astro';
+import Pic from '../components/Pic.astro';
+import Icon from '../components/Icon.astro';
+import Mark from '../components/Mark.astro';
+import DocObject from '../components/DocObject.astro';
+import PhotoStage from '../components/PhotoStage.astro';
+import AppDuo from '../components/AppDuo.astro';
+import PhotoBand from '../components/PhotoBand.astro';
+import { initials } from '../lib/portraits';
+import { photosForPosts, focusFor } from '../lib/photos';
+import BlockView from '../components/Block.astro';
+import { pageIn, postIn, readMinutes, sectionBlocks, ofType, stripTags, route as routeFor, rewriteHtml as rewriteFor } from '../lib/content';
+import { type Locale, localePath, t as tr } from '../lib/i18n';
+import { LOAN } from '../lib/loan-copy';
+import { PRICING } from '../lib/pricing-copy';
+import { expandText } from '../lib/facts';
+import PhotoHero from '../components/PhotoHero.astro';
+import TrustBar from '../components/TrustBar.astro';
+import ClosingCta from '../components/ClosingCta.astro';
+import MoneyFlow from '../components/MoneyFlow.astro';
+import StoreBadges from '../components/StoreBadges.astro';
+import LoanReceipt from '../components/LoanReceipt.astro';
+import { heroFor } from '../lib/heroes';
+import { markPh } from '../lib/placeholders';
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const t = (k: Parameters<typeof tr>[1]) => tr(locale, k);
+const route = (h?: string) => routeFor(h, locale);
+const rewriteHtml = (h: string) => rewriteFor(h, locale);
+const lp = (p: string) => localePath(locale, p);
+const lc = LOAN[locale] ?? LOAN.en;
+const pc = PRICING[locale] ?? PRICING.en;
+const nobr = (s: string) => s.replace(/EC Assets/g, '<span class="nobr">EC Assets</span>');
+
+const { page, translated } = pageIn('home', locale);
+// Englische Referenz: Textmuster werden am Original erkannt, gerendert wird die Uebersetzung
+const ref = pageIn('home', 'en').page;
+const S = (id: number) => sectionBlocks(page, id);
+const R = (id: number) => sectionBlocks(ref, id);
+
+// Hero (s0): erster Absatz ist die Headline, zweiter die Unterzeile; ein Knopf, vier Produkt-Haken
+const hero = S(0);
+const heroParas = ofType(hero, 'paragraph');
+const heroTitle = stripTags(heroParas[0]?.html ?? '');
+const heroSub = heroParas[1]?.html ?? '';
+const heroCta = ofType(hero, 'button')[0];
+const heroChecks = ofType(hero, 'list')[0]?.items ?? [];
+const heroPhoto = heroFor('home');
+// USP-Buehne: dasselbe Foto wie der Hero der Kreditseite, damit der Klick dorthin nahtlos wirkt
+const uspPhoto = heroFor('study-loan');
+
+const heroCtas = [heroCta && { text: heroCta.text, href: route(heroCta.href) }].filter(Boolean) as { text: string; href: string; ghost?: boolean; icon?: string }[];
+
+// Stimmen (s3), Ueberschrift aus s11
+const quotes = ofType(S(3), 'quote');
+const STAR = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 6.1 6.7.8-4.9 4.6 1.3 6.7L12 17.6 6 20.8l1.3-6.7-4.9-4.6 6.7-.8z" fill="#fff"/></svg>';
+const refQuotes = ofType(R(3), 'quote');
+const quotesTitle = ofType(S(11), 'heading')[0]?.text ?? '';
+
+// Produkte (s7): drei H3 mit Text und Link, gerendert als Triptychon
+const prodBlocks = S(7);
+const products: { title: string; lead: string; text: string; links: { text: string; href: string; style?: string }[] }[] = [];
+for (let i = 0; i < prodBlocks.length; i++) {
+  const b = prodBlocks[i];
+  if (b.type === 'heading' && b.level === 3) {
+    const rest = prodBlocks.slice(i + 1);
+    const stop = rest.findIndex((x) => x.type === 'heading');
+    const own = stop < 0 ? rest : rest.slice(0, stop);
+    const ps = ofType(own, 'paragraph');
+    products.push({ title: b.text, lead: stripTags(ps[0]?.html ?? ''), text: ps[1]?.html ?? '', links: ofType(own, 'button') });
+  }
+}
+const productIcons = ['bank', 'shield', 'card', 'spark'];
+// Triptychon: cineastische Serie (design-upgrade/foto-auswahl/cine), Ausschnitt je Karte
+const prodPhotos = [{ src: '/img/photos/cine-rooftop-skyline-man.jpg', pos: '50% 30%' }, { src: '/img/photos/cine-golden-city-woman.jpg', pos: '50% 78%' }, { src: '/img/photos/cine-car-night-woman.jpg', pos: '50% 35%' }];
+const chipKeys = ['chip.ba', 'chip.hi', 'chip.bank'] as const;
+const kickKeys = ['chipk.ba', 'chipk.hi', 'chipk.bank'] as const;
+const priceLine = expandText(t('home.priceLine'), locale);
+const priceLineWork = expandText(t('home.priceLineWork'), locale);
+// Bankkarten-Chip: Auszahlung je Visumtyp (Visa-Chips unter der Ueberschrift schalten um)
+const bankChip = { student: t('chip.bank').split('|')[1], work: t('chip.bankWork').split('|')[1] };
+const story = S(9);
+
+// App (s12 + s16), Blog (s13), FAQ (s14)
+const app = S(12);
+const applePay = ofType(S(16), 'paragraph')[0];
+const blog = S(13);
+const blogTitle = ofType(blog, 'heading').find((h) => h.level === 2)?.text ?? '';
+// Drei echte Guides: die uebersetzten Artikel zu Visum, Krankenversicherung und Studienkredit, mit Lesezeit statt Datum
+// Anriss an der Wortgrenze kuerzen (27): vorher endete er mitten im Wort ("alternatives exis...")
+const excerpt = (s: string, n: number) => (s.length <= n ? s : s.slice(0, n).replace(/\s+\S*$/, '') + '\u2026');
+const posts = (['german-student-visa', 'compare-health-insurances', 'student-loans-in-germany'] as const).map((slug) => {
+  const { post } = postIn(slug, locale);
+  return { slug, href: `/guides/${slug}`, title: post.title, meta: t('blog.readMin').replace('{n}', String(readMinutes(post))), text: stripTags(post.description) };
+});
+const blogBtn = ofType(blog, 'button')[0];
+// Drei verschiedene Motive nebeneinander (photos.ts), Zuschnitt auf den Bildschwerpunkt
+const postPhotos = photosForPosts(posts.map((po) => postIn(po.slug, 'en').post));
+const faq = ofType(S(14), 'faq')[0];
+const faqTitle = ofType(S(14), 'heading')[0]?.text ?? '';
+---
+<Base title={page.title} description={page.description} locale={locale} path="/" translated={translated} photoHero>
+<main id="main">
+  <!-- Hero: Foto vollflaechig, Header transparent darueber (08-SPEC 4.1) -->
+  <PhotoHero size="home" underHeader title={heroTitle} lead={rewriteHtml(heroSub)} ctas={heroCtas} checks={heroChecks.map((i) => rewriteHtml(i.html))} photo={heroPhoto} />
+  <TrustBar locale={locale} bridge />
+
+  <!-- Produkte (Revolut-Muster): drei Foto-Karten mit Overlay-Chip, darunter die eine Preiszeile -->
+  <section class="section chapter" id="products">
+    <div class="container">
+      <div class="prod-head"><h2 class="chapter">{t('home.benefits')}</h2></div>
+      <!-- Visa-Chips (Jan 20.09., Revolut-Muster "Adventure · Wedding · Moving"): schalten Sperrbetrag und Auszahlung um.
+           Am Telefon (M10) klebt der Schalter unter dem Header, waehrend die drei Produktzeilen darunter durchlaufen; die zweite
+           Beschriftung wird dort kurz (visa.workShort), damit beide Felder eine Zeile bleiben. -->
+      <div class="prod-scroll">
+      <div class="visa-chips">
+        <div class="seg-ctl" role="group" aria-label={t('home.benefits')} data-visa>
+          <span class="seg-thumb" aria-hidden="true"></span>
+          <button type="button" class="is-on" data-visa-btn="student" aria-pressed="true">{t('visa.student')}</button>
+          <button type="button" data-visa-btn="work" aria-pressed="false"><span class="vl">{t('visa.work')}</span><span class="vs" aria-hidden="true">{t('visa.workShort')}</span></button>
+        </div>
+      </div>
+      <ul class="tript">
+        {products.slice(0, 3).map((pr, i) => (
+          <li>
+            <a class="pcard" href={route(pr.links[0]?.href)} data-astro-prefetch="viewport" data-hero={heroFor((pr.links[0]?.href ?? '').replace(/^\//, ''))?.src}>
+              <span class="pc-img"><Pic src={prodPhotos[i].src} alt="" sizes="(max-width: 600px) 96px, (max-width: 800px) 84vw, 400px" style={`object-position:${prodPhotos[i].pos}`} /></span>
+              <span class="pc-top"><span class="pc-kicker">{t(kickKeys[i])}</span><span class="pc-title">{pr.title}</span></span>
+              <span class="pc-chip"><span class="icircle sm"><Icon name={productIcons[i] ?? 'spark'} size={18} /></span><span class="pc-txt"><b>{t(chipKeys[i]).split('|')[0]}</b><span data-visa-text={i === 2 ? '' : undefined} data-student={i === 2 ? bankChip.student : undefined} data-work={i === 2 ? bankChip.work : undefined}>{t(chipKeys[i]).split('|')[1]}</span></span><span class="pc-go" aria-hidden="true"><Icon name="arrow" size={15} /></span></span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      </div>
+      <p class="also"><strong>{t('prod.alsoLabel')}</strong> {t('prod.also')}</p>
+      <p class="priceline"><span data-visa-text data-student={priceLine} data-work={priceLineWork}>{priceLine}</span><a class="btn-link" href={lp('/pricing')}>{t('home.priceLink')}</a></p>
+    </div>
+  </section>
+
+  <!-- USP (Jan 20.09.: "der wichtigste Abschnitt im ganzen Aufbau"): der Kredit als eigene Buehne, vollflaechig auf dem Foto
+       der Kreditseite. Runde 29 (M04) hatte den Beleg rechts gepinnt und drei Beats daran vorbeiziehen lassen; Jan (20.09. Nacht):
+       "die Box, die mit runterscrollt, sieht gut gemeint, aber schlecht umgesetzt aus". Seitdem steht das Kapitel still: links
+       Behauptung, "Is this really interest-free?" und die Knoepfe, rechts der Beleg, der einmal beim Sichtbarwerden erscheint
+       (Zeilen, Strich durch die Zinsen, Etikett; LoanReceipt.astro), darunter die zwei Wege. Nichts klebt, nichts wiederholt sich.
+       Das einzige dunkle Kapitel der Seite (eine Kapitel-Regel, M03). -->
+  <section class="usp section--dark on-dark chapter" id="study-loan">
+    {uspPhoto && <div class="usp-photo" aria-hidden="true"><Pic class="photo" src={uspPhoto.src} alt="" sizes="100vw" style={`--pos:${uspPhoto.pos}`} data-parallax /></div>}
+    <div class="usp-scrim" aria-hidden="true"></div>
+    <div class="container">
+      <div class="usp-track">
+        <div class="usp-col usp-copy">
+          <div class="usp-claim">
+            <p class="kicker chapter-k">{lc.kicker}</p>
+            <h2 class="usp-h chapter">{lc.h1}</h2>
+            <p class="lead">{lc.home.lead}</p>
+          </div>
+          <div class="usp-q">
+            <h3 class="beat-h">{lc.faq.items[0].q}</h3>
+            <p class="lead" set:html={markPh(lc.faq.items[0].a)} />
+          </div>
+          <div class="ctas" data-cta-anchor>
+            <a class="btn btn-primary" href={lp('/app/start')}>{lc.ctaQualify}</a>
+            <a class="btn btn-outline" href={lp('/study-loan#how-it-works')}>{lc.ctaHow}</a>
+          </div>
+        </div>
+        <div class="usp-col usp-side">
+          <div class="usp-object">
+            <LoanReceipt locale={locale} vt="loan-receipt" />
+          </div>
+          <div class="usp-paths">
+            <p class="paths-title">{pc.paths.title}</p>
+            <div class="paths">
+              <a class="path" href={lp('/study-loan#welcome-bonus')}>
+                <span class="path-num">{pc.paths.own.figure}<small>{pc.paths.own.tag}</small></span>
+                <span class="path-body"><span class="path-title">{pc.paths.own.title}</span><span class="path-link">{pc.paths.own.link}<Icon name="arrow" size={16} /></span></span>
+              </a>
+              <a class="path" href={lp('/study-loan')}>
+                <span class="path-num">{pc.paths.loan.figure}<small>{pc.paths.loan.tag}</small></span>
+                <span class="path-body"><span class="path-title">{pc.paths.loan.title}</span><span class="path-link">{pc.paths.loan.link}<Icon name="arrow" size={16} /></span></span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Geldfluss (M08) statt der Beleg-Reihe mit Beispiel-Siegeln: wo das Geld ist, in drei Knoten -->
+  <MoneyFlow locale={locale} />
+
+  <!-- Atempause (14-PROMPT Aufgabe 1): ein Foto, ein Satz, kein Button -->
+  <PhotoBand src="/img/photos/cine-berlin-tower-sunset.jpg" pos="50% 45%" text={t('band.home')} tag="Berlin · Alexanderplatz" />
+
+  <!-- Das Dokument: die Bestaetigung mit den Stage-Texten des Sperrkontos (ersetzt "Moving to Germany? Start here."); innere Sektion des Band-Kapitels (M03) -->
+  <section class="section inner">
+    <div class="container two">
+      <div>
+        <p class="kicker chapter-k">{t('stage.kicker')}</p>
+        <h2 class="chapter">{t('stage.doc.title')}</h2>
+        <p class="body">{t('stage.doc.text')}</p>
+        <a class="btn btn-primary" href={lp('/blocked-account')}>{t('stage.doc.cta')}</a>
+      </div>
+      <div class="visual"><PhotoStage src="/img/photos/cine-terminal-golden.jpg" pos="50% 55%"><DocObject stage={false} vt="obj-doc" /></PhotoStage></div>
+    </div>
+  </section>
+
+  <!-- Stimmen (Jan 21.09.: "zu viele Boxen, keine Struktur, Trustpilot gehoert rein"): ein Kapitel ohne Kaesten. Kopf links
+       (Kicker, Kapitel-H2, Lead), rechts unten buendig die Bewertung (Trustpilot-Marke, fuenf Kacheln, Note, Zahl der Bewertungen;
+       Beispielwerte). Darunter drei Stimmen in drei gleich hohen Spalten an Haarlinien: Sterne oben, Zitat, Autor unten auf einer
+       Linie (margin-top auto). Kein Foto mehr in diesem Kapitel, das Band davor traegt das Bild. -->
+  <section class="section chapter stories" id="story">
+    <div class="container">
+      <div class="stories-head">
+        <div class="stories-copy">
+          <p class="kicker chapter-k">{t('customerStory')}</p>
+          {ofType(story, 'heading').map((h) => <h2 class="chapter">{h.text}</h2>)}
+          {ofType(story, 'paragraph').map((p) => <p class="lead" set:html={rewriteHtml(p.html)} />)}
+        </div>
+        <div class="tp" role="group" aria-label={`Trustpilot: ${t('tp.excellent')}, ${t('tp.score')}, ${t('tp.reviews')}`}>
+          <Mark name="trustpilot" size={24} />
+          <span class="stars" aria-hidden="true">{[1, 2, 3, 4, 5].map(() => <i class="st" set:html={STAR} />)}</span>
+          <p class="tp-line"><strong>{t('tp.excellent')}</strong> · {t('tp.score')} · {t('tp.reviews')}</p>
+          <p class="tp-note">{t('quotes.note')}</p>
+        </div>
+      </div>
+      <ol class="stories-list">
+        {quotes.slice(0, 3).map((q, qi) => (
+          <li class="stq">
+            <figure>
+              <span class="stars sm" aria-hidden="true">{[1, 2, 3, 4, 5].map(() => <i class="st" set:html={STAR} />)}</span>
+              <blockquote><p>{q.text}</p></blockquote>
+              <figcaption><span class="avatar initials" aria-hidden="true">{initials(refQuotes[qi]?.author ?? q.author)}</span><span class="who"><strong>{q.author}</strong><span>{q.role}</span></span></figcaption>
+            </figure>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- App (09-PROMPT C4); bleibt weiss, ein dunkles Kapitel je Seite (M03) -->
+  <section class="section chapter">
+    <div class="container two app">
+      <div>
+        {ofType(app, 'heading').map((h) => <h2>{h.text}</h2>)}
+        {ofType(app, 'paragraph').map((p) => <p class="lead" set:html={rewriteHtml(p.html)} />)}
+        <StoreBadges locale={locale} href="#app-stage" height={44} />
+        {applePay && <p class="note" set:html={rewriteHtml(applePay.html)} />}
+      </div>
+      <div class="visual" id="app-stage"><PhotoStage src="/img/photos/cine-berlin-dusk.jpg" pos="50% 60%" ratio="5 / 5.2" fill><AppDuo locale={locale} front="setup" back="money" bare vt="obj-app" /></PhotoStage></div>
+    </div>
+  </section>
+
+  <!-- Guides -->
+  <section class="section chapter">
+    <div class="container">
+      <div class="head row"><h2 class="util" set:html={nobr(blogTitle)} />{blogBtn && <a class="btn btn-link" href={route(blogBtn.href)}>{blogBtn.text}</a>}</div>
+      <div class="posts snap-row">
+        {posts.slice(0, 3).map((po, pi) => (
+          <a class="card post" href={localePath(locale, po.href)}>
+            <div class="post-ph" aria-hidden="true"><Pic src={postPhotos[pi]} alt="" sizes="(max-width: 800px) 84vw, 380px" style={`object-position:${focusFor(postPhotos[pi])}`} /></div>
+            <div class="post-body">
+              <h3>{po.title}</h3>
+              <p>{excerpt(po.text, 120)}</p>
+              <span class="meta">{po.meta}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ: drei Fragen, die nur hier stehen (09-PROMPT C6, gekuerzt 20.09.); grau, damit FAQ, Abschluss und Footer ein Ende bilden (M03) -->
+  <section class="section chapter has-bg">
+    <div class="container faq-wrap">
+      <h2 class="util">{faqTitle}</h2>
+      {faq && <BlockView locale={locale} block={faq} />}
+    </div>
+  </section>
+
+  <ClosingCta title={t('closing.title')} cta={t('getValuePackage')} href={lp('/app/start')} tone="surface" />
+
+</main>
+<script>
+  import { tweenText } from '../scripts/tween';
+  // Visa-Chips im Triptychon: Sperrbetrag und Auszahlung fuer Studentenvisum oder Chancenkarte/Jobsuche (Jan 20.09.).
+  // Seit 27 ein Segment-Schalter (motion.ts segControl bewegt den Schieber); die Betraege laufen weich um (tween.ts).
+  const bindVisa = () => {
+    const g = document.querySelector<HTMLElement>('[data-visa]:not([data-bound])'); if (!g) return; g.dataset.bound = '1';
+    g.querySelectorAll<HTMLButtonElement>('[data-visa-btn]').forEach((b) => b.addEventListener('click', () => {
+      const k = b.dataset.visaBtn === 'work' ? 'work' : 'student';
+      g.querySelectorAll('[data-visa-btn]').forEach((x) => { x.classList.toggle('is-on', x === b); x.setAttribute('aria-pressed', String(x === b)); });
+      document.querySelectorAll<HTMLElement>('[data-visa-text]').forEach((el) => { const v = el.dataset[k]; if (v) tweenText(el, v); });
+    }));
+  };
+  bindVisa(); document.addEventListener('astro:page-load', bindVisa);
+</script>
+</Base>
+
+<style>
+  .section { padding: var(--section-y) 0; }
+  .section.has-bg { background: var(--color-surface); padding-bottom: var(--section-y); }
+  .section.alt { background: var(--color-surface); }
+  .section.alt :global(.card) { background: var(--color-bg); }
+  .section.alt :global(a.card:hover) { background: var(--color-bg); }
+  .head { max-width: 720px; margin: 0 0 48px; text-align: start; }
+  .head p { color: var(--color-muted); font-size: var(--fs-body); line-height: var(--lh-lead); margin: 0; }
+  .head.row { max-width: none; display: flex; justify-content: space-between; align-items: flex-end; text-align: start; gap: 24px; flex-wrap: wrap; }
+  .head.row h2 { margin: 0; }
+  .body { color: var(--color-muted); font-size: 1.08rem; max-width: 56ch; }
+  :global(.nobr) { white-space: nowrap; }
+  /* Objekt mit 7 von 12 Spalten, ab 1320 px ueber den Container hinaus (M03) */
+  .two { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 48px; align-items: center; }
+  .two > * { min-width: 0; }
+  .two h2 { max-width: 14ch; }
+  .two .lead { font-size: 1.25rem; max-width: 40ch; }
+  .visual { display: flex; justify-content: center; align-items: center; position: relative; }
+  /* 21.09.: kein Ueberhang ueber den Container, buendig mit dem Band darueber (Kollege) */
+
+  /* Produkte: Triptychon, darunter die Preiszeile */
+  .prod-head { text-align: center; margin-bottom: 40px; }
+  .prod-head h2 { margin: 0 auto; max-width: 14ch; }
+  .tript { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap); align-items: center; }
+  .tript li:nth-child(2) { margin: -28px 0; }   /* mittlere Karte hoeher, wie bei Revolut */
+  /* overflow: clip statt hidden: hidden wuerde die Karte zum Scroller der Parallax-Zeitleiste machen */
+  .pcard { position: relative; display: block; aspect-ratio: 3 / 4; border-radius: var(--radius-l); overflow: clip; background: var(--color-ink); color: #fff; text-decoration: none; isolation: isolate; box-shadow: inset 0 0 0 1px rgba(255,255,255,.06); }
+  .pc-img { position: absolute; inset: 0; z-index: -2; display: block; }
+  .pcard :global(img) { position: absolute; inset: -6% 0; width: 100%; height: 112%; object-fit: cover; filter: var(--photo-grade); }
+  /* Parallax beim Scrollen: die Fotos wandern gegen die Karten, alle drei in dieselbe Richtung (M01: die gegenlaeufige Mitte war ein zweites System) */
+  @supports (animation-timeline: view()) and (width: 1px) {
+    .pcard :global(img) { animation: par linear both; animation-timeline: view(); animation-range: entry 0% exit 100%; }
+    @keyframes par { from { translate: 0 -5%; } to { translate: 0 5%; } }
+  }
+  .pcard::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(11,15,25,.55) 0%, rgba(11,15,25,0) 38%, rgba(11,15,25,0) 60%, rgba(11,15,25,.55) 100%), var(--photo-warm); }
+  .pc-top { position: absolute; inset: 24px 24px auto; display: flex; flex-direction: column; gap: 6px; }
+  .pc-kicker { font-size: .74rem; font-weight: 600; letter-spacing: var(--tracking-caps); text-transform: uppercase; opacity: .85; }
+  .pc-title { font-size: 1.5rem; font-weight: 600; letter-spacing: -.02em; line-height: 1.1; text-shadow: 0 1px 12px rgba(0,0,0,.25); }
+  .pc-chip { position: absolute; inset: auto 16px 16px; display: flex; align-items: center; gap: 12px; background: #fff; color: var(--color-text); border-radius: 18px; padding: 12px 14px; box-shadow: 0 20px 40px -20px rgba(11,15,25,.5); transition: transform .35s var(--ease-out); }
+  .pcard:hover .pc-chip { transform: translateY(-3px); }
+  .pc-chip :global(.icircle) { background: var(--color-accent-soft); color: var(--color-accent); }
+  /* Klick-Hinweis (27): der Pfeil im Chip erscheint erst beim Zeigen und gleitet nach rechts */
+  .pc-go { margin-inline-start: auto; flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--color-surface); color: var(--color-text); display: grid; place-items: center; opacity: 0; transform: translateX(-8px); transition: opacity .3s var(--ease-out), transform .4s var(--ease-out-soft), background-color .2s var(--ease-out), color .2s var(--ease-out); }
+  .pcard:hover .pc-go { opacity: 1; transform: none; background: var(--color-ink); color: #fff; }
+  @media (hover: none) { .pcard:hover .pc-chip { transform: none; } .pcard:hover .pc-go { opacity: 0; } .path:hover { background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.16); } } /* M10 */
+  :global([dir="rtl"]) .pc-go { transform: translateX(8px); }
+  :global([dir="rtl"]) .pc-go :global(svg) { transform: scaleX(-1); }
+  :global([dir="rtl"]) .pcard:hover .pc-go { transform: none; }
+  .pc-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .pc-txt b { font-size: .95rem; font-weight: 600; line-height: 1.25; }
+  .pc-txt span { font-size: .8rem; color: var(--color-muted); line-height: 1.3; }
+  .also { color: var(--color-muted); font-size: var(--fs-small); line-height: var(--lh-lead); max-width: 62ch; margin: 44px auto 0; text-align: center; }
+  .also strong { color: var(--color-text); }
+  /* Die eine Preiszeile (ein Produkt, ein Preis): Text und Link zur Preisseite */
+  .priceline { display: flex; justify-content: center; align-items: center; gap: 18px; flex-wrap: wrap; margin: 20px auto 0; font-size: var(--fs-body); font-weight: 500; font-variant-numeric: tabular-nums; text-align: center; }
+  .priceline .btn-link { font-size: var(--fs-small); }
+  /* Stimmen (Jan 21.09.): keine Kaesten. Kopf 7/5, die Bewertung rechts unten buendig mit dem Lead; darunter drei gleich hohe
+     Spalten an Haarlinien, Autoren unten auf einer Linie. Trustpilot-Gruen ist Markenfarbe wie die Store-Badges. */
+  .stories-head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; align-items: end; margin-bottom: 52px; }
+  .stories-head h2 { max-width: 12ch; }
+  .stories-head .lead { max-width: 44ch; margin: 0; }
+  .tp { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding-bottom: 4px; }
+  .stars { display: inline-flex; gap: 3px; }
+  .st { width: 24px; height: 24px; background: #00b67a; display: inline-grid; place-items: center; }
+  .st :global(svg) { width: 15px; height: 15px; display: block; }
+  .stars.sm .st { width: 16px; height: 16px; } .stars.sm .st :global(svg) { width: 10px; height: 10px; }
+  .tp-line { margin: 0; font-size: 1rem; color: var(--color-muted); }
+  .tp-line strong { color: var(--color-text); }
+  .tp-note { margin: 0; font-size: .78rem; color: var(--color-muted); }
+  .stories-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--color-border); }
+  .stq { padding: 36px 0 0; padding-inline-end: 40px; }
+  .stq + .stq { border-inline-start: 1px solid var(--color-border); padding-inline-start: 40px; }
+  .stq figure { margin: 0; display: flex; flex-direction: column; height: 100%; gap: 18px; }
+  .stq blockquote { margin: 0; }
+  .stq blockquote p { margin: 0; font-size: 1.18rem; line-height: 1.45; font-weight: 500; letter-spacing: -.012em; color: var(--color-text); text-wrap: pretty; hanging-punctuation: first; }
+  /* Autorenzeile: Avatar oben, Name mittig zum Avatar, Rolle reserviert zwei Zeilen; so stehen alle drei Avatare auf einer Hoehe */
+  .stq figcaption { margin-top: auto; padding-top: 8px; display: flex; align-items: flex-start; gap: 12px; font-size: .9rem; }
+  .stq .who { display: flex; flex-direction: column; padding-top: calc((44px - 1lh) / 2); }
+  .stq .who > span { min-height: 2lh; }
+  .stq .who > span { color: var(--color-muted); }
+  .avatar.initials { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--color-accent-soft); color: var(--color-accent); font-weight: 600; font-size: .85rem; letter-spacing: .02em; flex: none; }
+
+
+  /* App */
+  .note { font-size: .92rem; color: var(--color-muted); max-width: 52ch; }
+
+  /* Guides */
+  .posts { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap); }
+  .post { padding: 0; overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: inherit; min-height: 260px; }
+  .post-ph { aspect-ratio: 16 / 9; overflow: hidden; background: var(--color-surface-strong); }
+  .post-ph :global(img) { width: 100%; height: 100%; object-fit: cover; filter: var(--photo-grade); }
+  .post-body { padding: var(--card-pad); display: flex; flex-direction: column; flex: 1; }
+  .post h3 { font-size: 1.2rem; margin-bottom: .5em; }
+  .post p { color: var(--color-muted); font-size: .92rem; margin-bottom: 14px; }
+  .post .meta { margin-top: auto; font-size: .78rem; color: var(--color-muted); }
+
+  /* FAQ */
+  .faq-wrap > * { max-width: 820px; }
+  .faq-wrap h2 { text-align: start; margin-bottom: 1em; }
+
+  /* Studienkredit: rote Kachel im Container, darunter die zwei Wege als weisse Karten */
+
+  @media (max-width: 1000px) {
+    .stories-head { grid-template-columns: 1fr; gap: 28px; align-items: start; margin-bottom: 36px; }
+    .stories-list { grid-template-columns: 1fr; }
+    .stq { padding: 24px 0; } .stq + .stq { border-inline-start: 0; padding-inline-start: 0; border-top: 1px solid var(--color-border); }
+    .stq:last-child { padding-bottom: 0; }
+    .posts { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 800px) {
+    .prod-head { margin-bottom: 20px; }
+    .also { margin-top: 20px; text-align: start; font-size: .9rem; }
+    .priceline { justify-content: flex-start; text-align: start; font-size: 1rem; }
+    .two, .posts { grid-template-columns: 1fr; }
+    .two { gap: 32px; }
+  }
+  /* Mobil (Jan 18.09. 22:30: keine Wischreihen mehr, alles gestapelt und kompakt) */
+  @media (max-width: 600px) {
+    /* Triptychon als drei Zeilen: Foto links (quadratisch), Titel und Status rechts */
+    .tript { display: grid; grid-template-columns: 1fr; gap: 12px; margin: 0; padding: 0; overflow: visible; }
+    .tript li { flex: none; }
+    .tript li:nth-child(2) { margin: 0; }
+    .pcard { aspect-ratio: auto; display: grid; grid-template-columns: 96px 1fr; grid-template-rows: auto auto; column-gap: 14px; row-gap: 6px; align-items: center; padding: 12px; background: var(--color-surface); color: var(--color-text); border-radius: var(--radius-m); box-shadow: none; }
+    .pcard::before { content: none; }
+    .pc-img { position: relative; inset: auto; z-index: 0; width: 96px; aspect-ratio: 1; border-radius: 14px; overflow: clip; grid-row: 1 / span 2; }
+    .pcard :global(img) { position: absolute; inset: 0; height: 100%; animation: none; translate: none; }
+    .pc-top { position: static; gap: 2px; grid-column: 2; align-self: end; }
+    .pc-kicker { font-size: .68rem; opacity: 1; color: var(--color-accent); }
+    .pc-title { font-size: 1.05rem; text-shadow: none; }
+    .pc-chip { position: static; padding: 0; box-shadow: none; background: none; margin: 0; gap: 8px; grid-column: 2; align-self: start; }
+    .pc-txt { flex-direction: row; gap: 6px; align-items: baseline; flex-wrap: wrap; }
+    .pc-chip :global(.icircle) { width: 28px; height: 28px; }
+    .pc-chip :global(.icircle svg) { width: 14px; height: 14px; }
+    .pc-txt b { font-size: .82rem; } .pc-txt span { font-size: .74rem; }
+    .pcard:hover .pc-chip { transform: none; }
+    /* Klick-Hinweis am Telefon (M10): stiller Pfeilkreis, immer sichtbar, kein Hover-Zustand */
+    .pc-go { display: grid; width: 30px; height: 30px; opacity: 1; transform: none; background: var(--color-surface-strong); color: var(--color-text); }
+    /* Stimmen und Guides: gestapelt statt gewischt */
+    .posts { display: grid !important; grid-template-columns: 1fr; gap: 12px; margin: 0; padding: 0; overflow: visible; }
+    .posts > * { flex: none; width: auto; }
+    .stq blockquote p { font-size: 1.05rem; }
+    .post { display: grid; grid-template-columns: 96px 1fr; gap: 14px; align-items: center; min-height: 0; padding: 12px; }
+    .post-ph { aspect-ratio: 1; border-radius: 14px; }
+    .post-body { padding: 0; }
+    .post-body h3 { font-size: .98rem; margin-bottom: 4px; }
+    .post-body p { display: none; }
+    .post-body .meta { font-size: .74rem; }
+    .visual { margin: 0 calc(-1 * var(--gutter)); }
+    .visual :global(.photo-stage), .visual :global(.doc-stage) { border-radius: 0; max-width: none; }
+  }
+  /* Visa-Wahl als Segment-Schalter (27, base.css .seg-ctl); am Telefon zwei gleich breite Felder, die Beschriftung darf umbrechen */
+  .visa-chips { display: flex; justify-content: center; margin: -16px 0 36px; }
+  .visa-chips .vs { display: none; }
+  /* Telefon (M10): der Schalter klebt unter dem Header, solange die Produktzeilen durchlaufen; kurze Beschriftung, eine Zeile */
+  @media (max-width: 600px) {
+    .prod-scroll { position: relative; }
+    .visa-chips { position: sticky; top: var(--hdr-sticky); z-index: 5; margin: -6px calc(-1 * var(--gutter)) 12px; padding: 8px var(--gutter); background: rgba(255,255,255,.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid var(--color-border); }
+    .visa-chips :global(.seg-ctl) { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+    .visa-chips :global(.seg-ctl > button) { padding: 8px 10px; font-size: .84rem; min-height: 40px; }
+    .visa-chips .vl { display: none; } .visa-chips .vs { display: inline; }
+    .also { display: none; }
+    .prod-head { text-align: start; }
+    .prod-head h2 { margin: 0; }
+  }
+  .app :global(.stores) { margin: 8px 0 24px; }
+  /* Karten auf Weiss (Jan 20.09.: Uebergaenge wie bei Revolut, keine grauen Baender mehr zwischen den Abschnitten) */
+  .post { background: var(--color-surface); }
+  /* USP-Buehne: vollflaechiges Foto, Hero-Typografie, rechts der Kreditbeleg */
+  /* Vollflaechig mit geraden Kanten (Jan 20.09. abends: die grossen Rundungen waren "zu viel von diesen Pills"). overflow: clip
+     statt hidden (kein Scroller fuer Scroll-Zeitleisten). Das Foto sitzt absolut mit top:-8 % (Prozent der HOEHE); margin-top in
+     Prozent bezog sich auf die Breite und liess am Telefon einen 100-px-Balken ueber dem Foto frei (27). */
+  .usp { position: relative; isolation: isolate; overflow: clip; background: var(--color-ink); padding: clamp(88px, 11vw, 150px) 0 clamp(64px, 8vw, 110px); }
+  .usp-photo { position: absolute; inset: 0; z-index: -2; }
+  .usp-photo :global(.photo) { position: absolute; left: 0; top: -8%; width: 100%; height: 116%; object-fit: cover; object-position: var(--pos, 50% 30%); filter: var(--photo-grade); will-change: transform; }
+  .usp-photo::after { content: ""; position: absolute; inset: 0; background: var(--photo-warm); mix-blend-mode: multiply; }
+  /* Schleier dichter als vorher (M04): Beleg und 72-px-Headline muessen ueber gut zwei Bildschirmhoehen Foto halten */
+  .usp-scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(11,15,25,.62) 0%, rgba(11,15,25,.55) 45%, rgba(11,15,25,.85) 100%), var(--vignette); }
+  /* Zwei Spalten, nichts klebt (Jan 20.09. Nacht): links Behauptung, Frage und Knoepfe, rechts Beleg und die zwei Wege, beide
+     rechtsbuendig auf der Belegbreite. Unter 1000 px eine Spalte in Lesefolge: Behauptung, Beleg, Frage, Wege, Knoepfe. */
+  .usp-track { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 0 56px; align-items: stretch; }
+  .usp-col { display: flex; flex-direction: column; min-width: 0; }
+  .usp-copy { gap: 40px; }
+  .usp-side { gap: 28px; justify-content: center; } /* mittig zwischen Ober- und Unterkante der Textspalte: gleicher Abstand oben und unten */
+  .usp-h { max-width: 14ch; margin: 0 0 .4em; }
+  .beat-h { font-size: var(--fs-h2-util); color: #fff; max-width: 18ch; margin: 0 0 .5em; }
+  .usp .lead { max-width: 44ch; margin: 0; color: var(--color-on-dark-muted); font-size: var(--fs-body); }
+  .usp .ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+  .usp-paths { width: 100%; max-width: 440px; margin-inline-start: auto; }
+  /* Zwei Wege als kompakte Glaszeilen unter der Summe (M04): Zahl links, Titel und Link rechts */
+  .paths-title { font-size: var(--fs-small); font-weight: var(--fw-ui); letter-spacing: var(--tracking-caps); text-transform: uppercase; margin: 0 0 12px; color: var(--color-on-dark-muted); }
+  .paths { display: grid; gap: 10px; }
+  .path { display: grid; grid-template-columns: minmax(150px, auto) 1fr; align-items: center; gap: 8px 20px; padding: 16px 20px; border-radius: var(--radius-m); background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.16); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); text-decoration: none; color: #fff; transition: background-color .25s var(--ease-out), border-color .25s var(--ease-out); }
+  .path:hover { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.32); }
+  .path:active { background: rgba(255,255,255,.12); transition-duration: var(--dur-press); }
+  .path-num { font-family: var(--font-heading); font-size: 1.7rem; font-weight: var(--fw-number); letter-spacing: var(--tracking-number); line-height: 1; font-variant-numeric: tabular-nums; display: flex; flex-direction: column; gap: 4px; }
+  .path-num small { font-family: var(--font-body); font-size: .8rem; font-weight: 500; letter-spacing: 0; color: var(--color-on-dark-muted); }
+  .path-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .path-title { font-weight: 600; font-size: 1.05rem; }
+  .path-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; font-size: var(--fs-small); color: var(--color-on-dark-muted); }
+  .path-link :global(svg) { transition: transform .2s var(--ease-out); }
+  .path:hover .path-link :global(svg) { transform: translateX(3px); }
+  :global([dir="rtl"]) .path:hover .path-link :global(svg) { transform: translateX(-3px); }
+  /* Unter 1000 px: eine Spalte in Lesefolge, Beleg und Wege linksbuendig */
+  @media (max-width: 999px) {
+    .usp-track { grid-template-columns: 1fr; gap: 36px; }
+    .usp-col { display: contents; }
+    .usp-claim { order: 1; } .usp-object { order: 2; } .usp-q { order: 3; } .usp-paths { order: 4; } .usp .ctas { order: 5; }
+    .usp-object :global(.receipt), .usp-paths { margin-inline-start: 0; max-width: 520px; }
+  }
+  @media (max-width: 600px) { .usp { padding: 56px 0 40px; } .usp-h { font-size: 2.25rem; } .usp-track { gap: 28px; } .path { padding: 14px 16px; grid-template-columns: minmax(110px, auto) 1fr; } .path-num { font-size: 1.45rem; } }
+</style>

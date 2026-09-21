@@ -1,0 +1,194 @@
+---
+/** Sperrkonto-Planer (Runde 29, M06): ersetzt auf /blocked-account und /complete-setup das Kennzahlenraster des Kostenblocks und
+ *  den Rupien-Rechner (DepositCalc). Links die Regler: Visum (Studentenvisum / Chancenkarte), Monate des Aufenthalts (6 bis 12),
+ *  Waehrung der Anzeige und Kurs; rechts die Summe, die vor der Abreise zu ueberweisen ist, mit Sperrbetrag und
+ *  Ueberweisungsgebuehr, der Monatsgebuehr ab Aktivierung und der Kreditzeile. Dieselben Zahlen wie im Funnel (funnel-copy.ts,
+ *  facts.ts). Jede Aenderung laeuft in 550 ms weich um (tween.ts), wenn sie von einer echten Eingabe kommt (e.isTrusted) und
+ *  keine reduzierte Bewegung gewuenscht ist; synthetische Ereignisse (QA-Skripte) schreiben sofort. Die Eingaben bleiben in
+ *  localStorage 'ec-plan' (geteilt mit den anderen Rechnern). Rein clientseitig; ohne JS stehen die Startwerte im HTML.
+ *  Anker #rupees bleibt (links.py). */
+import { type Locale, type UiKey, t as tt, localePath } from '../lib/i18n';
+import { FUNNEL, PKR_PER_EUR_EXAMPLE, TRANSFER_FEE_PCT_EXAMPLE } from '../lib/funnel-copy';
+import { PRICE, money } from '../lib/facts';
+import { LOAN } from '../lib/loan-copy';
+import { markPh } from '../lib/placeholders';
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const t = (k: UiKey) => tt(locale, k);
+const f = FUNNEL[locale] ?? FUNNEL.en;
+const loan = (LOAN[locale] ?? LOAN.en).plansLine;
+// Startwerte fuer das HTML ohne JS: Studentenvisum, 12 Monate, Euro, Beispielkurs
+const months = 12, rate = PKR_PER_EUR_EXAMPLE;
+const deposit = PRICE.depositMonthly * months;
+const fee = deposit * TRANSFER_FEE_PCT_EXAMPLE / 100;
+const total = deposit + fee;
+const fees = PRICE.monthly * PRICE.feeMonths;
+const eur = (n: number) => money(Math.round(n), locale);
+const pkr = (n: number) => `PKR ${Math.round(n).toLocaleString('en-US')}`;
+const start = localePath(locale, '/app/start');
+const cfg = { locale, monthly: PRICE.depositMonthly, monthlyWork: PRICE.depositMonthlyWork, feePct: TRANSFER_FEE_PCT_EXAMPLE, fees, rate, start, depositSub: f.depositSub, depositSubWork: f.depositSubWork, lakh: t('est.lakh'), loan: t('est.loan') };
+---
+<section class="est-sec" id="rupees">
+  <div class="container">
+    <div class="est" data-est={JSON.stringify(cfg)}>
+      <div class="controls">
+        <div class="ctl">
+          <div class="seg-ctl" role="group" aria-label={t('home.benefits')}>
+            <span class="seg-thumb" aria-hidden="true"></span>
+            <button type="button" class="is-on" data-est-group="student" aria-pressed="true">{t('visa.student')}</button>
+            <button type="button" data-est-group="work" aria-pressed="false">{t('visa.workShort')}</button>
+          </div>
+        </div>
+        <div class="ctl">
+          <span class="lbl" id="est-months-lbl">{t('est.months')}</span>
+          <div class="stepper" role="group" aria-labelledby="est-months-lbl">
+            <button type="button" data-est-dec>−</button>
+            <span class="val" data-est-months-val aria-hidden="true">{months}</span>
+            <button type="button" data-est-inc disabled>+</button>
+            <input type="number" data-est-months value={months} min="6" max="12" step="1" aria-labelledby="est-months-lbl" />
+          </div>
+        </div>
+        <div class="ctl">
+          <span class="lbl">{t('currency.show')}</span>
+          <div class="seg-ctl" role="group" aria-label={t('currency.show')}>
+            <span class="seg-thumb" aria-hidden="true"></span>
+            <button type="button" class="is-on" data-est-cur="eur" aria-pressed="true">EUR</button>
+            <button type="button" data-est-cur="pkr" aria-pressed="false">PKR</button>
+          </div>
+        </div>
+        <div class="ctl">
+          <label class="lbl" for="est-rate">{f.rate}</label>
+          <div class="stepper rate">
+            <button type="button" data-est-rate-dec>−</button>
+            <span class="val"><input id="est-rate" type="number" data-est-rate value={rate} min="1" step="1" inputmode="numeric" /></span>
+            <button type="button" data-est-rate-inc>+</button>
+          </div>
+          <p class="note">{f.rateNote}</p>
+        </div>
+      </div>
+      <div class="result">
+        <p class="cap">{f.totalEur}</p>
+        <p class="fig"><strong class="est-total" data-est-total>{eur(total)}</strong><span class="est-alt" data-est-alt>{pkr(total * rate)}</span></p>
+        <p class="lakh" data-est-lakh hidden>≈ {(total * rate / 100000).toFixed(1)} {t('est.lakh')}</p>
+        <dl class="ledger">
+          <div><dt>{f.deposit}<small data-est-deposit-sub>{f.depositSub}</small></dt><dd data-est-deposit>{eur(deposit)}</dd></div>
+          <div><dt>{f.transferFee}<small set:html={markPh(f.feeNote)} /></dt><dd data-est-fee>{eur(fee)}</dd></div>
+        </dl>
+        <p class="fees"><span>{t('est.fees')}</span><span data-est-fees>{eur(fees)}</span></p>
+        <div class="loan">
+          <p class="loan-txt">{loan.text}</p>
+          <p class="loan-row"><strong data-est-loan>{t('est.loan').replace('{amount}', eur(0))}</strong><a class="btn-link" href={localePath(locale, '/study-loan')}>{loan.link}</a></p>
+        </div>
+        <a class="btn btn-primary go" data-est-go href={start}>{t('est.go')}</a>{/* die Abfrage (?group=&months=&rate=) schreibt das Skript beim Binden; Astro wuerde & als &#38; escapen, was links.py als Anker liest */}
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  import { tweenText } from '../scripts/tween';
+  type Cfg = { locale: string; monthly: number; monthlyWork: number; feePct: number; fees: number; rate: number; start: string; depositSub: string; depositSubWork: string; lakh: string; loan: string };
+  type Plan = { group?: string; months?: number; rate?: number; cur?: string };
+  const KEY = 'ec-plan';
+  const load = (): Plan => { try { return (JSON.parse(localStorage.getItem(KEY) || '{}') as Plan) ?? {}; } catch { return {}; } };
+  const bind = () => {
+    document.querySelectorAll<HTMLElement>('[data-est]:not([data-bound])').forEach((el) => {
+      el.dataset.bound = '1';
+      const d = JSON.parse(el.dataset.est!) as Cfg;
+      const q = <T extends HTMLElement>(s: string) => el.querySelector<T>(s);
+      const euro = (n: number) => (d.locale === 'en' ? `€${Math.round(n).toLocaleString('en-US')}` : `${Math.round(n).toLocaleString('en-US')} یورو`);
+      const pkr = (n: number) => `PKR ${Math.round(n).toLocaleString('en-US')}`;
+      const clampM = (n: number) => Math.min(12, Math.max(6, Math.round(n) || 12));
+      // Zustand: aus localStorage 'ec-plan' (geteilt mit den anderen Rechnern), sonst Studentenvisum, 12 Monate, Beispielkurs, Euro
+      const saved = load();
+      let group: 'student' | 'work' = saved.group === 'work' ? 'work' : 'student';
+      let months = clampM(Number(saved.months));
+      let rate = Number(saved.rate) > 0 ? Number(saved.rate) : d.rate;
+      let cur: 'eur' | 'pkr' = saved.cur === 'pkr' ? 'pkr' : 'eur';
+      const monthsIn = q<HTMLInputElement>('[data-est-months]')!, rateIn = q<HTMLInputElement>('[data-est-rate]')!;
+      const dec = q<HTMLButtonElement>('[data-est-dec]')!, inc = q<HTMLButtonElement>('[data-est-inc]')!;
+      const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+      // Hausregel: echte Eingaben (e.isTrusted) laufen in 550 ms weich um; synthetische Ereignisse (QA) und reduzierte Bewegung schreiben sofort
+      const out = (sel: string, v: string, soft: boolean) => { const x = q(sel); if (!x) return; if (soft) tweenText(x, v, 550); else x.textContent = v; };
+      const seg = (attr: string, val: string) => el.querySelectorAll<HTMLElement>(`[${attr}]`).forEach((b) => { const on = b.getAttribute(attr) === val; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', String(on)); });
+      const render = (e?: Event) => {
+        const soft = !!e?.isTrusted && !reduce();
+        const monthly = group === 'work' ? d.monthlyWork : d.monthly;
+        const deposit = monthly * months, fee = deposit * d.feePct / 100, total = deposit + fee;
+        const inPkr = cur === 'pkr';
+        const main = (n: number) => (inPkr ? pkr(n * rate) : euro(n)), alt = (n: number) => (inPkr ? euro(n) : pkr(n * rate));
+        out('[data-est-total]', main(total), soft); out('[data-est-alt]', alt(total), soft);
+        out('[data-est-deposit]', main(deposit), soft); out('[data-est-fee]', main(fee), soft); out('[data-est-fees]', main(d.fees), soft);
+        out('[data-est-loan]', d.loan.replace('{amount}', main(0)), soft);
+        const lakh = q('[data-est-lakh]'); if (lakh) { lakh.hidden = !inPkr; out('[data-est-lakh]', `≈ ${(total * rate / 100000).toFixed(1)} ${d.lakh}`, soft); }
+        const sub = q('[data-est-deposit-sub]'); if (sub) sub.textContent = group === 'work' ? d.depositSubWork : d.depositSub;
+        const mv = q('[data-est-months-val]'); if (mv) mv.textContent = String(months);
+        monthsIn.value = String(months); dec.disabled = months <= 6; inc.disabled = months >= 12;
+        if (document.activeElement !== rateIn) rateIn.value = String(rate);
+        const go = q<HTMLAnchorElement>('[data-est-go]'); if (go) go.href = `${d.start}?group=${group}&months=${months}&rate=${rate}`;
+        try { localStorage.setItem(KEY, JSON.stringify({ ...load(), group, months, rate, cur })); } catch {}
+      };
+      el.querySelectorAll<HTMLButtonElement>('[data-est-group]').forEach((b) => b.addEventListener('click', (e) => { group = b.dataset.estGroup === 'work' ? 'work' : 'student'; seg('data-est-group', group); render(e); }));
+      el.querySelectorAll<HTMLButtonElement>('[data-est-cur]').forEach((b) => b.addEventListener('click', (e) => { cur = b.dataset.estCur === 'pkr' ? 'pkr' : 'eur'; seg('data-est-cur', cur); render(e); }));
+      dec.addEventListener('click', (e) => { months = clampM(months - 1); render(e); });
+      inc.addEventListener('click', (e) => { months = clampM(months + 1); render(e); });
+      monthsIn.addEventListener('input', (e) => { months = clampM(Number(monthsIn.value)); render(e); });
+      rateIn.addEventListener('input', (e) => { const v = Number(rateIn.value); if (v > 0) { rate = v; render(e); } });
+      rateIn.addEventListener('change', () => { if (!(Number(rateIn.value) > 0)) rateIn.value = String(rate); }); // leeres Feld beim Verlassen: letzter Kurs zurueck
+      q('[data-est-rate-dec]')?.addEventListener('click', (e) => { rate = Math.max(1, Math.round(rate) - 1); render(e); });
+      q('[data-est-rate-inc]')?.addEventListener('click', (e) => { rate = Math.round(rate) + 1; render(e); });
+      // Startzustand: Schalter setzen, Werte sofort schreiben. Weicht der gespeicherte Zustand vom HTML ab, misst motion.ts
+      // (segControl) den Schieber der Segment-Schalter beim resize-Ereignis ohne Animation neu.
+      seg('data-est-group', group); seg('data-est-cur', cur); render();
+      if (group !== 'student' || cur !== 'eur') dispatchEvent(new Event('resize'));
+    });
+  };
+  bind(); document.addEventListener('astro:page-load', bind);
+</script>
+<style>
+  .est-sec { padding: 0 0 var(--section-y); }
+  /* Rhythmus (M03-Muster, eine Zahl bestimmt den Abstand): eine normale Sektion dahinter traegt ihren Abstand nach oben selbst
+     (Section.astro nullt ihn nur zwischen eigenen Sektionen), also entfaellt hier der nach unten; graue Flaechen, Pull Quote,
+     Kapitel und innere Sektionen behalten die Hausmasse */
+  :global(.est-sec:has(+ .section:not(.has-bg):not(.has-pricing):not(.quote-sec):not(.chapter):not(.inner))) { padding-bottom: 0; } /* :global um den ganzen Selektor: in :has() uebersetzt Astro es sonst nicht */
+  /* Graue Karte, Radius 28, kein Schatten, kein Rahmen; links die Regler (5/12), rechts das Ergebnis (7/12) */
+  .est { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 40px; align-items: start; background: var(--color-surface); border-radius: var(--radius-l); padding: 40px; }
+  .controls { display: grid; gap: 26px; align-content: start; }
+  .ctl { display: grid; gap: 10px; justify-items: start; }
+  .lbl { font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-muted); }
+  /* Segment-Schalter (base.css) stehen weiss auf der grauen Karte, die Stepper-Knoepfe sind es schon */
+  .ctl :global(.seg-ctl) { background: var(--color-bg); }
+  .note { margin: 2px 0 0; font-size: .85rem; color: var(--color-muted); max-width: 34ch; }
+  /* Kurs: der Stepper traegt ein sichtbares Zahlenfeld statt des Readouts (heutigen Kurs eintippen) */
+  .rate .val { display: inline-flex; }
+  .rate .val input { width: 5ch; font: inherit; text-align: center; border: 0; background: none; padding: 0; margin: 0; color: inherit; appearance: textfield; -moz-appearance: textfield; }
+  .rate .val input::-webkit-outer-spin-button, .rate .val input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .rate .val input:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; border-radius: 4px; }
+  .result { display: grid; align-content: start; }
+  .cap { margin: 0 0 6px; font-size: var(--fs-small); font-weight: 500; color: var(--color-muted); }
+  .fig { margin: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; }
+  .est-total { font-family: var(--font-heading); font-size: clamp(2.5rem, 4.5vw, 3.75rem); font-weight: 400; letter-spacing: -.05em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--color-ink); }
+  .est-alt { font-size: var(--fs-small); color: var(--color-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .lakh { margin: 6px 0 0; font-size: var(--fs-small); color: var(--color-muted); font-variant-numeric: tabular-nums; }
+  .result :global(.ledger) { margin-top: 22px; border-top: 1px solid var(--color-border); }
+  .result :global(.ledger dt small .ph-num) { font-size: .72rem; }
+  .fees { margin: 0; display: flex; justify-content: space-between; gap: 12px 16px; padding: 12px 0; border-top: 1px solid var(--color-border); font-size: var(--fs-small); color: var(--color-muted); font-variant-numeric: tabular-nums; }
+  .fees span:last-child { white-space: nowrap; }
+  .loan { border-top: 1px solid var(--color-border); padding-top: 16px; }
+  .loan-txt { margin: 0 0 4px; font-size: var(--fs-small); color: var(--color-muted); max-width: 52ch; }
+  .loan-row { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 18px; }
+  .loan-row strong { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .loan-row :global(.btn-link) { font-size: var(--fs-small); }
+  .go { margin-top: 24px; justify-self: start; }
+  @media (max-width: 900px) { .est { grid-template-columns: 1fr; gap: 32px; padding: 32px 28px; } }
+  @media (max-width: 600px) {
+    .est { padding: 24px 18px; gap: 28px; }
+    .est-total { font-size: 3rem; }
+    /* Segment-Schalter in zwei gleich breiten Feldern (wie die Visa-Chips der Startseite); die Stepper-Knoepfe bleiben 44 px */
+    .ctl :global(.seg-ctl) { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+    .ctl :global(.seg-ctl > button) { white-space: normal; padding: 8px 10px; font-size: .8rem; }
+    .result :global(.ledger > div) { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .result :global(.ledger dd) { text-align: start; white-space: normal; }
+    .fees { flex-direction: column; gap: 2px; }
+    .go { width: 100%; justify-content: center; }
+  }
+</style>

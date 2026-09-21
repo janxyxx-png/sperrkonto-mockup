@@ -1,0 +1,204 @@
+---
+/** Platzhalterseiten fuer Bereiche, die im Original eigene Systeme sind (Help Center, Partnerportal, Suche ...). */
+import Base from '../layouts/Base.astro';
+import Mark from '../components/Mark.astro';
+import Pic from '../components/Pic.astro';
+import Icon from '../components/Icon.astro';
+import { type Locale, localePath, t as tr } from '../lib/i18n';
+import { OVERRIDDEN, navFor, pageIn, pages, postIn, posts } from '../lib/content';
+import { DEMO_DATA, DEMO_LETTER, demoDate } from '../lib/portal-demo'; // M02: Verifikation zeigt den Brief der Demo-Welt
+import { money } from '../lib/facts';
+export type StubKind = 'help' | 'contact' | 'partnerLogin' | 'search' | 'authorities';
+interface Props { kind: StubKind; locale?: Locale; path: string }
+const { kind, locale = 'en', path } = Astro.props;
+const t = (k: Parameters<typeof tr>[1]) => tr(locale, k);
+const lp = (p: string) => localePath(locale, p);
+const titles: Record<StubKind, string> = { help: t('stub.help'), contact: t('stub.contact'), partnerLogin: t('stub.partnerLogin'), search: t('stub.search'), authorities: t('stub.authorities') };
+// Kicker ueber der H1 wie auf jeder anderen Seite
+const kickers: Record<StubKind, string> = { help: t('stub.k.help'), contact: t('stub.help'), partnerLogin: t('stub.k.partner'), search: t('stub.k.search'), authorities: t('stub.k.authorities') };
+// Suchindex (Rundgang 18.09. 23:10: Enter im Suchfeld tat nichts): jede Seite der Sprache mit Titel, Beschreibung und Art;
+// der Browser filtert beim Tippen. Produktseiten zuerst, dann Guides, dann Portal und Hilfe.
+const PRODUCT = /^(blocked-account|health-insurance|german-bank-account|complete-setup|current-account|study-loan|health-insurance-plus|travel-insurance)$/;
+const strip = (h: string) => h.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+const short = (title: string) => title.split(' | ')[0].trim(); // ohne SEO-Zusatz nach dem Strich
+const index = kind !== 'search' ? [] : [
+  ...pages.filter((p) => !OVERRIDDEN.has(p.slug)).map((p) => { const { page } = pageIn(p.slug, locale); return { t: short(page.title), d: strip(page.description ?? ''), p: lp(p.path), k: PRODUCT.test(p.slug) ? t('search.kind.product') : t('search.kind.page'), w: PRODUCT.test(p.slug) ? 0 : 2 }; }),
+  ...posts.map((p) => { const { post } = postIn(p.slug, locale); return { t: short(post.title), d: strip(post.description ?? ''), p: lp(`/guides/${p.slug}`), k: t('search.kind.guide'), w: 1 }; }),
+  // Menue- und Fusszeilenlinks der Sprache (Pricing, Guides, Help Center ...), ohne Doppel zu Datenseiten
+  ...[...navFor(locale).menu.flatMap((m) => (m.href ? [{ label: m.label, href: m.href }] : m.children)), ...navFor(locale).footerCols.flatMap((c) => c.links), { label: t('stub.authorities'), href: '/authorities' }, { label: t('getStarted'), href: '/app/start' }, { label: t('login'), href: '/app/login' }]
+    .filter((l, i, arr) => l.href.startsWith('/') && !pages.some((p) => p.path === l.href) && arr.findIndex((x) => x.href === l.href) === i)
+    .map((l) => ({ t: l.label, d: '', p: lp(l.href), k: t('search.kind.page'), w: 2 })),
+].sort((a, b) => a.w - b.w);
+const cats = [t('blockedAccount'), t('healthInsurance'), t('bankAccount'), t('valuePackage'), t('stub.cat5'), t('stub.cat6'), t('stub.cat7'), t('stub.cat8')];
+---
+<Base title={titles[kind]} description={`${titles[kind]} · ${kickers[kind]} · EC Assets`} locale={locale} path={path} cta={false}>
+  <main id="main" class:list={['stub', { 'is-help': kind === 'help', 'is-search': kind === 'search', 'is-partner': kind === 'partnerLogin' || kind === 'contact' }]}>
+    <div class="container head">
+      <p class="kicker">{kickers[kind]}</p>
+      <h1>{titles[kind]}</h1>
+    </div>
+    <div class="container"><div class="panel">
+    {kind === 'help' && <>
+      <label class="field"><span>{t('search')}</span><input type="search" placeholder={t('stub.helpSearch')} /></label>
+      <div class="cats">{cats.map((c) => <a class="card" href={lp('/help/contact')}>{c}</a>)}</div>
+      <p><a class="btn btn-outline" href={lp('/help/contact')}>{t('contactUs')}</a></p>
+    </>}
+    {kind === 'contact' && <div class="split"><form class="contact-form" onsubmit="return false" data-ack={t('contact.sent')}>
+      <label class="field"><span>{t('email')}</span><input type="email" required /></label>
+      <label class="field"><span>{t('stub.topic')}</span><select><option>{t('blockedAccount')}</option><option>{t('healthInsurance')}</option><option>{t('bankAccount')}</option><option>{t('stub.other')}</option></select></label>
+      <label class="field"><span>{t('stub.subject')}</span><input type="text" /></label>
+      <label class="field"><span>{t('stub.description')}</span><textarea rows="6" required></textarea></label>
+      <button class="btn btn-primary" type="submit">{t('submit')}</button>
+    </form>
+    <div class="side" aria-hidden="true"><Pic src="/img/photos/cine-railing-night-woman.jpg" alt="" sizes="(max-width: 800px) 100vw, 40vw" /><div class="scrim"></div><div class="copy"><p class="big">{t('contact.side')}</p><p class="sub">{t('contact.sideSub')}</p></div></div>
+    </div>}
+    {kind === 'partnerLogin' && <div class="split">
+      <div>
+        <label class="field"><span>{t('email')}</span><input type="email" /></label>
+        <label class="field"><span>{t('password')}</span><input type="password" /></label>
+        <a class="btn btn-primary" href={lp('/app/dashboard')}>{t('login')}</a>
+        <p class="after"><a class="btn btn-link" href={lp('/partners')}>{t('stub.becomePartner')}</a></p>
+      </div>
+      <div class="side" aria-hidden="true"><Pic src="/img/photos/cine-bridge-fog-man.jpg" alt="" sizes="(max-width: 800px) 100vw, 40vw" /><div class="scrim"></div><div class="copy"><p class="big">{t('partner.side')}</p><p class="sub">{t('partner.sideSub')}</p></div></div>
+    </div>}
+    {kind === 'search' && <>
+      <form class="search-form" data-search role="search" data-none={t('search.none')} data-none-hint={t('search.noneHint')} data-contact={lp('/help/contact')} data-contact-label={t('contactUs')}>
+        <label class="field big-search"><span class="sr">{t('search')}</span><span class="lupe"><Icon name="search" size={20} /></span><input type="search" name="q" placeholder={t('stub.searchSite')} autocomplete="off" autofocus /></label>
+        <p class="hint-line">{t('search.hint')}</p>
+        <div class="results" data-results hidden><p class="caps sub-head">{t('search.results')}</p><ol data-list></ol></div>
+      </form>
+      <script type="application/json" data-search-index set:html={JSON.stringify(index)} />
+      <div data-browse>
+        <p class="caps sub-head">{t('search.popular')}</p>
+        <div class="chips">{([[t('blockedAccount'), '/blocked-account'], [t('healthInsurance'), '/health-insurance'], [t('bankAccount'), '/german-bank-account'], [t('valuePackage'), '/complete-setup'], [t('stub.cat5'), '/pricing'], [t('stub.cat6'), '/authorities']] as const).map(([c, h]) => <a class="chip" href={lp(h)}>{c}</a>)}</div>
+        <p class="caps sub-head">{t('search.topics')}</p>
+        <div class="cats">{([[cats[0], '/blocked-account'], [cats[1], '/health-insurance'], [cats[2], '/german-bank-account'], [cats[3], '/complete-setup']] as const).map(([c, h]) => <a class="card" href={lp(h)}>{c}</a>)}</div>
+      </div>
+    </>}
+    {kind === 'authorities' && <form class="verify" data-verify data-ref={DEMO_LETTER.ref} onsubmit="return false">
+      <label class="field"><span>{t('stub.confirmationNo')}</span><input type="text" name="ref" placeholder={DEMO_LETTER.ref} autocomplete="off" /></label>
+      <label class="field"><span>{t('stub.dob')}</span><input type="date" name="dob" /></label>
+      <button class="btn btn-primary" type="submit">{t('stub.verify')}</button>
+      <p class="hint">{t('verify.hint')}</p>
+      <div class="result" data-result hidden>
+        <div class="ok" data-ok hidden>
+          <p class="status"><span class="badge">{t('verify.ok')}</span> {DEMO_LETTER.ref}</p>
+          <dl>
+            <div><dt>{t('verify.holder')}</dt><dd>{DEMO_DATA.name.split(' ').map((w) => w[0] + '.').join(' ')}, {DEMO_DATA.from}</dd></div>
+            <div><dt>{t('verify.deposit')}</dt><dd>{money(DEMO_DATA.deposit, locale)}</dd></div>
+            <div><dt>{t('verify.payout')}</dt><dd>{money(DEMO_DATA.payout, locale)}</dd></div>
+            <div><dt>{t('verify.valid')}</dt><dd>Visa application · 12 months</dd></div>
+            <div><dt>{t('verify.issued')}</dt><dd data-issued>{demoDate(DEMO_LETTER.issued, 'en')}, {DEMO_LETTER.city}</dd></div>
+          </dl>
+        </div>
+        <p class="none" data-none hidden>{t('verify.none')}</p>
+      </div>
+    </form>}
+    </div></div>
+  </main>
+</Base>
+<style>
+  /* Kurze Werkzeugseiten (Kontakt, Suche, Behoerden, Login): Kopf auf Weiss, Formular als weisse Karte auf grauer
+     Flaeche mit Mindesthoehe, damit der rote Footer nicht direkt unter drei Feldern klebt (Seitenharmonie, Jan 18.09. spaet) */
+  .stub { padding: 56px 0 0; background: linear-gradient(180deg, var(--color-bg) 0 220px, var(--color-surface) 220px); min-height: 70vh; }
+  .stub .head { margin-bottom: 40px; }
+  .panel { background: var(--color-bg); border-radius: var(--radius-l); padding: 40px; max-width: 760px; margin-bottom: var(--section-y); box-shadow: 0 0 0 1px rgba(11,15,25,.04); }
+  .is-help .panel { max-width: none; }
+  .stub h1, .stub .field { max-width: 760px; }
+  .stub h1 { font-size: var(--fs-h1-page); }
+  /* Suche (Jan 18.09. 22:50: "sieht kalt aus"): grosses Feld mit Lupe, Vorschlaege als Chips, Themen als Karten */
+  .big-search { position: relative; margin-bottom: 10px; }
+  .big-search .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .big-search .lupe { position: absolute; inset-inline-start: 18px; top: 50%; transform: translateY(-50%); color: var(--color-muted); display: grid; }
+  .big-search input { padding: 1.15em; padding-inline-start: 3.2em; padding-inline-end: 1.1em; font-size: 1.15rem; border-radius: var(--radius-pill); }
+  .hint-line { color: var(--color-muted); font-size: var(--fs-small); margin: 0 0 28px; }
+  .sub-head { color: var(--color-muted); margin: 0 0 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+  .chip { text-decoration: none; color: var(--color-text); background: var(--color-surface); border-radius: var(--radius-pill); padding: 8px 14px; font-size: .9rem; font-weight: 500; transition: background-color .2s, color .2s; }
+  .chip:hover { background: var(--color-accent-soft); color: var(--color-accent); }
+  .is-search .panel { max-width: none; }
+  /* Partner-Login: Formular links, Foto rechts */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: stretch; }
+  .is-partner .panel { max-width: none; }
+  .side { position: relative; border-radius: var(--radius-m); overflow: clip; isolation: isolate; min-height: 360px; display: flex; align-items: flex-end; color: #fff; padding: 28px; }
+  .side :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 50%; filter: var(--photo-grade); z-index: -2; }
+  .scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(11,15,25,.05) 0%, rgba(11,15,25,.2) 50%, rgba(11,15,25,.72) 100%), var(--vignette); }
+  .big { font-size: 1.35rem; font-weight: 600; letter-spacing: -.02em; line-height: 1.15; margin: 0 0 6px; text-wrap: balance; }
+  .sub { margin: 0; color: rgba(255,255,255,.8); font-size: .9rem; }
+  @media (max-width: 800px) { .split { grid-template-columns: 1fr; } .side { min-height: 200px; order: -1; } }
+  @media (max-width: 600px) { .panel { padding: 24px 20px; } .stub { min-height: 0; } .cats { grid-template-columns: 1fr 1fr; } }
+  .stub .btn { margin-top: 8px; }
+  .after { margin-top: 16px; }
+  .cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--grid-gap); margin: 24px 0 32px; }
+  @media (max-width: 1000px) { .cats { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 520px) { .cats { grid-template-columns: 1fr; } }
+  .cats a { text-decoration: none; color: var(--color-text); font-weight: 600; font-size: .95rem; padding: 22px; background: var(--color-surface); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .cats a::after { content: "→"; color: var(--color-text); opacity: 0; transform: translateX(-4px); transition: opacity .2s, transform .2s; }
+  :global([dir="rtl"]) .cats a::after { content: "←"; transform: translateX(4px); }
+  .cats a:hover::after { opacity: 1; transform: none; }
+</style>
+<script>
+  // Verifikations-Demo (18-NAECHSTES-LEVEL Hebel 2): eine Referenz aus dem Dokument-Objekt gilt als bekannt, alles andere nicht
+  const bind = () => {
+    const f = document.querySelector<HTMLFormElement>('[data-verify]'); if (!f || f.dataset.bound) return; f.dataset.bound = '1';
+    const check = () => {
+      const ref = (f.querySelector<HTMLInputElement>('[name=ref]')?.value ?? '').trim().toUpperCase();
+      const res = f.querySelector<HTMLElement>('[data-result]')!, ok = f.querySelector<HTMLElement>('[data-ok]')!, none = f.querySelector<HTMLElement>('[data-none]')!;
+      const known = ref === (f.dataset.ref ?? '').toUpperCase(); // Referenz des Demo-Briefs (DEMO_LETTER.ref)
+      res.hidden = false; ok.hidden = !known; none.hidden = known;
+    };
+    f.addEventListener('submit', check);
+    // QR auf dem Brief (M08): /authorities?ref=BA-2026-04871 fuellt das Feld und prueft sofort
+    const q = new URLSearchParams(location.search).get('ref');
+    if (q) { const inp = f.querySelector<HTMLInputElement>('[name=ref]'); if (inp) { inp.value = q; check(); } }
+  };
+  bind(); document.addEventListener('astro:page-load', bind);
+  // Suche: Index aus dem Build, Filter im Browser (Titel zaehlt doppelt), Enter oeffnet den ersten Treffer
+  const bindSearch = () => {
+    const f = document.querySelector<HTMLFormElement>('[data-search]'); if (!f || f.dataset.bound) return; f.dataset.bound = '1';
+    const raw = document.querySelector('[data-search-index]')?.textContent ?? '[]';
+    const index = JSON.parse(raw) as { t: string; d: string; p: string; k: string; w: number }[];
+    const input = f.querySelector<HTMLInputElement>('input')!, box = f.querySelector<HTMLElement>('[data-results]')!, list = f.querySelector<HTMLOListElement>('[data-list]')!;
+    const browse = document.querySelector<HTMLElement>('[data-browse]');
+    const norm = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+    const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+    const run = () => {
+      const q = norm(input.value.trim()); const words = q.split(/\s+/).filter((w) => w.length > 1);
+      if (!words.length) { box.hidden = true; if (browse) browse.hidden = false; return; }
+      const hits = index.map((e) => { const t = norm(e.t), d = norm(e.d); let score = 0; for (const w of words) { if (t.startsWith(w)) score += 3.5; else if (t.includes(w)) score += 3; else if (d.includes(w)) score += 1; else return null; } return { e, score: score + (e.w === 0 ? 1 : e.w === 1 ? .5 : 0) - t.length / 200 }; })
+        .filter((h): h is { e: typeof index[number]; score: number } => !!h).sort((a, b) => b.score - a.score).slice(0, 8);
+      list.innerHTML = hits.length
+        ? hits.map(({ e }) => `<li><a href="${esc(e.p)}"><span class="kind">${esc(e.k)}</span><strong>${esc(e.t)}</strong>${e.d ? `<small>${esc(e.d)}</small>` : ''}</a></li>`).join('')
+        : `<li class="none"><strong>${esc(f.dataset.none ?? '')} “${esc(input.value.trim())}”</strong><small>${esc(f.dataset.noneHint ?? '')}</small><a class="btn btn-outline btn-sm" href="${esc(f.dataset.contact ?? '')}">${esc(f.dataset.contactLabel ?? '')}</a></li>`;
+      box.hidden = false; if (browse) browse.hidden = true;
+    };
+    input.addEventListener('input', run);
+    f.addEventListener('submit', (ev) => { ev.preventDefault(); run(); const first = list.querySelector<HTMLAnchorElement>('li:not(.none) a'); if (first) location.href = first.href; });
+    if (input.value) run();
+  };
+  bindSearch(); document.addEventListener('astro:page-load', bindSearch);
+</script>
+<style>
+  /* Treffer werden per Script eingesetzt und tragen Astros Scope-Attribut nicht, deshalb :global() */
+  .results { margin: -8px 0 8px; }
+  .results ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  .results :global(li a) { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 12px; align-items: baseline; padding: 14px 16px; border-radius: var(--radius-m); background: var(--color-surface); text-decoration: none; color: var(--color-text); transition: background-color .2s, transform .2s var(--ease-out); }
+  .results :global(li a:hover) { background: var(--color-accent-soft); color: var(--color-text); transform: translateY(-1px); }
+  .results :global(.kind) { grid-row: 1 / span 2; align-self: start; font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-accent); padding: 4px 0 0; min-width: 60px; }
+  .results :global(strong) { font-weight: 600; }
+  .results :global(small) { grid-column: 2; display: -webkit-box; color: var(--color-muted); font-size: var(--fs-small); line-height: 1.4; margin-top: 2px; overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .results :global(.none) { padding: 18px 16px; border-radius: var(--radius-m); background: var(--color-surface); display: grid; gap: 8px; justify-items: start; }
+  .results :global(.none small) { display: block; color: var(--color-muted); }
+  .results :global(.none .btn) { margin-top: 4px; }
+</style>
+<style>
+  .verify .hint { font-size: .82rem; color: var(--color-muted); margin: -4px 0 0; }
+  .verify .result { margin-top: 20px; }
+  .verify .ok { background: var(--color-surface); border-radius: var(--radius-m); padding: 20px 22px; }
+  .verify .status { font-weight: 600; margin: 0 0 12px; display: flex; align-items: center; gap: 10px; font-variant-numeric: tabular-nums; }
+  .verify .badge { display: inline-block; padding: 3px 10px; border-radius: var(--radius-pill); background: var(--color-accent); color: #fff; font-size: .72rem; text-transform: uppercase; letter-spacing: var(--tracking-caps); }
+  .verify dl { margin: 0; display: grid; gap: 8px; }
+  .verify dl div { display: flex; justify-content: space-between; gap: 16px; border-top: 1px solid var(--color-border); padding-top: 8px; font-size: .95rem; }
+  .verify dt { color: var(--color-muted); } .verify dd { margin: 0; font-weight: 500; }
+  .verify .none { color: var(--color-text); background: var(--color-surface); border-radius: var(--radius-m); padding: 16px 20px; margin: 0; }
+</style>

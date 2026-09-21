@@ -1,0 +1,30 @@
+---
+/** "Atempause" (14-PROMPT Aufgabe 1): vollflaechiges Foto, ein Satz, kein Button. Eine pro Kernseite. */
+import Pic from './Pic.astro';
+interface Props { src: string; text: string; pos?: string; alt?: string; tag?: string }
+const { src, text, pos = '50% 40%', alt = '', tag } = Astro.props;
+---
+<section class="band-wrap" aria-label={text}>
+  <div class="container">
+    <div class="band">
+      <Pic src={src} alt={alt} sizes="(max-width: 1240px) 100vw, 1200px" style={`--pos:${pos}`} data-parallax />
+      <div class="scrim" aria-hidden="true"></div>
+      {tag && <span class="tag">{tag}</span>}
+      <p class="line">{text}</p>
+    </div>
+  </div>
+</section>
+<style>
+  /* Seit 18.09. spaet (Jan: Uebergaenge zu hart): gerundete Flaeche im Container statt randlosem Band, wie die uebrigen Kacheln */
+  .band-wrap { padding: 0; }
+  .band { position: relative; min-height: clamp(300px, 34vw, 440px); display: flex; align-items: flex-end; overflow: hidden; isolation: isolate; color: #fff; border-radius: var(--radius-l); padding: 48px; }
+  /* 16 % hoeher als die Flaeche, damit die Parallax-Verschiebung (motion.ts, bis 8 %) keinen Rand freilegt */
+  .band :global(img) { position: absolute; left: 0; right: 0; top: -8%; width: 100%; height: 116%; object-fit: cover; object-position: var(--pos); filter: var(--photo-grade); z-index: -2; will-change: transform; }
+  .scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(11,15,25,.05) 0%, rgba(11,15,25,.15) 50%, rgba(11,15,25,.62) 100%), var(--vignette); }
+  .scrim::after { content: ""; position: absolute; inset: 0; background: var(--photo-warm); mix-blend-mode: multiply; }
+  /* Orts-Chip oben in der Ecke (Jan 20.09., Accessoire nach Revolut-Muster) */
+  .tag { position: absolute; top: 24px; inset-inline-start: 24px; font-size: .78rem; font-weight: 600; letter-spacing: .02em; color: #fff; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.28); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: var(--radius-pill); padding: 7px 13px; }
+  .line { margin: 0; max-width: 24ch; font-size: clamp(1.6rem, 3.2vw, 2.6rem); font-weight: 600; letter-spacing: -.02em; line-height: 1.15; text-wrap: balance; }
+  @media (max-width: 800px) { .band { min-height: 240px; padding: 24px; border-radius: var(--radius-m); } .tag { top: 14px; inset-inline-start: 14px; font-size: .72rem; } .line { font-size: 1.45rem; max-width: 20ch; } }
+  @media (prefers-reduced-motion: no-preference) { .band :global(img) { transition: transform 1.2s var(--ease-out); } }
+</style>

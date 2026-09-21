@@ -1,0 +1,42 @@
+---
+/** Zwei-Spalten-Vergleich mit Werten statt Haekchen (03-KOMPONENTEN 3.7 in kleiner Form). Mobil stapeln die Zellen. */
+import { markPh } from '../lib/placeholders';
+interface Props { head: [string, string]; rows: { label: string; a: string; b: string }[] }
+const { head, rows } = Astro.props;
+---
+<div class="cmp2">
+  <table>
+    <thead><tr><th scope="col"></th><th scope="col">{head[0]}</th><th scope="col" class="us">{head[1]}</th></tr></thead>
+    <tbody>
+      {rows.map((r) => (
+        <tr>
+          <th scope="row">{r.label}</th>
+          <td data-h={head[0]} set:html={markPh(r.a)} />
+          <td data-h={head[1]} class="us" set:html={markPh(r.b)} />
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+<style>
+  .cmp2 { max-width: 860px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: start; padding: 18px 16px; border-bottom: 1px solid var(--color-border); vertical-align: top; font-size: var(--fs-small); line-height: var(--lh-lead); }
+  thead th { font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-muted); padding-top: 16px; padding-bottom: 14px; }
+  tbody th { font-weight: 500; color: var(--color-muted); width: 34%; }
+  td { font-weight: 600; }
+  /* hervorgehobene Spalte: weiss auf grauem Abschnitt, oben und unten gerundet (Rundgang 18.09. spaet: sass abgeschnitten) */
+  .us { background: var(--color-bg); }
+  thead th.us { color: var(--color-text); border-radius: var(--radius-m) var(--radius-m) 0 0; border-bottom-color: var(--color-border); }
+  tbody tr:last-child td.us { border-radius: 0 0 var(--radius-m) var(--radius-m); border-bottom: 0; }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: 0; }
+  td:first-of-type, th[scope="row"] { padding-inline-start: 0; }
+  @media (max-width: 600px) {
+    thead { display: none; }
+    tr { display: block; padding: 14px 0; border-bottom: 1px solid var(--color-border); }
+    th[scope="row"], td { display: block; border: 0; padding: 4px 0; width: auto; }
+    td { padding-inline-start: 0; background: none; }
+    td::before { content: attr(data-h) ": "; font-weight: 500; color: var(--color-muted); }
+    td.us::before { color: var(--color-text); }
+  }
+</style>

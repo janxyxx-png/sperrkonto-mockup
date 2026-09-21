@@ -1,0 +1,816 @@
+{
+  "slug": "health-insurance",
+  "path": "/health-insurance",
+  "title": "Health insurance for your German visa | Public or private, visa-ready",
+  "description": "Visa-ready health insurance for students and professionals moving to Germany. Choose public or private cover, get travel health insurance for your first weeks included, and combine it with a Blocked Account in the {{product}}.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "Health Insurance"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Health insurance for your German visa and your life in Germany"
+        },
+        {
+          "type": "paragraph",
+          "html": "Accepted by embassies, universities and employers"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Apply online in minutes. Take the cover on its own or together with your Blocked Account in the {{product}}.</strong>"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "Travel health insurance for your first weeks included.",
+              "mark": "ok"
+            },
+            {
+              "html": "Fair monthly rates, valid for your visa, your university and everyday life.",
+              "mark": "ok"
+            },
+            {
+              "html": "Public or private cover for your visa, your university and everyday life.",
+              "mark": "ok"
+            }
+          ]
+        },
+        {
+          "type": "button",
+          "text": "{{product.start}}",
+          "href": "/app/start",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Covered before the plane leaves"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Answer six questions"
+        },
+        {
+          "type": "paragraph",
+          "html": "Age, purpose of stay, arrival date. We show you whether the statutory or the private plan fits, and what it costs."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Get your certificates the same day"
+        },
+        {
+          "type": "paragraph",
+          "html": "Travel cover and German health insurance certificates land in your portal as soon as your account is set up. They go straight into your visa file."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Switch it on when you arrive"
+        },
+        {
+          "type": "paragraph",
+          "html": "Your German cover starts on the date you choose in the portal. Until then the travel cover carries you."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "See a doctor like anyone else"
+        },
+        {
+          "type": "paragraph",
+          "html": "Emergencies, prescriptions, dental, glasses on the private plan: you show your card, the insurer pays. Questions come to us, in English, Urdu or Punjabi."
+        }
+      ],
+      "anchor": "how-it-works"
+    },
+    {
+      "id": 2,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "image",
+          "src": "image",
+          "alt": "",
+          "photo": "/img/photos/cine-airport-silhouettes.jpg"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Premiums start when you arrive</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "You pay nothing for your German health insurance until you are in the country. Premiums are then collected monthly. There is no upfront cost before you travel."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": "",
+          "photo": "/img/photos/cine-bridge-fog-man.jpg"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>A recommendation for your situation</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "Based on your visa type, age and plans we suggest the cover that fits. It includes doctor visits, emergency treatment, prescriptions and more."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": "",
+          "photo": "/img/photos/cine-train-notebook.jpg"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Clear costs from the start</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "Your monthly Blocked Account payout is designed to cover living costs, including your health insurance. You see your exact premium at the end of the application."
+        }
+      ],
+      "anchor": "what-you-get"
+    },
+    {
+      "id": 19,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "What it costs"
+        },
+        {
+          "type": "paragraph",
+          "html": "Nothing is due before you travel. German health insurance is billed monthly once you are in the country; the exact premium appears at the end of the application."
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Travel health insurance</strong>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "€0"
+        },
+        {
+          "type": "paragraph",
+          "html": "included, no extra charge"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Statutory student rate</strong>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "€120"
+        },
+        {
+          "type": "paragraph",
+          "html": "to €140 a month, depending on age"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Before you arrive</strong>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "€0"
+        },
+        {
+          "type": "paragraph",
+          "html": "premiums start on arrival or at semester start"
+        }
+      ],
+      "anchor": "costs"
+    },
+    {
+      "id": 5,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Public or private: which one is right for you?"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Health insurance is compulsory for everyone living in Germany</strong>. Without it you cannot get a visa, enrol at a university, start a job or see a doctor. <br> <br> We help you pick the cover that matches your visa type and your circumstances. <br> <br> For many newcomers statutory insurance is the natural choice; for others a <a href=\"/health-insurance#private-cover\">private plan</a> fits better. Either way, you are insured with an established provider and we handle the paperwork."
+        },
+        {
+          "type": "paragraph",
+          "html": "The table below compares the two systems, or <a href=\"/guides/compare-health-insurances\">read our detailed comparison.</a>"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "<strong>Feature →</strong>: Public (statutory) / Private"
+            },
+            {
+              "html": "<strong><strong>Who is eligible:</strong></strong>: Most applicants, with a few visa types excluded (for example language course visas) / A smaller group; depends on age, health and student status"
+            },
+            {
+              "html": "<strong><strong>Are spouse and children covered:</strong></strong>: Yes, family members are included / Depends on the plan; family cover is available at extra cost"
+            },
+            {
+              "html": "<strong><strong>Which doctors can I see:</strong></strong>: Doctors who treat statutory patients / Statutory and private practices"
+            },
+            {
+              "html": "<strong><strong>Languages:</strong></strong>: Mostly German, some English / English and German with most plans"
+            },
+            {
+              "html": "<strong><strong>Accepted visa types:</strong></strong>: Bachelor, Master, exchange, employment, internship and more / Bachelor, Master, job seeker, Opportunity Card, language course and more"
+            },
+            {
+              "html": "<strong><strong>Monthly cost for students:</strong></strong>: Fixed student rate, rises noticeably from age 30 / Fixed student rate, rises moderately from age 30"
+            },
+            {
+              "html": "<strong><strong>Monthly cost for employees:</strong></strong>: A percentage of income / Depends on age, health and the level of cover"
+            },
+            {
+              "html": "<strong><strong>Available in the {{product}}:</strong></strong>: Yes / Yes"
+            }
+          ]
+        }
+      ],
+      "collapse": true,
+      "photo": "/img/photos/chair-laptop.jpg",
+      "anchor": "public-or-private",
+      "more": "public and private cover"
+    },
+    {
+      "id": 13,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "The insurers behind your cover"
+        },
+        {
+          "type": "paragraph",
+          "html": "We work with a small number of insurers that we know serve international customers well: a <strong>large statutory health insurer</strong>, a <strong>digital private health insurer</strong> and a <strong>specialist for travel and incoming insurance</strong>."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Statutory health insurance"
+        },
+        {
+          "type": "paragraph",
+          "html": "If you choose public cover, your membership with our statutory partner starts on the day your studies or your job begin. Statutory insurance is also called public or government health insurance."
+        },
+        {
+          "type": "paragraph",
+          "html": "Our statutory partner serves a large share of the international students and professionals in Germany. Members benefit from services such as vaccinations, a bonus programme and a digital appointment service."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Private health insurance"
+        },
+        {
+          "type": "paragraph",
+          "html": "Students can also choose a private plan from our private insurance partner. Private cover is the alternative to the statutory system and typically includes glasses and contact lenses, dental treatment, a free choice of doctors including private practices, a two-bed hospital room and worldwide cover. <br> <br> The plan is priced for students and everything, from claims to questions, is handled in the insurer's app."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Travel health insurance"
+        },
+        {
+          "type": "paragraph",
+          "html": "For the visa and your first weeks in Germany you need a separate type of cover, often called travel health insurance, incoming insurance or Schengen insurance. It is compulsory. Students are covered by it until their studies at a university or university of applied sciences begin."
+        },
+        {
+          "type": "paragraph",
+          "html": "If you are attending a language course or a preparatory course (<em>Studienkolleg</em>), this private cover runs for the whole duration of the course."
+        },
+        {
+          "type": "paragraph",
+          "html": "Our partner for this cover is a specialist insurance broker for stays abroad."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "button",
+          "text": "Go to FAQs",
+          "href": "/#faq",
+          "style": "relative btn-s btn btn-solid btn-secondary text-base fill-base btn-icon-back btn-icon"
+        }
+      ],
+      "collapse": true,
+      "anchor": "insurers",
+      "more": "the insurers"
+    },
+    {
+      "id": 30,
+      "hint": "",
+      "background": false,
+      "anchor": "private-cover",
+      "collapse": true,
+      "more": "Private cover",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Private cover"
+        },
+        {
+          "type": "paragraph",
+          "html": "Comprehensive cover at a student rate"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>The student plan from our private insurance partner, arranged by EC Assets.</strong>"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "Accepted for university enrolment, your visa and city registration.",
+              "mark": "ok"
+            },
+            {
+              "html": "Priced for a student budget.",
+              "mark": "ok"
+            },
+            {
+              "html": "<strong>{{product}}:</strong> adds the Blocked Account, a German Bank Account and extras.",
+              "mark": "ok"
+            }
+          ]
+        },
+        {
+          "type": "button",
+          "text": "{{product.start}}",
+          "href": "/app/start",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Students on the private plan share their experience"
+        },
+        {
+          "type": "paragraph",
+          "html": "Two students explain how the private plan worked for them in everyday life, from booking doctors to getting bills reimbursed."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Why private cover can be the better choice"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>More cover, often for less money.</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "Together with our private insurance partner we offer a plan for eligible students that runs for the whole of your studies. Afterwards you can stay private on a new tariff or move to the statutory system."
+        },
+        {
+          "type": "paragraph",
+          "html": "The plan combines fair rates with wide cover: a free choice of doctors including private practices, dental treatment, glasses and contact lenses, and up to six months of worldwide cover."
+        },
+        {
+          "type": "paragraph",
+          "html": "For many students the monthly premium is lower than the statutory student rate, especially from age 30.*"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Public and private cover compared"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>The full list of benefits is in the <a href=\"/guides\">plan overview.</a> <br></strong>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Which cover is right for you?"
+        },
+        {
+          "type": "quote",
+          "text": "\"Reimbursement was the thing I worried about, and it turned out to be the easiest part: photo of the invoice in the app, money back within two days.\"",
+          "author": "Mahnoor A.",
+          "role": "Student plan customer, Karachi"
+        },
+        {
+          "type": "quote",
+          "text": "\"Being able to book an English-speaking doctor through the app made the first months much easier while my German was still basic.\"",
+          "author": "Zainab R.",
+          "role": "Student plan customer, Islamabad"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "How to get health insurance in Germany"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Apply online in a few minutes"
+        },
+        {
+          "type": "paragraph",
+          "html": "Complete the <a href=\"/app/start\">online application</a>. Based on your situation we recommend statutory or private cover."
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Tip:</strong> most visa applicants also need a Blocked Account. <strong>Get both in one application with the <a href=\"/app/start\">{{product}}.</a></strong> It saves time and costs less than arranging the products separately."
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Download your certificates"
+        },
+        {
+          "type": "paragraph",
+          "html": "Shortly after submitting your application, your travel health insurance and German health insurance certificates are available <a href=\"/app/login\">in the portal.</a>"
+        },
+        {
+          "type": "paragraph",
+          "html": "Take them to your visa appointment as proof of cover. Check the list published by your local consulate, since requirements differ slightly."
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Activate"
+        },
+        {
+          "type": "paragraph",
+          "html": "After arrival, activate your health insurance in the portal. If you chose the <a href=\"/complete-setup\">{{product}},</a> activate your Blocked Account at the same time. <br> Our guide explains <a href=\"/help\">how to activate the private plan.</a>"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Settle in"
+        },
+        {
+          "type": "paragraph",
+          "html": "From here on you are covered by an insurer whose service is built for international customers."
+        },
+        {
+          "type": "paragraph",
+          "html": "<a href=\"/complete-setup\">{{product}}</a> customers receive their monthly Blocked Account payouts in their Bank Account as soon as they have activated."
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Tip: seeing a doctor"
+        },
+        {
+          "type": "paragraph",
+          "html": "When you need a doctor, book an appointment in the insurer's app at a time that suits you. After the visit, upload the invoice in the app and the reimbursement arrives within a few days."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "More reasons to choose the student plan"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Made for students"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Available through EC Assets and accepted by universities and embassies.</strong>"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "<strong>Designed for students from Pakistan</strong>: quick sign-up, English-speaking support, no paper forms."
+            },
+            {
+              "html": "<strong>Wide cover at a student rate</strong>: comprehensive benefits at a premium that fits a student budget. <br> <br>"
+            },
+            {
+              "html": "<strong>Worldwide cover included</strong>: up to six months of cover outside Germany as part of the plan."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Affordable"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "<strong>Fair and flexible</strong>: private cover priced for students, so your monthly costs stay low. <br> <br>"
+            },
+            {
+              "html": "<strong>More cover for less</strong>: broader benefits than the statutory system at a lower monthly premium."
+            }
+          ]
+        },
+        {
+          "type": "button",
+          "text": "{{product.start}}",
+          "href": "/app/start",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "English-language service in the app"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>The insurer's app puts every service in your pocket, in English and German.</strong>"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "<strong>One place for everything</strong>: appointments, prescriptions and invoices are handled in the app. <br> <br>"
+            },
+            {
+              "html": "<strong>Remote consultations</strong>: speak to a registered doctor by video, wherever you are. <br> <br>"
+            },
+            {
+              "html": "<strong>Simple reimbursement</strong>: upload an invoice and the money comes back to your account."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Fast reimbursement"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>No waiting weeks for money you have paid out.</strong>"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "<strong>Quick turnaround</strong>: submit invoices in the app and receive the reimbursement in your Bank Account within days. <br> <br>"
+            },
+            {
+              "html": "<strong>Direct hospital settlement</strong>: for larger bills the insurer can pay the hospital directly. <br> <br>"
+            },
+            {
+              "html": "<strong>Broad cover</strong>: goes beyond the basics, including over-the-counter medication and single rooms in hospital."
+            }
+          ]
+        },
+        {
+          "type": "button",
+          "text": "{{product.start}}",
+          "href": "/app/start",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Still have questions?"
+        },
+        {
+          "type": "paragraph",
+          "html": "Book a call with our insurance specialist <a href=\"/help/contact\">here</a>. <br> We are happy to go through your situation with you."
+        },
+        {
+          "type": "button",
+          "text": "{{product.start}}",
+          "href": "/help/contact",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Frequently asked questions"
+        },
+        {
+          "type": "faq",
+          "items": [
+            {
+              "q": "Who is eligible for private health insurance?",
+              "a": "It depends on your situation. Students are frequently eligible. <br> <br> <a href=\"/help/contact\">Book a call</a> with our team or take the <a href=\"/health-insurance#public-or-private\">insurance quiz</a> to find out."
+            },
+            {
+              "q": "Will my university accept the private plan?",
+              "a": "Yes. German universities are required to accept it.<br><br>The plan is a substitutive private health insurance that meets the enrolment requirements under section 193 (3) of the Insurance Contract Act and the long-term care obligation under section 23 (1) of the Social Code, Book XI.<br><br><strong>If your university is unsure, tell us. Our insurance team will contact the university and explain the rules.</strong>"
+            },
+            {
+              "q": "Can I switch back to statutory insurance later?",
+              "a": "A private plan taken out as a student applies for the whole of your studies.<br><br><strong>You cannot switch in either direction while you are still enrolled.</strong> Once the application is submitted and the university informed, the decision stands.<br><br>The one exception: when you turn 30 and the current semester ends, you may move from statutory to private cover to benefit from the lower rate. Students over 30 who stay in the statutory system pay a higher premium because the student rate no longer applies.<br><br><strong>After your studies you can switch</strong> to statutory insurance. Staying private, or switching to it, requires meeting certain conditions such as a minimum income, self-employment or civil servant status."
+            },
+            {
+              "q": "How does reimbursement work?",
+              "a": "In the private system you pay the doctor and the insurer reimburses you. In practice you rarely pay out of pocket:<br><br>Most doctors send an invoice with a payment deadline of around four weeks. Upload it in the app and the reimbursement usually arrives <strong>before the invoice is due.</strong> <br> <br><br><br>For large bills, such as inpatient hospital treatment, the insurer can pay the hospital <strong>directly</strong>. <br> <br><br><br>Check that a treatment is covered before you go ahead. Some treatments, for example dental implants, require a treatment and cost plan to be <strong>approved in advance.</strong>"
+            },
+            {
+              "q": "Where can I find out more?",
+              "a": "<a href=\"/help/contact\">Book a call</a> with our insurance team.<br><br>The <a href=\"/help\">Help Center</a> answers the most common questions.<br><br>Related guides: <br> <br> - <a href=\"/guides\">Myths about private health insurance</a><br><br>- <a href=\"/guides\">Private health insurance in Germany</a><br><br>- <a href=\"/guides/compare-health-insurances\">Public and private cover compared</a>"
+            },
+            {
+              "q": "Can I work while privately insured?",
+              "a": "Yes.<br><br>The plan is a substitutive private insurance and is treated like statutory cover in every official process.<br><br>To keep it while working, make sure your contract is a <strong>working student contract</strong> (<em>Werkstudent</em>) and that you stay under 20 hours a week during the semester. Up to 26 weeks a year you may exceed that limit during semester breaks, evenings or weekends. Going beyond these limits affects your insurance status and your visa.<br><br><strong>Tip:</strong> if an employer's HR system does not list your insurer, choose \"private health insurance\". Before accepting a part-time role, confirm that it is a working student contract. If the employer is unsure, our insurance team can explain it to them.<br><br><br> The limits as of 2026:<br><br>Up to 20 hours a week: you keep student status and your private cover.<br><br>26-week rule: more than 20 hours a week is allowed for up to 26 weeks a year during breaks, evenings or weekends.<br><br>Beyond that you lose student status, become an employee and must move to statutory insurance.<br><br>Keeping to these limits also keeps you within the conditions of your visa. <br> <br>"
+            },
+            {
+              "q": "What does the plan cover?",
+              "a": "The full benefit list is in the <a href=\"/guides\">plan overview.</a>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "hint": "",
+      "background": false,
+      "anchor": "bonus-tariff",
+      "collapse": true,
+      "more": "The bonus tariff",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "The bonus tariff"
+        },
+        {
+          "type": "paragraph",
+          "html": "An optional tariff from our statutory insurance partner for members who want to keep their contribution low. You choose which service packages you want to keep and receive a yearly bonus for the ones you deselect; if you use a deselected service after all, a deductible applies. Amounts and conditions are set by the insurer and shown before you choose the tariff. <sup>1</sup>"
+        },
+        {
+          "type": "paragraph",
+          "html": "You activate the tariff in the insurer's online service after your membership has started, and you can return to full cover at the end of the tariff period."
+        },
+        {
+          "type": "faq",
+          "items": [
+            {
+              "q": "Who can take part?",
+              "a": "Eligible members of our statutory insurance partner, once their membership is active."
+            },
+            {
+              "q": "What if I need a service I have deselected?",
+              "a": "You remain covered. You pay the deductible set by the insurer for that service, and the bonus for the year is reduced accordingly."
+            },
+            {
+              "q": "Does the tariff have another name?",
+              "a": "The insurer uses its own product name; on this website we call it the bonus tariff."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "quote",
+          "text": "\"The university accepted the certificate straight away, and when I applied for my residence permit the insurer prepared the extra document I needed within a day.\"",
+          "author": "Usman K.",
+          "role": "Master's student, Islamabad"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Frequently asked questions"
+        },
+        {
+          "type": "faq",
+          "items": [
+            {
+              "q": "What does the health insurance bundle include?",
+              "a": "Full cover for your time in Germany. <br> It combines travel health insurance for your arrival with German health insurance for your stay.<br><br><strong>Do you also need proof of funds?</strong> <br> The <a href=\"/app/start\">{{product}}</a> adds a Blocked Account and a German Bank Account, so everything the visa asks for comes from one application."
+            },
+            {
+              "q": "How much does health insurance cost in Germany?",
+              "a": "For students, German health insurance typically costs between €120 and €140 a month. <br> <br> With EC Assets, the travel health insurance your visa requires is included at no extra cost. <br> <br> Premiums for your German cover start only when you arrive or when your semester begins.<br><br>Your monthly premium depends on:<br><br>your age<br><br>whether you are a student or an employee<br><br>your health status<br><br>The insurer collects the premium from your German Bank Account. <br> <br> If you choose the {{product}}, that Bank Account is included, so there is nothing extra to set up.<br><br>You see your exact premium during the application, before you commit. <br> <br> <a href=\"/app/start\">{{product.start}}</a> <br> <br> <a href=\"/app/start\">{{product.start}}</a>"
+            },
+            {
+              "q": "Can I switch insurers later?",
+              "a": "If you take out private cover as a student, that choice applies for the whole of your studies.<br><br>You cannot move to statutory insurance while you are still enrolled, but you can switch after graduation or when your visa type changes.<br><br>You can also stay private and move to a fuller tariff if you remain eligible (employees above a certain income, self-employed people or civil servants). <br> <br> <strong>From statutory to private? <br></strong> Some students qualify. Take our quiz to see what we recommend for you. <br> <br> For individual questions you can <a href=\"/help/contact\">book a call with our insurance specialist.</a> <br> We are happy to help."
+            },
+            {
+              "q": "How do I prove my insurance at the visa appointment?",
+              "a": "With both the health insurance bundle and the {{product}}, your certificates appear in your <a href=\"/app/login\">portal</a> as soon as your application is approved, usually within minutes.<br><br>You find them under Documents. <br> Check your embassy's list of required documents as well, since requirements vary by visa type and country."
+            },
+            {
+              "q": "What is the difference between public and private health insurance?",
+              "a": "<strong>Public (statutory, <em>gesetzliche Krankenversicherung</em>)</strong> <br> Run by non-profit insurers under state rules. Premiums depend on your status or income. Cover includes doctor visits, hospital treatment and basic dental care.<br><br><strong>Private (<em>private Krankenversicherung</em>)</strong> <br> Run by private companies. Premiums depend on your age, health and the level of cover you choose. Plans often include quicker appointments, private practices and extra benefits.<br><br>EC Assets offers both, and both are accepted for visa, enrolment, employment and daily life. <br> <br> We work only with established insurers. <br> <br> <a href=\"/guides/compare-health-insurances\">Read our full comparison of the two systems.</a>"
+            },
+            {
+              "q": "Is the cover valid for my visa?",
+              "a": "Yes. Every plan we offer is accepted by the German authorities for visa purposes. <br> <br> We match the cover to your visa type, so you can apply with confidence."
+            },
+            {
+              "q": "What is the difference between travel health insurance and German health insurance?",
+              "a": "Travel health insurance (incoming insurance) is the cover you show at the visa appointment. It applies to your journey and to the time before your German insurance starts.<br><br>After arrival you activate your German health insurance, statutory or private. That cover is compulsory for everyone living in Germany and pays for your everyday medical needs."
+            },
+            {
+              "q": "Do I need health insurance in Germany?",
+              "a": "Yes. German law requires everyone living in the country to be insured. <br> <br> You must also show travel health insurance at your visa appointment.<br><br>All the insurers we work with are recognised by the German authorities."
+            }
+          ]
+        }
+      ],
+      "anchor": "faq"
+    },
+    {
+      "id": 18,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Footnotes"
+        },
+        {
+          "type": "paragraph",
+          "html": "[1] The bonus tariff is an optional tariff offered by our statutory insurance partner and is available once your membership is active. Members can opt out of selected service packages in exchange for a yearly bonus; if those services are used after all, a deductible applies. Amounts and conditions are set by the insurer and shown before you choose the tariff."
+        },
+        {
+          "type": "paragraph",
+          "html": "[2] To keep your Bank Account active you will need to provide a valid visa <strong>or</strong> residence permit after arrival. We will tell you the deadline for submitting these documents."
+        }
+      ]
+    }
+  ]
+}

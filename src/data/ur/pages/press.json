@@ -1,0 +1,63 @@
+{
+  "slug": "press",
+  "path": "/press",
+  "title": "پریس | EC Assets",
+  "description": "EC Assets کے بارے میں میڈیا معلومات۔ لوگو فائلیں اور پریس سے متعلق سوالات۔",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "پریس"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>میڈیا معلومات</strong>"
+        }
+      ],
+      "photo": "/img/photos/cine-speicherstadt-night.jpg"
+    },
+    {
+      "id": 1,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "لوگو فائلیں"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "EC Assets لوگو، گہرا ورژن (درخواست پر دستیاب)",
+              "mark": "ok"
+            },
+            {
+              "html": "EC Assets لوگو، ہلکا ورژن (درخواست پر دستیاب)",
+              "mark": "ok"
+            },
+            {
+              "html": "EC Assets نشان (درخواست پر دستیاب)",
+              "mark": "ok"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>پریس سے متعلق سوالات کے لیے:</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "<a href=\"/\">press@ecassets.com</a>"
+        }
+      ]
+    }
+  ]
+}

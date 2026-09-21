@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import { pages, posts, OVERRIDDEN } from '../lib/content';
+import { EXACT } from '../../redirects.mjs';
+const marketing = pages.filter((p) => !OVERRIDDEN.has(p.slug)).sort((a, b) => a.path.localeCompare(b.path));
+const custom = [
+  ['/guides', 'Guides-Uebersicht (Template)'], ['/guides/tag/studying-in-germany', 'Guides-Kategorie (Template)'],
+  ['/study-loan', 'Studienkredit (handkomponiert, Zahlen als Platzhalter)'],
+  ['/app/start', 'Onboarding-Wizard'], ['/app/login', 'Login'], ['/app/dashboard', 'Portal-Dashboard (Annahme)'],
+  ['/partner/login', 'Partner-Login (Stub)'], ['/help', 'Help Center (Stub)'], ['/help/contact', 'Contact (Stub)'],
+  ['/authorities', 'Behoerden-Pruefung (Stub)'], ['/search', 'Suche (Stub)'], ['/mockup-illustrations', 'Illustrationen (intern)'],
+];
+---
+<Base title="Seitenuebersicht (intern)">
+  <main id="main" class="container sm">
+    <h1>Seitenuebersicht</h1>
+    <p>Alle Routen des Mockups nach der Abloesung von der Vorlage (16-PROMPT). Marketing-Seiten sind generisch aus den Daten gerendert.</p>
+    <h2>Marketing-Seiten ({marketing.length})</h2>
+    <table><thead><tr><th>Route</th><th>Titel</th><th>Sektionen</th></tr></thead><tbody>
+      {marketing.map((p) => <tr><td><a href={p.path}>{p.path}</a></td><td>{p.title}</td><td>{p.sections.length}</td></tr>)}
+    </tbody></table>
+    <h2>Eigene Templates und App-Screens ({custom.length})</h2>
+    <table><tbody>{custom.map(([r, d]) => <tr><td><a href={r}>{r}</a></td><td>{d}</td></tr>)}</tbody></table>
+    <h2>Blog-Artikel ({posts.length})</h2>
+    <ul>{posts.map((p) => <li><a href={`/guides/${p.slug}`}>{p.title}</a> <small>{p.tags.join(', ')}</small></li>)}</ul>
+    <h2>Weiterleitungen ({Object.keys(EXACT).length} je Sprache)</h2>
+    <table><tbody>{Object.entries(EXACT).map(([a, b]) => <tr><td>{a}</td><td><a href={b}>{b}</a></td></tr>)}</tbody></table>
+  </main>
+</Base>
+<style>
+  .sm { padding: 56px 0 80px; font-size: .93rem; }
+  .sm h2 { font-size: 1.35rem; margin-top: 2em; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 32px; display: block; overflow-x: auto; }
+  td, th { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+  th { font-size: .68rem; text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-muted); }
+  tr:hover td { background: var(--color-surface); }
+  small { color: var(--color-muted); }
+  ul { padding-left: 1.2em; }
+  li { margin: 4px 0; }
+</style>

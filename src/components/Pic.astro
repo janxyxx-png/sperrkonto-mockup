@@ -1,0 +1,26 @@
+---
+/** Foto mit Varianten (Hebel 7, 18-NAECHSTES-LEVEL): <picture> mit AVIF und WebP in 480/960/1440 px, JPEG als Rueckfall.
+ *  sizes sagt dem Browser, wie breit das Bild im Layout ist (z. B. "100vw" fuer Heros, "(max-width: 800px) 100vw, 50vw"
+ *  fuer Zweispalter). Ohne Varianten (andere Ordner) faellt die Komponente auf ein einfaches <img> zurueck.
+ *  M14: nachgeladene Bilder (loading=lazy) mit fetchpriority=low, damit sie Schrift, Skript und Hero nicht bedraengen; eager bleibt
+ *  wie bisher (priority = high, sonst Browser-Standard). */
+import { hasVariants, srcsetFor, imgSize } from '../lib/img';
+interface Props { src: string; alt?: string; sizes?: string; eager?: boolean; class?: string; style?: string; width?: number; height?: number; priority?: boolean; [k: `data-${string}`]: string | undefined }
+const { src, alt = '', sizes = '100vw', eager = false, class: cls, style, width: w0, height: h0, priority = false, ...rest } = Astro.props;
+const v = hasVariants(src);
+// Bildbox (M10): ohne Angabe kommen Breite und Hoehe des Originals aus photos/sizes.json, damit der Browser den Platz vorab kennt
+const box = w0 === undefined && h0 === undefined ? imgSize(src) : undefined;
+const width = w0 ?? box?.[0], height = h0 ?? box?.[1];
+---
+{v ? (
+  <picture>
+    <source type="image/avif" srcset={srcsetFor(src, 'avif')} sizes={sizes} />
+    <source type="image/webp" srcset={srcsetFor(src, 'webp')} sizes={sizes} />
+    <img src={src} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" fetchpriority={priority ? 'high' : eager ? undefined : 'low'} class={cls} style={style} width={width} height={height} {...rest} />
+  </picture>
+) : (
+  <img src={src} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" fetchpriority={priority ? 'high' : eager ? undefined : 'low'} class={cls} style={style} width={width} height={height} {...rest} />
+)}
+<style>
+  picture { display: contents; }
+</style>

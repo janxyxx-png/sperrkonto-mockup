@@ -1,0 +1,335 @@
+{
+  "slug": "home",
+  "path": "/",
+  "title": "جرمنی منتقلی کے لیے بلاکڈ اکاؤنٹ، ہیلتھ انشورنس اور بینک اکاؤنٹ",
+  "description": "جرمنی جا رہے ہیں؟ EC Assets آپ کی ویزا درخواست کی تین ضروریات، بلاکڈ اکاؤنٹ، ہیلتھ انشورنس اور جرمن بینک اکاؤنٹ، ایک آن لائن درخواست میں یکجا کرتا ہے۔ تیز، واضح اور مناسب قیمت پر۔",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "hero-frontpage__section",
+      "background": true,
+      "blocks": [
+        {
+          "type": "paragraph",
+          "html": "تیار ہو کر پہنچیں۔"
+        },
+        {
+          "type": "paragraph",
+          "html": "جرمن ویزے کی ہر ضرورت، سفر سے پہلے آن لائن مکمل۔ پاکستان سے جرمنی جانے والے طلبہ اور پیشہ ور افراد کے لیے بنایا گیا۔"
+        },
+        {
+          "type": "button",
+          "text": "{{product.start}}",
+          "href": "/app/start",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon- btn-icon"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "جس دن رقم پہنچے، اسی دن تصدیقی خط",
+              "mark": "ok"
+            },
+            {
+              "html": "پہلے ہفتوں کے لیے ٹریول ہیلتھ انشورنس شامل",
+              "mark": "ok"
+            },
+            {
+              "html": "پرواز سے پہلے جرمن IBAN تیار",
+              "mark": "ok"
+            },
+            {
+              "html": "ہمارے پارٹنر بینکوں کے ذریعے سود سے پاک تعلیمی قرض",
+              "mark": "ok"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "quote",
+          "text": "\"میں نے کراچی میں اپنے کچن ٹیبل سے بلاکڈ اکاؤنٹ کھولا۔ تصدیقی خط اگلے دن آ گیا اور سفارت خانے نے اسے بغیر کسی سوال کے قبول کر لیا۔\"",
+          "author": "عریبہ او.",
+          "role": "ڈیٹا سائنس کی ماسٹرز طالبہ، برلن، کراچی سے"
+        },
+        {
+          "type": "quote",
+          "text": "\"کرایہ، فون کا بل، سودا سلف: پہلے ہفتے سے سب کچھ اسی اکاؤنٹ سے چلا۔ کارڈ فزیکل کارڈ آنے سے پہلے ہی میری والٹ ایپ میں تھا۔\"",
+          "author": "سلمیٰ بی.",
+          "role": "ماسٹرز طالبہ، ملتان"
+        },
+        {
+          "type": "quote",
+          "text": "\"تین پراڈکٹس، ایک لاگ اِن۔ جب میں میونخ پہنچا تو میرا بینک اکاؤنٹ پہلے سے فعال تھا اور پہلی ادائیگی میرا انتظار کر رہی تھی۔\"",
+          "author": "بلال آر.",
+          "role": "مکینیکل انجینئرنگ کے ماسٹرز طالب علم، میونخ، لاہور سے"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تین پراڈکٹس۔ ایک سیٹ اپ۔"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "بلاکڈ اکاؤنٹ"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>وہ مالی ثبوت جو آپ کے ویزے کے لیے درکار ہے</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "بلاکڈ اکاؤنٹ (<em>Sperrkonto</em>) جرمن حکام کو دکھاتا ہے کہ آپ اپنے قیام کے دوران اپنا خرچ اٹھا سکتے ہیں۔ ہمارا اکاؤنٹ ہر سفارت خانے اور امیگریشن دفتر کے ہاں تسلیم شدہ ہے، اور تصدیقی خط اسی دن جاری ہوتا ہے جس دن آپ کی رقم پہنچتی ہے۔"
+        },
+        {
+          "type": "button",
+          "text": "مزید جانیں",
+          "href": "/blocked-account",
+          "style": "relative btn-s btn btn-outline btn-tertiary btn-outline-1 text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "button",
+          "text": "ابھی کھولیں",
+          "href": "/app/start",
+          "style": "relative btn-s btn btn-solid btn-secondary text-base fill-base btn-icon-back btn-icon"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "ہیلتھ انشورنس"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>آپ کی صورتحال کے مطابق کوریج</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "ایسے پارٹنرز کی <strong>سرکاری یا نجی ہیلتھ انشورنس</strong> منتخب کریں جو بین الاقوامی درخواست گزاروں کو سمجھتے ہیں۔ دونوں آپشن <strong>ویزے کے لیے قابلِ قبول</strong> ہیں اور انگریزی میں سروس کے ساتھ آتے ہیں۔ پہلے ہفتوں کے لیے <strong>ٹریول ہیلتھ انشورنس</strong> شامل ہے۔"
+        },
+        {
+          "type": "button",
+          "text": "مزید جانیں",
+          "href": "/health-insurance",
+          "style": "relative btn-s btn btn-outline btn-tertiary btn-outline-1 text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "button",
+          "text": "کوریج منتخب کریں",
+          "href": "/app/start",
+          "style": "relative btn-s btn btn-solid btn-secondary text-base fill-base btn-icon-back btn-icon"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "بینک اکاؤنٹ"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>روزمرہ زندگی کے لیے جرمن اکاؤنٹ</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>کرایہ ادا کریں، تنخواہ وصول کریں اور اپنی رقم ایک ایپ میں سنبھالیں۔</strong> آپ کا اکاؤنٹ <strong>آپ کے بلاکڈ اکاؤنٹ سے منسلک</strong> ہے اور جرمن <strong>IBAN</strong> کے ساتھ آتا ہے، جو مالک مکان اور آجر مانگتے ہیں۔ <strong>کوئی اکاؤنٹ فیس نہیں</strong> اور کم از کم بیلنس کی شرط نہیں۔ <strong>{{product}} میں شامل۔</strong>"
+        },
+        {
+          "type": "button",
+          "text": "مزید جانیں",
+          "href": "/german-bank-account",
+          "style": "relative btn-s btn btn-outline btn-tertiary btn-outline-1 text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "button",
+          "text": "ابھی کھولیں",
+          "href": "/app/start",
+          "style": "relative btn-s btn btn-solid btn-secondary text-base fill-base btn-icon-back btn-icon"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "{{product}}"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>تینوں صرف {{price.monthly}} ماہانہ میں۔</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "تیار ہو کر پہنچنے کا سب سے آسان طریقہ۔ ایک ہی درخواست میں اپنا <strong>بلاکڈ اکاؤنٹ اور بینک اکاؤنٹ</strong> کھولیں اور وہ <strong>ہیلتھ انشورنس</strong> حاصل کریں جو آپ کے ویزے کو درکار ہے۔ ڈیجیٹل اسٹوڈنٹ آئی ڈی اور انشورنس بونس ٹیرف جیسی اضافی سہولتیں شامل ہیں۔ <br>"
+        },
+        {
+          "type": "button",
+          "text": "مزید جانیں",
+          "href": "/complete-setup",
+          "style": "relative btn-s btn btn-outline btn-tertiary btn-outline-1 text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "button",
+          "text": "{{product.choose}}",
+          "href": "/app/start",
+          "style": "relative btn-s btn btn-solid btn-secondary text-base fill-base btn-icon-back btn-icon"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "ان لوگوں کی کہانیاں جنہوں نے یہ سفر کیا"
+        },
+        {
+          "type": "paragraph",
+          "html": "طلبہ اور پیشہ ور افراد بتاتے ہیں کہ انہوں نے جرمنی کی تیاری کیسے کی، کیا چیز حیران کن تھی اور وہ کیا مختلف کرتے۔ ہر مہینے نئی کہانیاں۔"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "ہمارے صارفین کیا کہتے ہیں"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "جرمنی منتقلی کے لیے ایک ایپ"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>بلاکڈ اکاؤنٹ، ہیلتھ انشورنس اور بینک اکاؤنٹ، سب اپنے فون سے سنبھالیں۔</strong>"
+        },
+        {
+          "type": "image",
+          "src": "icon",
+          "alt": ""
+        },
+        {
+          "type": "image",
+          "src": "icon",
+          "alt": ""
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "آپ کے سفر کے لیے گائیڈز"
+        },
+        {
+          "type": "button",
+          "text": "تمام گائیڈز",
+          "href": "/guides",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "اکثر پوچھے جانے والے سوالات"
+        },
+        {
+          "type": "faq",
+          "items": [
+            {
+              "q": "{{product}} میں کیا شامل ہے؟",
+              "a": "<p>{{product}} میں بلاکڈ اکاؤنٹ، جرمن بینک اکاؤنٹ اور وہ ہیلتھ انشورنس شامل ہے جو آپ کی ویزا درخواست مانگتی ہے، سب ایک ہی درخواست میں۔ ماہانہ فیس دونوں اکاؤنٹس کے لیے ہے؛ انشورنس پریمیم انشورر کو جاتا ہے اور صرف پہنچنے کے بعد وصول ہوتا ہے۔</p>"
+            },
+            {
+              "q": "درخواست کا عمل کیسے ہوتا ہے؟",
+              "a": "سب کچھ آن لائن ہوتا ہے۔ ایک پراڈکٹ منتخب کریں، چند سوالات کے جواب دیں تاکہ ہم آپ کی صورتحال کے مطابق انشورنس اور اکاؤنٹ سیٹ اپ طے کر سکیں، اور درخواستی فارم مکمل کریں۔ آپ کو دستاویزات ڈیجیٹل طور پر ملتی ہیں اور آپ انہیں ویزا اپائنٹمنٹ کے لیے ڈاؤن لوڈ کر سکتے ہیں۔"
+            },
+            {
+              "q": "کیا مجھے پوری رقم کے بغیر بلاکڈ اکاؤنٹ مل سکتا ہے؟",
+              "a": "ہاں۔ ہمارے پارٹنر بینک ڈپازٹ فراہم کرتے ہیں اور EC Assets سود براہِ راست بینک کو ادا کرتا ہے، اس لیے آپ صرف وہی واپس کرتے ہیں جو آپ کو ملا۔ اہلیت چیک میں دو منٹ لگتے ہیں۔ <a href=\"/study-loan\">سود سے پاک تعلیمی قرض کے بارے میں مزید۔</a>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "paragraph",
+          "html": "آپ کا EC Assets ڈیبٹ کارڈ ایپل پے اور گوگل پے میں شامل کیا جا سکتا ہے، تاکہ آپ پہنچنے کے پہلے دن سے فون سے ادائیگی کر سکیں۔"
+        }
+      ]
+    }
+  ]
+}

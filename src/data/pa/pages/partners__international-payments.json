@@ -1,0 +1,261 @@
+{
+  "slug": "partners/international-payments",
+  "path": "/partners/international-payments",
+  "title": "بین الاقوامی ادائیگی پارٹنر | EC Assets",
+  "description": "ساڈے بین الاقوامی ادائیگی پارٹنر راہیں باہرلے ملک توں آپݨے بلاکڈ اکاؤنٹ وچ رقم کیویں پاؤ: مقامی کرنسیاں، شفاف فیساں، ٹریکنگ تے سپورٹ۔",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "کتھوں وی آپݨے بلاکڈ اکاؤنٹ وچ رقم پاؤ"
+        },
+        {
+          "type": "paragraph",
+          "html": "سرحداں پار وڈی رقم بھیجݨا <strong>محفوظ، سادہ تے قابلِ پیش گوئی</strong> لگݨا چاہیدا اے۔ ایسے لئی تہاڈے بلاکڈ اکاؤنٹ دے ڈپازٹ ساڈے بین الاقوامی ادائیگی پارٹنر راہیں چلدے نیں، اک عالمی ادائیگی کمپنی جو بالکل ایسے کم دی ماہر اے۔"
+        },
+        {
+          "type": "paragraph",
+          "html": "اسی مل کے یقینی بݨاندے آں کہ تہاڈے پیسے <strong>جلدی تے محفوظ پہنچن</strong>، تاں جے تسی آپݨی منتقلی دے باقی کماں تے دھیان دے سکو۔"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ],
+      "figure": "/img/photos/cine-car-night-woman.jpg"
+    },
+    {
+      "id": 1,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "paragraph",
+          "html": "<strong>آپݨی کرنسی وچ ادا کرو</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "کئی کرنسیاں سپورٹ ہوندیاں نیں، تے تصدیق توں پہلاں شرحِ تبادلہ تے فیس دکھائی جاندی اے۔"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>محفوظ تے ریگولیٹڈ</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "ساڈا پارٹنر اک لائسنس والا پیمنٹ ادارہ اے تے کئی ملکاں وچ یونیورسٹیاں تے ادارے ایہنوں ورتدے نیں۔"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>ٹریکنگ تے سپورٹ</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "آپݨی ادائیگی حقیقی ویلے وچ ویکھو، تے سوال ہووے تے کئی زباناں والی سپورٹ ٹیم تک پہنچو۔"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ٹرانسفر شروع کرو"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets پورٹل وچ آپݨی ادائیگی شروع کرو تے آپݨا ڈپازٹ محفوظ، شفاف طریقے نال بھیجو۔"
+        },
+        {
+          "type": "button",
+          "text": "ہݨے ٹرانسفر کرو",
+          "href": "/app/login",
+          "style": "btn btn-m btn-solid btn-white text-base fill-base btn-icon btn-icon-back"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ٹرانسفر کیویں کم کردا اے"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "ادائیگی شروع کرو"
+        },
+        {
+          "type": "paragraph",
+          "html": "آپݨے <a href=\"/app/login\">EC Assets پورٹل</a> وچ بلاکڈ اکاؤنٹ تھلے <strong>میریاں ادائیگیاں</strong> کھولو۔ تسی زیرِ التوا ادائیگیاں ویکھدے او تے <strong>ادائیگی شروع کرو</strong> نال نویں شروع کر سکدے او۔"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "بھیجݨ والا ملک چݨو"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>اوہ ملک چݨو جتھوں تسی ادا کر رہے او۔</strong> ٹرانسفر اوس ملک دے بینک اکاؤنٹ توں آݨا چاہیدا اے۔"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "رقم چݨو"
+        },
+        {
+          "type": "paragraph",
+          "html": "تہاڈے بلاکڈ اکاؤنٹ لئی لوڑیندی پوری رقم، یا اوہدا اک حصہ جے تسی قسطاں وچ ادا کرنا چاہندے او۔"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "ادائیگی پارٹنر چݨو"
+        },
+        {
+          "type": "paragraph",
+          "html": "طریقے دے طور تے ساڈا ادائیگی پارٹنر چݨو تے آپݨا مقامی کرنسی آپشن چݨو۔ <br>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "ادائیگی دا طریقہ چݨو"
+        },
+        {
+          "type": "paragraph",
+          "html": "بینک ٹرانسفر، کریڈٹ یا ڈیبٹ کارڈ، یا تہاڈے ملک وچ دستیاب مقامی ادائیگی طریقیاں وچوں اک۔"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "تصدیق وصول کرو"
+        },
+        {
+          "type": "paragraph",
+          "html": "جیویں ای فنڈ تہاڈے بلاکڈ اکاؤنٹ وچ پہنچدے نیں، EC Assets تہانوں ای میل کردا اے۔"
+        },
+        {
+          "type": "button",
+          "text": "ہݨے ٹرانسفر کرو",
+          "href": "/app/login",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "ساڈے گاہک کیہ کہندے نیں"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "EC Assets بلاگ توں رہنمائی"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "جرمنی وچ بین الاقوامی طالب علماں لئی پوری فنڈڈ اسکالرشپاں (2026)"
+        },
+        {
+          "type": "paragraph",
+          "html": "21 جنوری 2026"
+        },
+        {
+          "type": "paragraph",
+          "html": "سرکاری یونیورسٹیاں ٹیوشن نئیں لیندیاں، پر رہݨ سہݨ دا خرچ رہندا اے۔ کہڑیاں اسکالرشپاں اوہنوں پورا کور کردیاں نیں، کون اہل اے تے درخواست کیویں دیو..."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "پاکستان دے طالب علماں لئی اسکالرشپاں (2026)"
+        },
+        {
+          "type": "paragraph",
+          "html": "3 مارچ 2025"
+        },
+        {
+          "type": "paragraph",
+          "html": "جرمنی پاکستانی طالب علماں لئی سبھ توں سستیاں منزلاں وچوں اک اے۔ لاگو ہوݨ والے فنڈنگ پروگرام تے درخواست کیویں مضبوط کریے..."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "جرمنی وچ ٹیوشن فری یونیورسٹیاں"
+        },
+        {
+          "type": "paragraph",
+          "html": "27 فروری 2025"
+        },
+        {
+          "type": "paragraph",
+          "html": "جرمنی اوہناں چند ملکاں وچوں اک اے جتھے سرکاری یونیورسٹیاں ٹیوشن نئیں لیندیاں۔ عملی طور تے ایہدا کیہ مطلب اے، تے تسی ایہدی تھاں کیہ دیندے او..."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "سدھی درخواستاں قبول کرن والیاں یونیورسٹیاں (2026/2027)"
+        },
+        {
+          "type": "paragraph",
+          "html": "24 فروری 2025"
+        },
+        {
+          "type": "paragraph",
+          "html": "ہر یونیورسٹی مرکزی درخواستی سروس نئیں ورتدی۔ اوہناں ادارےآں دی فہرست جتھے تسی سدھی درخواست دیندے او، تے عمل وچ کیہ بدلدا اے..."
+        },
+        {
+          "type": "button",
+          "text": "بلاگ پڑھو",
+          "href": "/guides",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        }
+      ]
+    }
+  ]
+}

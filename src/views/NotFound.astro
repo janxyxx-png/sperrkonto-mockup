@@ -1,0 +1,32 @@
+---
+/** Fehlerseite in der Sprache der Adresse (Jan 19.09.: Urdu und Punjabi vollwertig). Gebaut als /not-found, /ur/not-found,
+ *  /pa/not-found; dist/404.html (src/pages/404.astro) leitet nach dem Sprachpraefix der Adresse hierher um. */
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { type Locale, localePath, t as tr } from '../lib/i18n';
+interface Props { locale?: Locale; path?: string }
+const { locale = 'en', path = '/' } = Astro.props;
+const t = (k: Parameters<typeof tr>[1]) => tr(locale, k);
+const lp = (p: string) => localePath(locale, p);
+const cards = [['/blocked-account', t('blockedAccount'), 'bank'], ['/health-insurance', t('healthInsurance'), 'shield'], ['/german-bank-account', t('bankAccount'), 'card'], ['/help', t('stub.help'), 'chat']] as const;
+---
+<Base title={`404 | EC Assets`} description={t('nf.lead')} locale={locale} path={path}>
+  <main id="main" class="nf">
+    <div class="container">
+      <p class="kicker">404</p>
+      <h1>{t('nf.title')}</h1>
+      <p class="lead">{t('nf.lead')}</p>
+      <div class="grid">{cards.map(([h, l, i]) => <a class="card is-link" href={lp(h)}><span class="icircle"><Icon name={i} size={22} /></span><span>{l}</span><span class="card-arrow"><Icon name="arrow" size={18} /></span></a>)}</div>
+      <p><a class="btn btn-primary" href={lp('/')}>{t('nf.home')}</a> <a class="btn btn-outline" href={lp('/search')}>{t('search')}</a></p>
+    </div>
+  </main>
+</Base>
+<style>
+  .nf { padding: 72px 0 var(--section-y); }
+  h1 { font-size: var(--fs-h1-page); max-width: 18ch; margin-bottom: 16px; }
+  .lead { max-width: 56ch; margin-bottom: 36px; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--grid-gap); margin-bottom: 40px; }
+  .card { display: flex; flex-direction: column; gap: 14px; min-height: 140px; padding-bottom: 60px; font-weight: 600; text-decoration: none; color: var(--color-text); }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } .card { min-height: 0; flex-direction: row; align-items: center; padding-bottom: var(--card-pad); } .card .card-arrow { position: static; margin-inline-start: auto; } }
+</style>

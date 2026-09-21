@@ -1,0 +1,164 @@
+/* ============================================================================
+   tokens-vorschlag.css - Vorschlag als Ersatz fuer src/styles/tokens.css
+   Stand 18.09.2026. Referenzwerte stammen aus Live-Messungen, siehe
+   daten/messwerte.json und 02-TOKENS.md.
+
+   Richtung: Instrument Sans, schwarz/weiss/grau, EIN Akzent (Bordeaux der Marke),
+   keine Schatten, Hierarchie ueber Form statt Farbe.
+   Neu: neutrale Grautoene, groessere und leichtere Headlines, engere Lead-
+   Zeilenhoehe, eigene Tokens fuer dunkle Sektionen.
+   ============================================================================ */
+
+:root {
+  --font-heading: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-body: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif;
+
+  /* --- Flaechen und Text (hell) ------------------------------------------ */
+  --color-bg: #ffffff;
+  --color-surface: #f5f5f6;          /* war #f4f5f8 - Blaustich raus; Revolut #F7F7F7 */
+  --color-surface-strong: #ebebec;   /* war #e8eaf0 */
+  --color-text: #0b0f19;             /* bleibt; Revolut #1F1F1F, N26 #1B1B1B */
+  --color-muted: #6e6e73;            /* war #5b6472 - blaugrau raus; Revolut #717173 */
+  --color-border: #e4e4e6;           /* war #e3e6ec */
+
+  /* --- Flaechen und Text (dunkle Sektionen) ------------------------------ */
+  /* Seit 18.09. abends (Jan: "zu viel Schwarz"): die vollflaechigen dunklen Flaechen tragen das Rot der Marke,
+     nicht mehr Tinte: Kreditband, Paketkarte "Most popular", Fussnoten, Footer, Buchcover. Tinte bleibt fuer Text,
+     Zweitbuttons, Pfeilkreise und den Fotoschleier. */
+  --color-dark: #8e2d2f;             /* Sektionshintergrund, vollflaechig = Marke */
+  --color-dark-surface: #7c2427;     /* Karte auf dunkler Sektion, eine Stufe tiefer */
+  --color-on-dark: #ffffff;
+  --color-on-dark-muted: #efd8d8;    /* 7,2:1 auf Bordeaux */
+  --color-on-dark-border: rgba(255, 255, 255, .2);
+  --scrim: linear-gradient(180deg, rgba(11,15,25,.55) 0%, rgba(11,15,25,.25) 45%, rgba(11,15,25,.75) 100%);
+  /* Fotoserie (14-PROMPT Aufgabe 1): eine Farbanpassung fuer alle Fotos, damit gemischte Quellen wie ein Shoot wirken.
+     Ein eigener Shoot setzt beides auf none bzw. transparent. */
+  /* Seit 18.09. abends cineastisch (Jan): mehr Kontrast, etwas weniger Farbe, leicht abgedunkelt; dazu Vignette in Hero und Band. */
+  --photo-grade: contrast(1.08) saturate(.88) brightness(.96);
+  --photo-warm: rgba(160, 84, 78, .06); /* Hauch der Marke ueber allen Fotos */
+  --vignette: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(6, 8, 14, .45) 100%);
+
+  /* --- Marke und Akzent -------------------------------------------------- */
+  /* Seit 18.09. abends: Bordeaux #8e2d2f, die Farbe der EC-Assets-Wortmarke (ecassets.com, --primary 359 52% 37%).
+     Tinte bleibt die Arbeitsfarbe (Text, Rahmen, dunkle Flaechen, Zweitbuttons). Bordeaux ist die Signatur und
+     kommt dosiert: Logo, EIN Primaerbutton je Blickfeld, Kicker, Haken, Sterne, Stempel, Fokus, Auswahl.
+     Dazu als Flaeche ueberall dort, wo vorher Tinte stand (--color-dark). Nie als Text auf Tinte (Kontrast 1,6:1).
+     Blau bleibt tabu (12-ROTER-FADEN). */
+  --color-brand: #8e2d2f;
+  --color-accent: #8e2d2f;
+  --color-accent-strong: #741f23;      /* Hover auf Bordeaux */
+  --color-accent-soft: #f7efef;        /* getoente Flaeche: Haken-Kreis, Schrittnummer, Menue-Hover, Fokus-Schein */
+  --color-accent-tint: #e9d3d3;        /* Rahmen und Trenner auf getoenter Flaeche */
+  --color-accent-on-dark: #ffffff;     /* auf den roten Flaechen ist der Akzent weiss; #e6a7a9 waere die Variante auf Tinte (4,8:1) */
+  --color-accent-contrast: #ffffff;    /* Text auf Bordeaux (8,3:1) */
+  --color-focus: var(--color-accent);  /* Fokusring hell; auf dunkel weiss (base.css) */
+
+  --color-ink: #0b0f19;                /* Zweitbuttons, dunkle Flaechen */
+  --color-ink-soft: #161b28;
+
+  --color-ok: var(--color-accent);
+  --color-ok-on-dark: var(--color-accent-on-dark);
+  --color-no: #c0392b;
+
+  /* --- Radien und Schatten: unveraendert ---------------------------------- */
+  --radius-s: 12px;
+  --radius-m: 20px;                  /* deckt sich mit Revoluts Kartenradius */
+  --radius-l: 28px;
+  --radius-pill: 999px;
+
+  --shadow-card: none;
+  --shadow-card-hover: none;
+  --shadow-float: 0 40px 80px -30px rgba(11, 15, 25, .35), 0 0 0 1px rgba(11, 15, 25, .04);
+
+  /* --- Raster ------------------------------------------------------------ */
+  --container: 1200px;
+  --gutter: 24px;
+  --section-y: 80px;                 /* war 96 (M03: zwei Vertikalmasse, Kapitel und innen) */
+  --section-y-tight: 72px;           /* dunkle Sektionen, Trust-Leiste, Matrix */
+  /* Rhythmus (M03, Revolut-Muster): 112 bis 160 px zwischen Kapiteln, 56 px innerhalb eines Kapitels. base.css .chapter / .inner */
+  --chapter-y: clamp(112px, 10vw, 160px);
+  --section-y-inner: 56px;
+  --card-pad: 24px;                  /* neu; Revolut 24px */
+  --grid-gap: 24px;                  /* neu; Revolut durchgehend 24px */
+
+  /* --- Typo-Skala -------------------------------------------------------- */
+  --fs-h1: clamp(2.75rem, 6.6vw, 6rem);        /* max 96px (Jan 18.09. spaet: eine Stufe groesser als Revoluts 87,6px) */
+  --fs-h1-page: clamp(2.25rem, 4.4vw, 3.625rem); /* neu, max 58px; Revolut Unterseiten 58,1px */
+  --fs-h2: clamp(1.9rem, 3.8vw, 3.25rem);      /* max 52px; Revolut 51,8px: Sektionsueberschrift */
+  /* Drei Display-Stufen unter dem Hero (M03): Kapitel 72 px, Sektion 52 px, Utility 34 px (FAQ, Guides, Rechner). base.css h2.chapter / h2.util */
+  --fs-chapter: clamp(2.5rem, 5vw, 4.5rem);
+  --fs-h2-util: clamp(1.5rem, 2.4vw, 2.125rem);
+  --fs-h3: 1.5rem;                             /* 24px; Revolut 24px */
+  --fs-body: 1.125rem;                         /* 18px; Revolut 18px */
+  --fs-small: 1rem;                            /* 16px Sekundaertext; Revolut 16/24 */
+
+  --fw-display: 600;                 /* war fest 700; Revolut 500, N26 400.
+                                        500 einmal gegentesten - Instrument Sans
+                                        kann bei 500 auf 88px duenn wirken.     */
+  --fw-body: 400;
+  --fw-ui: 500;                      /* Buttons, Labels; Revolut 500 */
+
+  --lh-display: 1.0;                 /* Revolut exakt 1,0 */
+  --lh-lead: 1.4;                    /* Revolut 1,33 - fuer Lead, Karten, Features */
+  --lh-body: 1.6;                    /* fuer Artikel- und Langtext */
+
+  --tracking-display: -.034em;       /* Jan 18.09. spaet: enger bei 96px; Revolut -0,024em */
+  /* Display-Zahlen (Preise, Kennzahlen, Trust): gross, leicht, tabellarisch */
+  --fw-number: 400;
+  --tracking-number: -.04em;
+  --tracking-h2: -.02em;
+  --tracking-caps: .08em;
+
+  --ease-out: cubic-bezier(.2, .7, .2, 1);
+  /* --- Haptik (Feinschliff 27, 20.09. abends) -------------------------------
+     Ein Ausklingen fuer Einblendungen, eine Feder mit leichtem Ueberschwung NUR nach einem Impuls (Segment-Schieber,
+     Etiketten, die aufspringen), drei Dauern: Druck sofort, Zeigen kurz, Erscheinen ruhig. */
+  --ease-out-soft: cubic-bezier(.16, 1, .3, 1);
+  --ease-spring: cubic-bezier(.34, 1.45, .64, 1);
+  --dur-press: 70ms;
+  --dur-fast: 160ms;
+  --dur: 260ms;
+  --dur-slow: 700ms;
+  /* Runde 29 (M01), Hausregel fuer Bewegung: Druck 70 ms, Zeigen 160, Erscheinen 750, Szene 420, Morph 500, Scrub linear.
+     Federn nur nach einem Impuls (Schieber, Etiketten), nie in Schleife. Drei Stufen: "scrubbed" (Fotos und Objekte, die
+     der Nutzer mit dem Scrollen treibt, auch bei reduzierter Bewegung erlaubt), "faded" ([data-rv], bei reduzierter Bewegung
+     aus), "static". Zustaende (data-stage der Kapitel) schalten immer, nur ihre Uebergaenge entfallen. */
+  --dur-scene: 420ms;
+  --dur-morph: 400ms;                  /* Seitenwechsel; waehrend der Morph laeuft, nimmt Chrome keine Klicks an, deshalb nicht laenger */
+  --stagger-step: 70ms;
+  --band: 45%;                        /* Mittelband fuer inView (Erscheinen); beats schaltet an der Mittellinie */
+  /* Hoehe des klebenden Headers nach dem Scrollen: Anker-Sprungziele (#faq, #how-it-works ...) landen darunter */
+  --hdr-sticky: 72px; /* M14: der Header schrumpft nicht mehr beim Scrollen (72 px, unter 1120 66 px; Header.astro) */
+}
+
+@media (max-width: 800px) {
+  :root {
+    --section-y: 48px;
+    --section-y-tight: 56px;
+    --chapter-y: 72px;
+    --section-y-inner: 32px;
+    --gutter: 20px;
+    --tracking-display: -.02em;      /* enge Laufweite bricht auf kleinen Groessen */
+  }
+}
+@media (max-width: 1120px) { :root { --hdr-sticky: 66px; } }
+/* Telefon (Jan 18.09. 22:30, "mobil komplett umbauen"): engere Abstaende, kleinere Ueberschriften, kleinere Radien */
+@media (max-width: 600px) {
+  :root {
+    --section-y: 44px;
+    --section-y-tight: 40px;
+    --chapter-y: 64px;
+    --section-y-inner: 28px;
+    --gutter: 18px;
+    --fs-h2: 1.75rem;
+    --fs-chapter: 2.25rem;
+    --fs-h2-util: 1.4rem;
+    --fs-h3: 1.15rem;
+    --fs-body: 1rem;
+    --fs-small: .9rem;
+    --radius-l: 20px;
+    --radius-m: 16px;
+    --card-pad: 18px;
+    --grid-gap: 12px;
+  }
+}

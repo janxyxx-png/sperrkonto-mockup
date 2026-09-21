@@ -1,0 +1,112 @@
+{
+  "slug": "privacy-policy",
+  "path": "/privacy-policy",
+  "title": "Privacy Policy | EC Assets",
+  "description": "How EC Assets handles personal data: what we collect, why, for how long, and the rights you have.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Privacy Policy"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>This is a structural placeholder for the mockup. The final wording must come from EC Assets' legal counsel before publication.</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets processes personal data only to provide the products you order, to meet legal obligations and to run this website. This page explains what that means in practice."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "1. Who is responsible"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets, GmbH, Musterstraße 1, 10178, Berlin, is the controller for the processing described here. You can reach our data protection contact at privacy@ecassets.com."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "2. What we process and why"
+        },
+        {
+          "type": "paragraph",
+          "html": "Account and contact data to create and manage your customer account."
+        },
+        {
+          "type": "paragraph",
+          "html": "Identity and residence data to open a Blocked Account and arrange insurance, as required by banking and immigration rules."
+        },
+        {
+          "type": "paragraph",
+          "html": "Payment data to process deposits and fees through our banking and payments partners."
+        },
+        {
+          "type": "paragraph",
+          "html": "Usage data from this website to keep it secure and to understand how it is used, based on your consent where the law requires it."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "3. Who receives your data"
+        },
+        {
+          "type": "paragraph",
+          "html": "Our partner bank, our insurance partners and our payments provider receive the data they need to deliver the product you ordered. We do not sell personal data."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "4. Transfers outside the EEA"
+        },
+        {
+          "type": "paragraph",
+          "html": "Where a partner or service provider is based outside the European Economic Area, we rely on adequacy decisions or standard contractual clauses."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "5. How long we keep data"
+        },
+        {
+          "type": "paragraph",
+          "html": "We keep data for as long as your contract runs and for the retention periods that commercial and tax law require, typically six to ten years."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "6. Your rights"
+        },
+        {
+          "type": "paragraph",
+          "html": "You can request access to your data, correction, deletion, restriction of processing and a copy in a portable format. You can withdraw consent at any time and complain to a supervisory authority."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "7. Cookies and analytics"
+        },
+        {
+          "type": "paragraph",
+          "html": "We use strictly necessary cookies to run the site. Analytics and marketing cookies are set only with your consent, which you can change in the cookie settings."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "8. Changes"
+        },
+        {
+          "type": "paragraph",
+          "html": "We update this policy when our products or the law change. The date of the latest version is shown here: 18 September 2026."
+        }
+      ]
+    }
+  ]
+}

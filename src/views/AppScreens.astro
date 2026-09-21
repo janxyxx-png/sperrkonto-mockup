@@ -1,0 +1,149 @@
+---
+/**
+ * Portal-Prototyp (18-NAECHSTES-LEVEL Hebel 4): drei Screens hinter dem Dashboard, anklickbar, rein clientseitig.
+ * transfer: Ueberweisungsdetails mit Referenz und Status; documents: PDFs fuer die Botschaft mit Vorschau des Briefs;
+ * activate: Aktivierung nach Ankunft mit Datum und Adresse. Texte in portal-copy.ts, Zahlen aus facts.ts.
+ */
+import App from '../layouts/App.astro';
+import PortalNav from '../components/PortalNav.astro';
+import DocObject from '../components/DocObject.astro';
+import Icon from '../components/Icon.astro';
+import { type Locale, t as tr, localePath } from '../lib/i18n';
+import { PORTAL } from '../lib/portal-copy';
+import { DEMO, DEMO_DATA, DEMO_LETTER, fillDates } from '../lib/portal-demo';
+import { PRICE, money } from '../lib/facts';
+import { markPh } from '../lib/placeholders';
+interface Props { locale?: Locale; kind: 'transfer' | 'documents' | 'activate' }
+const { locale = 'en', kind } = Astro.props;
+const t = (k: Parameters<typeof tr>[1]) => tr(locale, k);
+const lp = (p: string) => localePath(locale, p);
+const P = PORTAL[locale] ?? PORTAL.en;
+const c = P[kind];
+const demo = DEMO[locale] ?? DEMO.en;
+const fd = (s: string) => fillDates(s, locale); // M02: Datums-Tokens der Demo-Welt
+const D_ready = () => (P.documents.ready);
+// Empfaengerdaten der Partnerbank sind Platzhalter (Chips ueber markPh); Name und Referenz kommen aus der Demo-Welt (M02)
+const bank = { holder: DEMO_DATA.name, bank: '[PLACEHOLDER: partner bank]', iban: '[PLACEHOLDER: partner bank IBAN]', bic: '[PLACEHOLDER: BIC]', ref: `${DEMO_LETTER.ref} ${DEMO_DATA.name.toUpperCase()}` };
+---
+<App title={c.title} locale={locale} path={`/app/${kind}`}>
+  <div class="dash">
+    <PortalNav locale={locale} current={kind} />
+    <section class="main">
+      <p class="kicker">{c.kicker}</p>
+      <h1>{c.title}</h1>
+      <p class="muted lead">{c.lead}</p>
+
+      {kind === 'transfer' && (() => { const T = P.transfer; return <>
+        <div class="card white details" data-transfer>
+          <dl>
+            {[[T.to, bank.holder], [T.bank, bank.bank], [T.iban, bank.iban], [T.bic, bank.bic], [T.reference, bank.ref], [T.amount, money(PRICE.deposit, locale)]].map(([k, v]) => <div><dt>{k}</dt><dd><span set:html={markPh(v)} /><button type="button" class="copy" data-copy={v} data-copied={T.copied}>{T.copy}</button></dd></div>)}
+          </dl>
+          <p class="muted small">{T.note}</p>
+        </div>
+        <div class="grid2">
+          <div class="card white">
+            <h3>{T.status}</h3>
+            <ol class="track" data-track>{T.steps.map((s, i) => <li class:list={{ done: i === 0 }}><b>{i + 1}</b><span>{s}</span></li>)}</ol>
+            <button class="btn btn-primary only-applying" type="button" data-sent>{T.sent}</button>
+            <p class="muted small only-applying" data-sent-done hidden>{T.sentDone}</p>
+            <p class="received only-active"><span class="badge ready">{D_ready()}</span> {fd(demo.screens.received)}</p>
+          </div>
+          <div class="card white">
+            <h3>{T.partner}</h3>
+            <p class="muted" set:html={markPh(T.partnerText)} />
+          </div>
+        </div>
+      </>; })()}
+
+      {kind === 'documents' && (() => { const D = P.documents; return <>
+        <p class="muted small only-active allready">{demo.screens.allReady}</p>
+        <ul class="docs">{D.items.map((d) => <li class="card white"><div><span class:list={['badge', d.state, { 'only-applying': d.state === 'pending' }]}>{d.state === 'ready' ? D.ready : D.pending}</span>{d.state === 'pending' && <span class="badge ready only-active">{D.ready}</span>}<h3>{d.name}</h3><p class="muted small">{d.note}</p></div>{d.state === 'ready' ? <a class="btn btn-outline" href={lp('/authorities')}><Icon name="doc" size={16} /> {D.download}</a> : <><span class="only-applying"><span class="muted small">{D.pending}</span></span><a class="btn btn-outline only-active" href="#"><Icon name="doc" size={16} /> {D.download}</a></>}</li>)}</ul>
+        <div class="card white preview"><p class="caps muted">{D.preview}</p><DocObject /></div>
+      </>; })()}
+
+      {kind === 'activate' && (() => { const A = P.activate; return <>
+        <div class="card white done only-active"><span class="badge ready">{fd(demo.screens.activatedOn)}</span><p class="muted">{A.doneText} <strong>{A.payout}</strong></p><ol class="track">{A.steps.map((s, i) => <li class="done"><b>{i + 1}</b><span>{s}</span></li>)}</ol></div>
+        <form class="card white act only-applying" data-activate onsubmit="return false">
+          <label class="field"><span>{A.arrival}</span><input type="date" required /></label>
+          <label class="field"><span>{A.address}</span><input type="text" placeholder="Musterstraße 1, 10178 Berlin" /><small class="muted">{A.addressNote}</small></label>
+          <label class="field"><span>{A.upload}</span><input type="file" /></label>
+          <button class="btn btn-primary" type="submit">{A.button}</button>
+        </form>
+        <div class="card white done only-applying" data-done hidden>
+          <span class="badge ready">{A.done}</span>
+          <p class="muted">{A.doneText} <strong>{A.payout}</strong></p>
+          <ol class="track">{A.steps.map((s, i) => <li class="done" style={`--i:${i}`}><b>{i + 1}</b><span>{s}</span></li>)}</ol>
+        </div>
+      </>; })()}
+    </section>
+  </div>
+  <script>
+    // Druck des Briefs (M08): der Download-Knopf auf dem Dokument-Objekt druckt die Vorschau
+    const bindPrint = () => { document.querySelectorAll<HTMLElement>('.preview [data-print]:not([data-bound])').forEach((b) => { b.dataset.bound = '1'; b.style.cursor = 'pointer'; b.addEventListener('click', () => window.print()); }); };
+    bindPrint(); document.addEventListener('astro:page-load', bindPrint);
+    const bind = () => {
+      document.querySelectorAll<HTMLButtonElement>('[data-copy]:not([data-bound])').forEach((b) => { b.dataset.bound = '1'; b.addEventListener('click', async () => { try { await navigator.clipboard.writeText(b.dataset.copy!); } catch {} const o = b.textContent; b.textContent = b.dataset.copied!; setTimeout(() => (b.textContent = o), 1200); }); });
+      // M02 Commit-Moment: Bestaetigung und Schritt 2 sofort, der Knopf 600 ms "pending" mit Spinner, dann weg; nach 1,2 s zaehlt die Glocke (App.astro, ec-unread) hoch
+      const sent = document.querySelector<HTMLButtonElement>('[data-sent]:not([data-bound])'); if (sent) { sent.dataset.bound = '1'; sent.addEventListener('click', () => { if (sent.classList.contains('is-pending')) return; document.querySelector<HTMLElement>('[data-track] li:nth-child(2)')?.classList.add('done', 'is-new'); document.querySelector<HTMLElement>('[data-sent-done]')!.hidden = false; sent.classList.add('is-pending'); sent.setAttribute('aria-busy', 'true'); setTimeout(() => { sent.classList.remove('is-pending'); sent.removeAttribute('aria-busy'); sent.hidden = true; }, 600); setTimeout(() => document.dispatchEvent(new CustomEvent('ec-unread')), 1200); }); }
+      const f = document.querySelector<HTMLFormElement>('[data-activate]:not([data-bound])'); if (f) { f.dataset.bound = '1'; f.addEventListener('submit', () => { f.hidden = true; document.querySelector<HTMLElement>('[data-done]')!.hidden = false; window.scrollTo({ top: 0 }); }); }
+    };
+    // Zustand "In Germany": Sendungsverfolgung komplett; reagiert auch auf den Umschalter in der Seitenleiste
+    const persona = () => { const on = document.documentElement.dataset.persona === 'active'; document.querySelectorAll<HTMLElement>('[data-track] li').forEach((li, i) => { if (on) li.classList.add('done'); else if (i > 0 && !document.querySelector('[data-sent-done]:not([hidden])')) li.classList.remove('done'); }); };
+    persona(); document.addEventListener('ec-persona', persona); document.addEventListener('astro:page-load', persona);
+    bind(); document.addEventListener('astro:page-load', bind);
+  </script>
+</App>
+<style>
+  .dash { display: grid; grid-template-columns: 260px 1fr; gap: 32px; max-width: 1200px; margin: 0 auto; align-items: start; }
+  .dash > :global(*) { min-width: 0; }
+  .main { display: grid; gap: 20px; }
+  h1 { font-size: clamp(1.8rem, 3vw, 2.4rem); margin-bottom: .2em; }
+  .lead { margin: 0 0 8px; }
+  .muted { color: var(--color-muted); max-width: 70ch; } .small { font-size: .85rem; }
+  .card { padding: 26px; }
+  .details dl { margin: 0; display: grid; gap: 0; }
+  .details dl div { display: grid; grid-template-columns: 180px 1fr; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--color-border); align-items: center; }
+  .details dt { color: var(--color-muted); font-size: .88rem; }
+  .details dd { margin: 0; display: flex; justify-content: space-between; gap: 12px; align-items: center; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .details dd :global(.ph-num) { font-weight: 500; font-size: .78rem; }
+  .copy { font: inherit; font-size: .78rem; font-weight: 600; border: 1px solid var(--color-border); background: var(--color-bg); border-radius: var(--radius-pill); padding: 5px 12px; cursor: pointer; color: var(--color-muted); }
+  .copy:hover { color: var(--color-text); border-color: var(--color-text); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  h3 { font-size: 1.15rem; margin-bottom: .6em; }
+  .track { list-style: none; margin: 0 0 18px; padding: 0; display: grid; gap: 10px; }
+  .track li { display: flex; gap: 12px; align-items: center; color: var(--color-muted); font-size: .93rem; }
+  .track b { width: 26px; height: 26px; border-radius: 50%; background: var(--color-surface-strong); display: grid; place-items: center; font-size: .75rem; flex: none; }
+  .track li.done { color: var(--color-text); } .track li.done b { background: var(--color-accent); color: #fff; }
+  /* M02 Commit-Momente: der Kreis federt ein (--ease-spring 320 ms), der Verbinder zum Vorschritt waechst (260 ms); die Aktivierung tickt mit 110 ms Versatz je --i; bei reduzierter Bewegung greift die Kill-Regel in base.css */
+  .track li { position: relative; }
+  .track li + li::before { content: ""; position: absolute; inset-inline-start: 12px; top: -10px; width: 2px; height: 10px; background: var(--color-accent); transform: scaleY(0); transform-origin: top; }
+  .track li.done + li.done::before { transform: scaleY(1); }
+  .track li.is-new::before { animation: m02-grow .26s var(--ease-out) both; }
+  .track li.is-new b { animation: m02-pop .32s var(--ease-spring) both; }
+  [data-done]:not([hidden]) .track li b { animation: m02-pop .32s var(--ease-spring) both; animation-delay: calc(var(--i, 0) * 110ms); }
+  @keyframes m02-pop { from { transform: scale(.5); } to { transform: scale(1); } }
+  @keyframes m02-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  .btn.is-pending { pointer-events: none; }
+  .btn.is-pending::before { content: ""; width: 16px; height: 16px; border-radius: 50%; border: 2px solid currentColor; border-inline-end-color: transparent; animation: m02-spin .7s linear infinite; flex: none; }
+  @keyframes m02-spin { to { transform: rotate(360deg); } }
+  .docs { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .docs li { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .docs h3 { margin: 6px 0 4px; font-size: 1.05rem; }
+  .docs .btn { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+  .badge { display: inline-block; font-size: .62rem; text-transform: uppercase; letter-spacing: var(--tracking-caps); padding: 3px 9px; border-radius: var(--radius-pill); background: var(--color-surface-strong); color: var(--color-muted); }
+  .badge.ready { background: var(--color-accent); color: #fff; }
+  .preview :global(.doc-stage) { max-width: 560px; }
+  /* Druck des Briefs (M08): "Download PDF" auf dem Objekt oeffnet den Druckdialog, gedruckt wird nur das Blatt auf A4 */
+  @media print { :global(body *) { visibility: hidden; } .preview, .preview :global(*) { visibility: visible; } .preview { position: absolute; inset: 0 auto auto 0; margin: 0; box-shadow: none; background: #fff; } .preview :global(.doc-stage) { max-width: none; } }
+  @page { size: A4; margin: 20mm; }
+  .act { display: grid; gap: 16px; max-width: 560px; }
+  .act[hidden], .done[hidden], [data-sent][hidden] { display: none; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field span { font-size: .76rem; font-weight: 600; color: var(--color-muted); text-transform: uppercase; letter-spacing: var(--tracking-caps); }
+  .field input { height: 48px; border-radius: var(--radius-s); border: 1px solid var(--color-border); padding: 0 14px; font: inherit; background: var(--color-bg); }
+  .field input[type=file] { padding: 10px 14px; height: auto; }
+  .done p { margin: 12px 0 16px; }
+  @media (max-width: 900px) { .dash, .grid2 { grid-template-columns: 1fr; } .details dl div { grid-template-columns: 1fr; gap: 4px; } .docs li { flex-direction: column; align-items: flex-start; } }
+  .received { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0; font-size: .92rem; }
+  .allready { margin: -6px 0 0; }
+</style>

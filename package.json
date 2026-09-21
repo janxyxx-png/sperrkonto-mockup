@@ -1,0 +1,25 @@
+{
+  "name": "sperrkonto-mockup",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "variants": "bun scripts/img/variants.ts",
+    "prebuild": "bun scripts/img/variants.ts"
+  },
+  "dependencies": {
+    "astro": "^5",
+    "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@types/qrcode": "^1.5.6",
+    "@vercel/edge": "^1.3.3",
+    "cheerio": "^1.0.0",
+    "puppeteer-core": "^25.11.0",
+    "sharp": "^0.35.4",
+    "simple-icons": "^16.32.0"
+  }
+}

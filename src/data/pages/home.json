@@ -1,0 +1,335 @@
+{
+  "slug": "home",
+  "path": "/",
+  "title": "Blocked Account, Health Insurance and Bank Account for your move to Germany",
+  "description": "Moving to Germany? EC Assets bundles the three things your visa application needs, a Blocked Account, Health Insurance and a German Bank Account, into one online application. Fast, clear and fairly priced.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "hero-frontpage__section",
+      "background": true,
+      "blocks": [
+        {
+          "type": "paragraph",
+          "html": "Arrive prepared."
+        },
+        {
+          "type": "paragraph",
+          "html": "Everything a German visa asks for, set up online before you travel. Built for students and professionals moving to Germany from Pakistan."
+        },
+        {
+          "type": "button",
+          "text": "{{product.start}}",
+          "href": "/app/start",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon- btn-icon"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "Confirmation letter the day your deposit arrives",
+              "mark": "ok"
+            },
+            {
+              "html": "Travel health insurance for your first weeks included",
+              "mark": "ok"
+            },
+            {
+              "html": "German IBAN ready before you fly",
+              "mark": "ok"
+            },
+            {
+              "html": "Interest-free study loan through our partner banks",
+              "mark": "ok"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "quote",
+          "text": "\"I opened the Blocked Account from my kitchen table in Karachi. The confirmation letter came the next day and the embassy accepted it without a single question.\"",
+          "author": "Areeba O.",
+          "role": "Master's student in Data Science, Berlin, from Karachi"
+        },
+        {
+          "type": "quote",
+          "text": "\"Rent, phone bill, groceries: everything ran through the account from week one. The card was in my wallet app before the physical one arrived.\"",
+          "author": "Salma B.",
+          "role": "Master's student, Multan"
+        },
+        {
+          "type": "quote",
+          "text": "\"Three products, one login. When I landed in Munich my bank account was already active and my first payout was waiting.\"",
+          "author": "Bilal R.",
+          "role": "Master's student in Mechanical Engineering, Munich, from Lahore"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Three products. One setup."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Blocked Account"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>The financial proof your visa requires</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "A Blocked Account (<em>Sperrkonto</em>) shows the German authorities that you can support yourself during your stay. Ours is recognised by every embassy and immigration office, and the confirmation letter is issued the day your money arrives."
+        },
+        {
+          "type": "button",
+          "text": "Learn more",
+          "href": "/blocked-account",
+          "style": "relative btn-s btn btn-outline btn-tertiary btn-outline-1 text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "button",
+          "text": "Open now",
+          "href": "/app/start",
+          "style": "relative btn-s btn btn-solid btn-secondary text-base fill-base btn-icon-back btn-icon"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Health Insurance"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Cover that fits your situation</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "Pick <strong>public or private health insurance</strong> from partners that understand international applicants. Both options are <strong>accepted for visa purposes</strong> and come with English-speaking service. <strong>Travel health insurance</strong> for your first weeks is included."
+        },
+        {
+          "type": "button",
+          "text": "Learn more",
+          "href": "/health-insurance",
+          "style": "relative btn-s btn btn-outline btn-tertiary btn-outline-1 text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "button",
+          "text": "Choose cover",
+          "href": "/app/start",
+          "style": "relative btn-s btn btn-solid btn-secondary text-base fill-base btn-icon-back btn-icon"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Bank Account"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>A German account for everyday life</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Pay rent, receive your salary and manage your money in one app.</strong> Your account is <strong>linked to your Blocked Account</strong> and comes with a German <strong>IBAN</strong>, which landlords and employers will ask for. <strong>No account fees</strong> and no minimum balance. <strong>Included in the {{product}}.</strong>"
+        },
+        {
+          "type": "button",
+          "text": "Learn more",
+          "href": "/german-bank-account",
+          "style": "relative btn-s btn btn-outline btn-tertiary btn-outline-1 text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "button",
+          "text": "Open now",
+          "href": "/app/start",
+          "style": "relative btn-s btn btn-solid btn-secondary text-base fill-base btn-icon-back btn-icon"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "{{product}}"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>All three for {{price.monthly}} a month.</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "The simplest way to arrive prepared. Open your <strong>Blocked Account and Bank Account</strong> and secure the <strong>health insurance</strong> your visa needs in a single application. Extras such as the digital student ID and the insurance bonus tariff are included. <br>"
+        },
+        {
+          "type": "button",
+          "text": "Learn more",
+          "href": "/complete-setup",
+          "style": "relative btn-s btn btn-outline btn-tertiary btn-outline-1 text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "button",
+          "text": "{{product.choose}}",
+          "href": "/app/start",
+          "style": "relative btn-s btn btn-solid btn-secondary text-base fill-base btn-icon-back btn-icon"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Stories from people who made the move"
+        },
+        {
+          "type": "paragraph",
+          "html": "Students and professionals tell us how they prepared for Germany, what surprised them and what they would do differently. New stories every month."
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "What our customers say"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "One app for your move to Germany"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Blocked Account, Health Insurance and Bank Account, managed from your phone.</strong>"
+        },
+        {
+          "type": "image",
+          "src": "icon",
+          "alt": ""
+        },
+        {
+          "type": "image",
+          "src": "icon",
+          "alt": ""
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Guides for your move"
+        },
+        {
+          "type": "button",
+          "text": "All guides",
+          "href": "/guides",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Frequently asked questions"
+        },
+        {
+          "type": "faq",
+          "items": [
+            {
+              "q": "What is in the {{product}}?",
+              "a": "<p>The {{product}} combines a Blocked Account, a German Bank Account and the health insurance your visa application requires, set up together in one application. The monthly fee covers the two accounts; the insurance premium goes to the insurer and is billed only after you arrive.</p>"
+            },
+            {
+              "q": "How does the application work?",
+              "a": "Everything happens online. Choose a product, answer a few questions so we can match the right insurance and account setup to your situation, and complete the application form. You receive your documents digitally and can download them for your visa appointment."
+            },
+            {
+              "q": "Can I get a Blocked Account without having the full amount?",
+              "a": "Yes. Our partner banks fund the deposit and EC Assets pays the interest directly to the bank, so you repay only what you received. The eligibility check takes two minutes. <a href=\"/study-loan\">More about the interest-free study loan.</a>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "paragraph",
+          "html": "Your EC Assets debit card can be added to Apple Pay and Google Pay, so you can pay by phone from the day you arrive."
+        }
+      ]
+    }
+  ]
+}

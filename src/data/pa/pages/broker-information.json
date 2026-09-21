@@ -1,0 +1,82 @@
+{
+  "slug": "broker-information",
+  "path": "/broker-information",
+  "title": "بروکر معلومات | EC Assets",
+  "description": "انشورنس بروکر دے طور تے EC Assets بارے قانونی معلومات۔",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "بروکر معلومات"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>ایہ ماک اپ لئی اک ساختی پلیس ہولڈر اے۔ اخیرلی عبارت چھپن توں پہلاں EC Assets دے قانونی مشیر توں آؤنی چاہیدی اے۔</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "انشورنس بروکر دے کردار وچ EC Assets بارے معلومات، جیویں جرمن قانون منگدا اے۔"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "کمپنی"
+        },
+        {
+          "type": "paragraph",
+          "html": "<span dir=\"ltr\">EC Assets GmbH, Musterstraße 1, 10178 Berlin</span>"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "لائسنس"
+        },
+        {
+          "type": "paragraph",
+          "html": "جرمن ٹریڈ ریگولیشن ایکٹ دی دفعہ 34d (1) ہیٹھ انشورنس بروکر دے طور تے لائسنس یافتہ۔ رجسٹریشن نمبر D-1234-ABCDE-56۔"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "رجسٹر"
+        },
+        {
+          "type": "paragraph",
+          "html": "رجسٹریشن جرمن چیمبر آف انڈسٹری اینڈ کامرس دے زیرِ انتظام انشورنس ثالثاں دے عوامی رجسٹر وچ چیک کیتی جا سکدی اے۔"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "آزادی"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets کسے وی انشورنس کمپنی وچ 10 فیصد توں ودھ دا سدھا یا اسدھا حصہ نہیں رکھدا، تے کوئی انشورنس کمپنی EC Assets وچ ایہو جیہا حصہ نہیں رکھدی۔"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "معاوضہ"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets اوہناں انشورنس کمپنیاں توں کمیشن لیندا اے جنہاں دیاں پروڈکٹاں دی اوہ بروکریج کردا اے۔ بروکریج لئی گاہک توں کوئی وکھری فیس نہیں لئی جاندی۔"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "شکایتاں"
+        },
+        {
+          "type": "paragraph",
+          "html": "شکایتاں legal@ecassets.com تے یا انشورنس محتسب نوں بھیجیاں جا سکدیاں نیں: Versicherungsombudsmann e. V., Postfach 08 06 32, 10006 Berlin۔"
+        }
+      ]
+    }
+  ]
+}

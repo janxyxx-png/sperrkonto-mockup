@@ -1,0 +1,17 @@
+---
+/** Feste CTA-Leiste unter 800 px (03-KOMPONENTEN 3.6). Erscheint, wenn der Hero-CTA aus dem Bild ist, und
+ *  verschwindet, solange ein Abschnitts-CTA ([data-cta-anchor]) im Bild ist. Logik in src/scripts/motion.ts. */
+import { type Locale, localePath, t } from '../lib/i18n';
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+---
+<div class="mobile-cta" data-mobile-cta>
+  <a class="btn btn-primary" href={localePath(locale, '/app/start')} data-astro-prefetch="viewport">{t(locale, 'getValuePackage')}</a>
+</div>
+<style>
+  .mobile-cta { position: fixed; inset: auto 0 0 0; z-index: 45; padding: 12px var(--gutter) calc(12px + env(safe-area-inset-bottom)); display: none; transform: translateY(120%); transition: transform .28s var(--ease-out); background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.92) 40%); }
+  .mobile-cta .btn { width: 100%; min-height: 52px; }
+  .mobile-cta.is-visible { transform: none; }
+  @media (max-width: 800px) { .mobile-cta { display: block; } :global(html.nav-lock) .mobile-cta { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .mobile-cta { transition: none; } }
+</style>

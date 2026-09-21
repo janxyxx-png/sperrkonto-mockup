@@ -1,0 +1,868 @@
+---
+/**
+ * Funnel /app/start (18-NAECHSTES-LEVEL Hebel 1): Fragen, dann ein persoenlicher Plan, der die Eingaben verarbeitet.
+ * Seit 20.09. (design-upgrade/25-EIN-PRODUKT-ZWEI-WEGE.md): ein Produkt (Complete Setup, Monatspreis, keine Einrichtung),
+ * Zielgruppe Studierende und Fachkraefte (Au-pair und Familiennachzug entfallen), Sperrbetrag je Visumtyp (992 bzw. 1.091 im
+ * Monat), die Finanzierungsfrage nur fuer Studierende und mit Wirkung: "I need financing" macht die Partnerbank zum Zahler
+ * des Sperrbetrags (nichts zu ueberweisen, Buergenfrage im Kreditschritt), "I have the funds" zeigt den 500-Euro-Bonus.
+ * Rein clientseitig, nichts wird gesendet. Texte: ui-strings (wiz.*) und funnel-copy.ts; Zahlen: facts.ts.
+ *
+ * Runde 29, M11 (nativer Ablauf): Leiste ueber der Karte mit "Frage a von b", Segmenten und rundem Zurueck-Knopf; Blaetter
+ * wechseln gerichtet (View Transition, sonst WAAPI), der Zustand steht in sessionStorage (ec-wiz) und der Schritt in der URL
+ * (?step=..., Browser-Zurueck geht im Funnel zurueck); Vorbelegung ueber ?group=|purpose=|from=|age=|arrival=|funding=|months=|rate=
+ * (Sperrbetrag-Planer M06) und localStorage ec-plan; Ankunft als zwei Semesterkarten plus "anderer Monat".
+ * M12 (lebender Plan): computeModel(a, rate) liefert ein Modell, render(model) schreibt Ergebnis UND die [data-plan]-Zeilen
+ * der Plan-Karte (ab 1000 px rechts, klebend) bzw. des Streifens (darunter), ab der ersten Antwort.
+ */
+import App from '../layouts/App.astro';
+import Mark from '../components/Mark.astro';
+import Icon from '../components/Icon.astro';
+import PhotoStage from '../components/PhotoStage.astro';
+import AppDuo from '../components/AppDuo.astro';
+import { type Locale, localePath, t as tr } from '../lib/i18n';
+import { FUNNEL, PKR_PER_EUR_EXAMPLE, TRANSFER_FEE_PCT_EXAMPLE, PREMIUM } from '../lib/funnel-copy';
+import { PRICE, PRICE_DEPOSIT_WORK, money } from '../lib/facts';
+import { markPh } from '../lib/placeholders';
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const t = (k: Parameters<typeof tr>[1]) => tr(locale, k);
+const lp = (p: string) => localePath(locale, p);
+const f = FUNNEL[locale] ?? FUNNEL.en;
+// Einwilligungssatz des Registrierungsschritts mit Links auf AGB und Datenschutz (Routen aus nav.json legal)
+const consentHtml = f.acct.consent.replace('{terms}', `<a href="${lp('/general-terms-and-conditions')}">${f.acct.terms}</a>`).replace('{privacy}', `<a href="${lp('/privacy-policy')}">${f.acct.privacyPolicy}</a>`);
+const purposes = [
+  [t('wiz.study'), [t('wiz.p1'), t('wiz.p2'), t('wiz.p3'), t('wiz.p4'), t('wiz.p5'), t('wiz.p6'), t('wiz.p7')]],
+  [t('wiz.other'), [t('wiz.o1'), t('wiz.o2')]],
+] as const;
+let optIndex = 0;
+// Semesterkarten (M11): naechstes Wintersemester (Oktober) und Sommersemester (April) ab heute, chronologisch; das Skript
+// rechnet sie beim Laden mit dem echten Datum nach. Monatsnamen: en-GB, sonst Urdu (auch fuer Shahmukhi-Punjabi).
+const monthLocale = locale === 'en' ? 'en-GB' : 'ur';
+const semesterOf = (kind: 'winter' | 'summer', now = new Date()) => { const y = now.getFullYear(), m = now.getMonth(), mo = kind === 'winter' ? 9 : 3; return new Date(m < mo ? y : y + 1, mo, 1); };
+const semesters = (['winter', 'summer'] as const).map((k) => {
+  const d = semesterOf(k);
+  const [name, when] = f.arrivalPick[k].replace('{month}', d.toLocaleDateString(monthLocale, { month: 'long' })).replace('{year}', String(d.getFullYear())).split(' · ');
+  return { k, ym: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`, name, when: when ?? '' };
+}).sort((p, q) => p.ym.localeCompare(q.ym));
+// Daten fuer das Skript: alles, was das Ergebnis je Antwort braucht
+const data = {
+  locale, monthLocale, rate: PKR_PER_EUR_EXAMPLE, feePct: TRANSFER_FEE_PCT_EXAMPLE, deposit: PRICE.deposit, depositWork: PRICE_DEPOSIT_WORK, monthly: PRICE.monthly, premium: PREMIUM,
+  setupName: f.setupComplete, setupWhy: f.setupWhy, docs: f.docs, docsCommon: f.docsCommon, tl: f.tl, tlLoan: f.tlLoan,
+  embassy: f.embassy, statutory: f.statutory, privatePlan: f.privatePlan, today: f.today, whatsappText: f.whatsappText,
+  labels: { depositSub: f.depositSub, depositSubWork: f.depositSubWork, totalEur: f.totalEur, noSetupFee: f.noSetupFee, nothingToTransfer: f.nothingToTransfer, guarantorNote: f.guarantorNote },
+  fund: f.fund, perMonth: t('perMonth'), calendarTitle: f.calendarTitle, docsProgress: f.docsProgress, stepOf: t('wiz.stepOf'), arrivalPick: f.arrivalPick,
+};
+---
+<App title={t('wiz.title')} locale={locale} path="/app/start">
+  <div class="wiz" data-wizard>
+    <!-- Leiste (M11): Zurueck, "Frage a von b", Segmente; auf dem Telefon klebend -->
+    <div class="wiz-rail" data-rail hidden>
+      <button type="button" class="back" data-back hidden aria-label={t('back')} title={t('back')}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="rail-prog" data-rail-prog>
+        <p class="rail-count" data-count aria-live="polite"></p>
+        <div class="track" role="progressbar" aria-label={t('progress')} aria-valuemin="1" data-progress></div>
+      </div>
+    </div>
+    <!-- Laufender Plan unter 1000 px (M12): drei Werte, klebend unter der Leiste -->
+    <div class="plan-strip" data-plan-strip hidden aria-label={f.acct.summary}>
+      <div data-plan-row><small>{f.deposit}</small><b class="none" data-plan="deposit">–</b></div>
+      <div data-plan-row><small>{f.glance.appt}</small><b class="none" data-plan="appointment">–</b></div>
+      <div data-plan-row><small>{f.glance.docs}</small><b class="none" data-plan="docs">–</b></div>
+    </div>
+
+    <!-- Start (Jan 20.09.: "nicht so spannend gemacht"): links das Versprechen in drei Zeilen, rechts die App als Objekt auf Foto -->
+    <section class="card white step start wide-card" data-step="start">
+      <div class="start-grid">
+        <div class="start-text">
+          <p class="kicker">{t('getStarted')}</p>
+          <h2 tabindex="-1">{t('wiz.title')}</h2>
+          <p class="muted">{t('wiz.intro')}</p>
+          <ul class="start-list">{f.start.items.map((it, i) => <li><span class="icircle"><Icon name={['calendar', 'euro', 'doc'][i] ?? 'check'} size={15} /></span><span>{it}</span></li>)}</ul>
+          <p class="start-meta">{f.start.meta.map((m) => <span>{m}</span>)}</p>
+          <button class="btn btn-primary wide" type="button" data-next style="view-transition-name: primary-cta">{t('wiz.go')}</button>
+          <p class="muted small existing">{f.start.existing} <a href={lp('/app/login')}>{t('login')}</a></p>
+        </div>
+        <div class="start-visual" aria-hidden="true"><PhotoStage src="/img/photos/cine-berlin-dusk.jpg" pos="50% 60%" ratio="5 / 5.6" fill><AppDuo locale={locale} front="setup" back="money" bare /></PhotoStage></div>
+      </div>
+    </section>
+
+    <section class="card white step" data-step="purpose" hidden>
+      <h2 tabindex="-1">{t('wiz.q1')}</h2>
+      {purposes.map(([group, opts]) => <>
+        <div class="group caps">{group}</div>
+        {opts.map((o) => <button type="button" class="opt" data-next data-answer="purpose" data-value={String(optIndex++)}>{o}</button>)}
+      </>)}
+    </section>
+
+    <section class="card white step" data-step="from" hidden>
+      <h2 tabindex="-1">{f.qFrom}</h2>
+      <button type="button" class="opt" data-next data-answer="from" data-value="islamabad">{f.fromIslamabad}</button>
+      <button type="button" class="opt" data-next data-answer="from" data-value="karachi">{f.fromKarachi}</button>
+      <p class="muted small">{f.fromNote}</p>
+    </section>
+
+    <!-- Alter als Formular: Enter im Feld geht weiter wie der Knopf (M11) -->
+    <section class="card white step" data-step="age" hidden>
+      <h2 tabindex="-1">{t('wiz.q2')}</h2>
+      <form data-step-form novalidate>
+        <label class="field"><span>{t('wiz.age')}</span><input type="number" placeholder="23" min="14" max="99" data-answer="age" inputmode="numeric" /></label>
+        <p class="muted small">{t('wiz.ageNote')}</p>
+        <button class="btn btn-primary wide" type="submit" data-next>{t('continue')}</button>
+      </form>
+    </section>
+
+    <!-- Ankunft (M11): zwei Semesterkarten (visuell zuerst, order: -1), darunter aufklappbar "anderer Monat" mit dem Monatsfeld,
+         das im DOM das erste [data-answer=arrival] bleibt (QA-Skripte setzen es direkt). Der Weiter-Knopf ist das einzige [data-goto]. -->
+    <section class="card white step" data-step="arrival" hidden>
+      <h2 tabindex="-1">{t('wiz.q3')}</h2>
+      <div class="arrival-pick">
+        <details class="other-month">
+          <summary>{f.arrivalPick.other}</summary>
+          <label class="field"><span>{t('wiz.arrival')}</span><input type="month" data-answer="arrival" /></label>
+        </details>
+        <div class="semesters">{semesters.map((s) => <button type="button" class="opt semester" data-pick-arrival={s.ym} data-sem={s.k}><b>{s.name}</b><small>{s.when}</small></button>)}</div>
+      </div>
+      <p class="muted small">{t('wiz.arrivalNote')}</p>
+      <!-- Die Finanzierungsfrage gilt nur fuer Studentenvisa; Jobsuche und Chancenkarte springen zum E-Mail-Schritt (Skript) -->
+      <button class="btn btn-primary wide" type="button" data-goto="funding">{t('continue')}</button>
+    </section>
+
+    <section class="card white step" data-step="funding" hidden>
+      <h2 tabindex="-1">{t('wiz.fundQ')}</h2>
+      <button type="button" class="opt" data-goto="email" data-answer="funding" data-value="have">{t('wiz.fundHave')}</button>
+      <button type="button" class="opt" data-goto="loan" data-answer="funding" data-value="need">{t('wiz.fundNeed')}</button>
+    </section>
+
+    <section class="card white step" data-step="loan" hidden>
+      <p class="kicker">{t('wiz.loanNote')}</p>
+      <h2 tabindex="-1">{t('wiz.loanTitle')}</h2>
+      <p class="muted">{t('wiz.loanText')}</p>
+      <p class="chipline"><span class="chip-note"><Icon name="shield" size={13} />{f.noCheck}</span></p>
+      <p class="q">{f.loanQ}</p>
+      <button type="button" class="opt" data-goto="email" data-answer="guarantor" data-value="yes">{f.loanYes}</button>
+      <button type="button" class="opt" data-goto="email" data-answer="guarantor" data-value="no">{f.loanNo}</button>
+    </section>
+
+    <section class="card white step" data-step="email" hidden>
+      <h2 tabindex="-1">{f.qEmail}</h2>
+      <form data-step-form novalidate>
+        <label class="field"><span>{t('email')}</span><input type="email" placeholder="you@example.com" data-answer="email" autocomplete="email" /></label>
+        <p class="muted small">{f.emailNote}</p>
+        <button class="btn btn-primary wide" type="submit" data-goto="result">{t('continue')}</button>
+        <button class="btn btn-link" type="button" data-goto="result">{f.skip}</button>
+      </form>
+    </section>
+
+    <section class="step result wide-card" data-step="result" hidden>
+      <div class="card white head">
+        <div class="head-text">
+          <p class="kicker">{f.resultKicker}</p>
+          <h2 tabindex="-1">{f.resultTitle}</h2>
+          <p class="muted">{f.resultLead}</p>
+        </div>
+        <dl class="glance">
+          <div><dt>{f.glance.total}</dt><dd data-out="glanceTotal"></dd></div>
+          <div><dt>{f.glance.appt}</dt><dd data-out="glanceAppt"></dd></div>
+          <div><dt>{f.glance.docs}</dt><dd data-out="glanceDocs"></dd></div>
+        </dl>
+      </div>
+
+      <div class="grid3">
+        <div class="card white" style="view-transition-name: plan-card">
+          <span class="icircle sm"><Icon name="spark" size={18} /></span><p class="caps lbl">{f.setupLabel}</p>
+          <h3>{f.setupComplete}</h3>
+          <p class="price">{money(PRICE.monthly, locale)} {t('perMonth')} · {f.noSetupFee}</p>
+          <p class="muted" data-out="setupWhy">{f.setupWhy.study}</p>
+        </div>
+        <div class="card white">
+          <span class="icircle sm"><Icon name="shield" size={18} /></span><p class="caps lbl">{f.insuranceTitle}</p>
+          <h3 data-out="planName">{f.statutory}</h3>
+          <p class="price"><span data-out="premium">{money(PREMIUM.statutoryStudent, locale)}</span> <small>{t('perMonth')}</small></p>
+          <p class="muted">{f.premiumNote} {f.billedOnArrival}</p>
+        </div>
+        <div class="card white fund">
+          <span class="icircle sm"><Icon name="bank" size={18} /></span><p class="caps lbl">{f.fundLabel}</p>
+          <h3 data-out="fundTitle">{f.fund.have.title}</h3>
+          <p class="muted" data-out="fundText">{f.fund.have.text}</p>
+          <p class="muted small" data-out="fundNote" hidden></p>
+        </div>
+      </div>
+
+      <div class="card white money">
+        <h3>{f.moneyTitle}</h3>
+        <label class="field rate"><span>{f.rate}</span><input type="number" data-rate value={PKR_PER_EUR_EXAMPLE} min="100" max="1000" step="0.5" inputmode="decimal" /><small>{f.rateNote}</small></label>
+        <!-- Hauptbuch (base.css .ledger, M11): Euro rechts, Rupien darunter; die Ausgaben laufen bei echter Kurseingabe weich um -->
+        <dl class="ledger sums">
+          <div><dt>{f.deposit}<small data-out="depositSub">{f.depositSub}</small></dt><dd><span data-out="depositEur">{money(PRICE.deposit, locale)}</span><small class="pkr" data-out="depositPkr"></small></dd></div>
+          <div><dt>{f.transferFee}</dt><dd><span data-out="feeEur"></span><small class="pkr" data-out="feePkr"></small></dd></div>
+          <div class="total"><dt>{f.totalEur}<small>{f.totalPkr}</small></dt><dd><span data-out="totalEur"></span><small class="pkr" data-out="totalPkr"></small></dd></div>
+        </dl>
+        <p class="muted small" set:html={markPh(f.feeNote)} />
+      </div>
+
+      <div class="grid2">
+        <div class="card white">
+          <h3>{f.timelineTitle}</h3>
+          <p class="muted small">{f.timelineLead}</p>
+          <ol class="tl" data-out="timeline"></ol>
+          <!-- Kalenderdatei (.ics) fuer den Botschaftstermin, im Browser erzeugt (Jan 20.09., Accessoire) -->
+          <p><button class="btn btn-link" type="button" data-ics>{f.calendar}</button></p>
+        </div>
+        <div class="card white">
+          <h3>{f.docsTitle}</h3>
+          <p class="muted small">{f.docsLead}</p>
+          <div class="dbar" aria-hidden="true"><i data-out="docsBar"></i></div>
+          <p class="muted small" data-out="docsProgress"></p>
+          <!-- Haken-Kreise wie .checklist li.ok (base.css); das native Kaestchen bleibt im Label, nur unsichtbar -->
+          <ul class="docs checklist" data-out="docs"></ul>
+          <h4 class="caps lbl emb">{f.embassyTitle}</h4>
+          <p class="muted small" data-out="embassy"></p>
+          <p class="muted small" set:html={markPh(f.embassyWait)} />
+          <p><a class="btn btn-link" href={lp('/embassy-checklist')}>{f.embassyTitle}</a></p>
+        </div>
+      </div>
+
+      <p class="muted small disclaimer">{f.disclaimer}</p>
+      <!-- Auf dem Telefon klebt die Aktionskarte unten, der Primaerknopf bleibt im Bild (M11) -->
+      <div class="card actions section--dark on-dark">
+        <h3>{f.actions}</h3>
+        <div class="btns">
+          <a class="btn btn-outline" data-whatsapp href="https://wa.me/?text=" target="_blank" rel="noopener"><Icon name="chat" size={18} /> {f.whatsapp}</a>
+          <button class="btn btn-outline" type="button" data-print><Icon name="doc" size={18} /> {f.print}</button>
+          <button class="btn btn-primary" type="button" data-goto="account">{f.createAccount}</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Registrierung (Jan 20.09.: "der ist noch bisschen lieblos"): Zusammenfassung des Plans, Felder mit Pruefung, Passwort
+         mit Anzeige und Staerke, Einwilligung mit Links, dann ein Erfolgsschritt mit den naechsten drei Schritten. -->
+    <section class="card white step acct" data-step="account" hidden>
+      <p class="kicker">{f.acct.kicker}</p>
+      <h2 tabindex="-1">{f.acct.title}</h2>
+      <p class="muted">{f.acct.lead}</p>
+      <p class="chipline"><span class="chip-note"><Icon name="check" size={13} />{f.acct.free}</span></p>
+      <div class="summary">
+        <span class="caps lbl">{f.acct.summary}</span>
+        <ul>
+          <li><span class="icircle xs"><Icon name="spark" size={13} /></span><span data-out="sumSetup">{f.setupComplete}</span></li>
+          <li><span class="icircle xs"><Icon name="bank" size={13} /></span><span data-out="sumFund">{f.fund.have.title}</span></li>
+          <li><span class="icircle xs"><Icon name="calendar" size={13} /></span><span data-out="sumAppt">{f.calendarTitle}</span></li>
+        </ul>
+      </div>
+      <form data-acct novalidate>
+        <label class="field" data-field="email"><span>{t('email')}</span><input type="email" placeholder="you@example.com" data-mirror="email" autocomplete="email" required /><small class="err" data-err="email" hidden>{f.acct.emailErr}</small></label>
+        <label class="field" data-field="pw"><span>{t('password')}</span>
+          <span class="pw-wrap"><input type="password" placeholder="••••••••" autocomplete="new-password" minlength="8" required data-pw /><button type="button" class="pw-toggle" data-pw-toggle aria-pressed="false" data-show={f.acct.show} data-hide={f.acct.hide}>{f.acct.show}</button></span>
+          <span class="meter" aria-hidden="true"><i data-meter></i></span>
+          <small class="muted hint" data-pw-hint data-labels={f.acct.strength.join('|')}>{f.acct.pwHint}</small>
+          <small class="err" data-err="pw" hidden>{f.acct.pwErr}</small>
+        </label>
+        <button class="btn btn-primary wide" type="submit">{t('createAccount')}</button>
+        <p class="muted small consent" set:html={consentHtml} />
+      </form>
+      <div class="or">{t('or')}</div>
+      <button class="btn btn-outline wide" type="button" data-social="google"><Mark name="google" label={false} size={18} />{t('withGoogle')}</button>
+      <button class="btn btn-outline wide" type="button" data-social="apple"><Mark name="apple" label={false} size={18} />{t('withApple')}</button>
+      <p class="muted small">{t('alreadyRegistered')} <a href={lp('/app/login')}>{t('login')}</a></p>
+    </section>
+
+    <section class="card white step done" data-step="done" hidden>
+      <svg class="ck" viewBox="0 0 64 64" width="76" height="76" aria-hidden="true"><circle cx="32" cy="32" r="30" class="ck-c" /><path d="M20 33l8 8 16-17" class="ck-p" /></svg>
+      <h2 tabindex="-1">{f.acct.doneTitle}</h2>
+      <p class="muted">{f.acct.doneText}</p>
+      <ol class="next">{f.acct.doneSteps.map((st) => <li><span class="n" aria-hidden="true" /><span>{st}</span></li>)}</ol>
+      <a class="btn btn-primary wide" href={lp('/app/dashboard')}>{f.acct.goPortal}</a>
+    </section>
+
+    <!-- Plan-Karte ab 1000 px (M12): rechts neben den Fragen, klebend; Zeilen fuellen sich mit jeder Antwort -->
+    <aside class="plan-card" data-plan-card hidden aria-label={f.acct.summary}>
+      <p class="caps lbl">{f.acct.summary}</p>
+      <dl class="ledger plan-rows">
+        <div><dt>{f.setupLabel}</dt><dd>{f.setupComplete} · {money(PRICE.monthly, locale)} {t('perMonth')}</dd></div>
+        <div data-plan-row><dt>{f.insuranceTitle}</dt><dd class="none" data-plan="insurance">–</dd></div>
+        <div data-plan-row><dt>{f.fundLabel}</dt><dd class="none" data-plan="financing">–</dd></div>
+        <div data-plan-row><dt>{f.deposit}</dt><dd class="none" data-plan="deposit">–</dd></div>
+        <div data-plan-row><dt>{f.glance.appt}</dt><dd class="none" data-plan="appointment">–</dd></div>
+        <div data-plan-row><dt>{f.docsTitle}</dt><dd class="none" data-plan="docs">–</dd></div>
+      </dl>
+      <p class="see" data-plan-see hidden><button type="button" class="btn btn-link">{f.skip}</button></p>
+    </aside>
+
+    <p class="privacy"><Icon name="lock" size={14} />{f.privacy}</p>
+  </div>
+  <script is:inline type="application/json" data-funnel set:html={JSON.stringify(data)} />
+  <script>
+    import { tweenText } from '../scripts/tween';
+    // Zustand des Funnels und Berechnung des Plans. Nichts verlaesst den Browser; alle Ausgaben ueber textContent.
+    type Answers = { purpose?: number; from?: 'islamabad' | 'karachi'; age?: number; arrival?: string; funding?: 'have' | 'need'; guarantor?: 'yes' | 'no'; email?: string; months?: number };
+    type Step = { key: string; label: string; weeks: number };
+    type Fund = { title: string; text: string };
+    type Model = { group: 'study' | 'work'; statutory: boolean; premium: number; fund: Fund; dep: number; fee: number; total: number; arrival: Date; appointmentDate: Date | null; docsCount: number; setupWhy: string; embassy: string; loan: boolean; rate: number; planName: string; docs: string[]; tl: { key: string; label: string; date: Date; late: boolean }[] };
+    type RenderOpts = { tween?: boolean; first?: boolean; quiet?: boolean };
+
+    const initWizard = () => {
+      const root = document.querySelector<HTMLElement>('[data-wizard]:not([data-bound])'); if (!root) return; root.dataset.bound = '1';
+      const data = JSON.parse(document.querySelector('[data-funnel]')?.textContent || '{}');
+      const steps = [...root.querySelectorAll<HTMLElement>('[data-step]')];
+      const ids = steps.map((s) => s.dataset.step!);
+      const $ = <T extends HTMLElement = HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
+      const back = $('[data-back]'), rail = $('[data-rail]'), railProg = $('[data-rail-prog]'), count = $('[data-count]'), track = $('[data-progress]');
+      const planCard = $('[data-plan-card]'), planStrip = $('[data-plan-strip]'), planSee = $('[data-plan-see]');
+      const rateInput = $<HTMLInputElement>('[data-rate]'), monthInput = $<HTMLInputElement>('input[data-answer="arrival"]');
+      const semesterCards = [...root.querySelectorAll<HTMLButtonElement>('[data-pick-arrival]')];
+      const rtl = document.documentElement.dir === 'rtl';
+      const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let a: Answers = {}; let hist: number[] = []; let i = 0;
+      const out = (k: string) => root.querySelector<HTMLElement>(`[data-out="${k}"]`)!;
+      const loc: string = data.locale;
+      const euro = (n: number) => (loc === 'en' ? `€${Math.round(n).toLocaleString('en-US')}` : `${Math.round(n).toLocaleString('en-US')} یورو`);
+      const pkr = (n: number) => `PKR ${Math.round(n).toLocaleString('en-US')}`;
+      // Optionen 0 bis 6 sind Studium, 7 und 8 Chancenkarte und Jobsuche (funnel-copy GROUP_OF)
+      const group = (p: number) => (p < 7 ? 'study' : 'work');
+      const fmt = (d: Date) => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      const ymd = (d: Date) => `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+      const el = (tag: string, cls: string, text: string) => { const x = document.createElement(tag); if (cls) x.className = cls; x.textContent = text; return x; };
+      const rate = () => Number(rateInput.value) || data.rate;
+      // Zustand: Antworten, Schritt und Verlauf in sessionStorage (ec-wiz); der Schritt zusaetzlich in der URL
+      const persist = () => { try { sessionStorage.setItem('ec-wiz', JSON.stringify({ a, i, hist })); } catch {} };
+      const b64 = (s: string) => btoa(String.fromCharCode(...new TextEncoder().encode(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      const unb64 = (s: string) => new TextDecoder().decode(Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/')), (c) => c.charCodeAt(0)));
+      // Plan in der URL (?plan=): die Antworten ohne E-Mail, damit der geteilte Link keine Adresse traegt
+      const encPlan = () => { const { email: _e, ...rest } = a; return b64(JSON.stringify(rest)); };
+      const decPlan = (s: string): Answers | null => { try { const p = JSON.parse(unb64(s)); return p && typeof p === 'object' ? p : null; } catch { return null; } };
+      const url = (n: number) => { const id = ids[n]; return id === 'start' ? location.pathname : `?step=${id}${id === 'result' ? '&plan=' + encPlan() : ''}`; };
+
+      // Semesterkarten mit dem echten Datum: naechster Oktober und naechster April, chronologisch
+      (() => {
+        const now = new Date(), y = now.getFullYear(), m = now.getMonth();
+        const list = (['winter', 'summer'] as const).map((k) => { const mo = k === 'winter' ? 9 : 3; return { k, d: new Date(m < mo ? y : y + 1, mo, 1) }; }).sort((p, q) => p.d.getTime() - q.d.getTime());
+        semesterCards.forEach((c, n) => { const s = list[n]; if (!s) return; c.dataset.pickArrival = `${s.d.getFullYear()}-${String(s.d.getMonth() + 1).padStart(2, '0')}`; c.dataset.sem = s.k; const [name, when] = String(data.arrivalPick[s.k]).replace('{month}', s.d.toLocaleDateString(data.monthLocale, { month: 'long' })).replace('{year}', String(s.d.getFullYear())).split(' · '); const b = c.querySelector('b'), sm = c.querySelector('small'); if (b) b.textContent = name; if (sm) sm.textContent = when ?? ''; });
+      })();
+
+      // Fragen des Zweigs: die Finanzierungsfrage nur fuer Studium, der Kreditschritt nur bei "I need financing"
+      const questions = () => { const q = ['purpose', 'from', 'age', 'arrival']; if (group(a.purpose ?? 0) === 'study') { q.push('funding'); if (a.funding === 'need') q.push('loan'); } q.push('email'); return q; };
+      const progress = (animate: boolean) => {
+        const q = questions(); const k = q.indexOf(ids[i]); railProg.hidden = k < 0; if (k < 0) return;
+        count.textContent = String(data.stepOf).replace('{a}', String(k + 1)).replace('{b}', String(q.length));
+        if (track.children.length !== q.length) track.replaceChildren(...q.map(() => document.createElement('i')));
+        track.setAttribute('aria-valuenow', String(k + 1)); track.setAttribute('aria-valuemax', String(q.length));
+        track.classList.toggle('is-anim', animate && !reduce());
+        [...track.children].forEach((seg, n) => seg.classList.toggle('on', n <= k));
+      };
+
+      // Optionen: Druck markiert sofort (Haken federt ein), gewaehlte Antworten bleiben beim Zurueckgehen markiert (.is-on)
+      const press = (o: HTMLElement) => { o.closest('[data-step]')?.querySelectorAll('.opt.is-pressed').forEach((x) => x.classList.remove('is-pressed')); o.classList.add('is-pressed'); };
+      const syncOptions = (s: HTMLElement) => s.querySelectorAll<HTMLElement>('.opt').forEach((o) => {
+        o.classList.remove('is-pressed');
+        const key = o.dataset.answer as keyof Answers | undefined;
+        const cur = key ? a[key] : o.dataset.pickArrival !== undefined ? a.arrival : undefined;
+        const on = cur !== undefined && String(cur) === (o.dataset.value ?? o.dataset.pickArrival);
+        o.classList.toggle('is-on', on); o.setAttribute('aria-pressed', String(on));
+      });
+      const syncArrival = () => { const det = root.querySelector<HTMLDetailsElement>('.other-month'); if (det && a.arrival && !semesterCards.some((c) => c.dataset.pickArrival === a.arrival)) det.open = true; };
+
+      // Blattwechsel (M11): hidden wird SOFORT umgeschaltet (QA-Skripte und Fokus sehen das neue Blatt sofort); das alte Blatt
+      // bleibt als Overlay an Ort und Stelle stehen, bis der Uebergang laeuft (nach dem Druck 160 ms), dann View Transition
+      // (Alt ausblenden, Neu von der Seite herein) oder, ohne Unterstuetzung, WAAPI. Reduzierte Bewegung: harter Schnitt.
+      type VT = { ready?: Promise<void>; updateCallbackDone?: Promise<void>; finished?: Promise<void>; skipTransition: () => void };
+      const dsvt = (document as Document & { startViewTransition?: (cb: () => void) => VT }).startViewTransition;
+      let pending = 0, seq = 0, leaving: HTMLElement | null = null, active: VT | null = null;
+      // Chrome trifft waehrend einer View Transition nur noch <html> (pointer-events hilft nicht): ein Klick in dieser Zeit
+      // bricht den Uebergang ab und geht an das Element unter dem Zeiger, damit schnelle Tipper (und die QA-Skripte) nichts verlieren
+      document.addEventListener('click', (e) => {
+        if (!active || e.target !== document.documentElement) return;
+        const tr = active; active = null; tr.skipTransition();
+        const hit = document.elementFromPoint(e.clientX, e.clientY)?.closest<HTMLElement>('button, a, summary, label, input');
+        if (hit) hit.click();
+      }, true);
+      const unleave = (s: HTMLElement | null) => { if (!s) return; s.classList.remove('is-leaving'); s.style.cssText = ''; if (leaving === s) leaving = null; };
+      const swap = (from: HTMLElement | null, to: HTMLElement, dir: number, delay: number, vt: boolean) => {
+        clearTimeout(pending); unleave(leaving); const my = ++seq;
+        const box = from && from !== to ? { top: from.offsetTop, left: from.offsetLeft, width: from.offsetWidth } : null;
+        steps.forEach((s) => { s.hidden = s !== to; s.classList.remove('is-entering'); s.removeAttribute('data-vt'); });
+        if (!from || !box || dir === 0 || reduce()) { to.setAttribute('data-vt', ''); return; }
+        from.classList.add('is-leaving'); from.style.cssText = `top:${box.top}px;left:${box.left}px;width:${box.width}px`; from.setAttribute('data-vt', ''); leaving = from;
+        to.classList.add('is-entering');
+        const x = 24 * dir * (rtl ? -1 : 1);
+        const run = () => {
+          if (my !== seq) return;
+          document.documentElement.style.setProperty('--wiz-x', `${x}px`);
+          const update = () => { unleave(from); from.removeAttribute('data-vt'); if (my !== seq) return; to.classList.remove('is-entering'); to.setAttribute('data-vt', ''); };
+          if (vt && dsvt) {
+            const tr = dsvt.call(document, update); active = tr;
+            // abgebrochene Uebergaenge (skipTransition) lehnen ready ab; das ist erwartet und kein Fehler
+            tr.ready?.catch(() => {}); tr.updateCallbackDone?.catch(() => {});
+            tr.finished?.finally(() => { if (active === tr) active = null; }).catch(() => {});
+            return;
+          }
+          update();
+          from.classList.add('is-leaving'); from.style.cssText = `top:${box.top}px;left:${box.left}px;width:${box.width}px`; leaving = from;
+          from.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 180, easing: 'ease-out', fill: 'both' }).onfinish = () => unleave(from);
+          to.animate([{ opacity: 0, transform: `translateX(${x}px)` }, { opacity: 1, transform: 'none' }], { duration: 280, easing: 'cubic-bezier(.16, 1, .3, 1)', fill: 'both' });
+        };
+        if (delay) pending = window.setTimeout(run, delay); else run();
+      };
+
+      const shown = new Set<string>();
+      const show = (dir: 1 | -1 | 0, delay = 0) => {
+        root.dataset.dir = String(dir);
+        const id = ids[i], from = steps.find((s) => !s.hidden) ?? null, to = steps[i];
+        // nach oben nur, wenn der Anfang des Funnels oben aus dem Bild ist; dann laeuft der Wechsel ohne View Transition
+        const above = root.getBoundingClientRect().top < 0;
+        if (above) root.scrollIntoView({ block: 'start', behavior: reduce() ? 'auto' : 'smooth' });
+        swap(from, to, dir, delay, !above);
+        back.hidden = i === 0 || id === 'done';
+        rail.hidden = id === 'start' || id === 'done';
+        progress(dir === 1);
+        planCard.hidden = id === 'start' || id === 'result';
+        planStrip.hidden = id === 'start' || id === 'result' || id === 'done';
+        planSee.hidden = !shown.has('result') || id === 'result';
+        syncOptions(to);
+        if (id === 'arrival') syncArrival();
+        if (id === 'result') render(computeModel(a, rate()), { first: !shown.has('result') });
+        shown.add(id);
+        if (dir !== 0) to.querySelector<HTMLElement>('h2')?.focus({ preventScroll: true });
+        persist();
+      };
+      const go = (n: number, delay = 0) => { if (n === i || n < 0 || n >= steps.length) return; hist.push(i); i = n; show(1, delay); try { history.pushState({ i }, '', url(i)); } catch {} };
+      const goId = (id: string, delay = 0) => go(ids.indexOf(id), delay);
+      // Zurueck: ueber die Browser-History, wenn der aktuelle Eintrag unserer ist (dann macht popstate den Rest), sonst per Verlauf
+      const stepBack = () => {
+        if (!hist.length && i === 0) return;
+        const own = history.state && typeof history.state.i === 'number' && history.state.i === i;
+        if (own && hist.length) { history.back(); return; }
+        i = hist.length ? hist.pop()! : Math.max(0, i - 1); show(-1); try { history.replaceState({ i }, '', url(i)); } catch {}
+      };
+      back.addEventListener('click', (e) => { e.preventDefault(); stepBack(); });
+      window.addEventListener('popstate', (e) => {
+        const st = e.state as { i?: unknown } | null; if (!st || typeof st.i !== 'number' || st.i === i || st.i < 0 || st.i >= steps.length) return;
+        const isBack = hist.length > 0 && hist[hist.length - 1] === st.i; if (isBack) hist.pop(); else hist.push(i);
+        i = st.i; show(isBack ? -1 : 1);
+      });
+
+      const read = (x: HTMLElement) => {
+        const key = x.dataset.answer as keyof Answers | undefined; if (!key) return;
+        const v = x.dataset.value ?? (x as HTMLInputElement).value;
+        (a as Record<string, unknown>)[key] = v === '' ? undefined : key === 'purpose' || key === 'age' ? Number(v) : v;
+        persist();
+      };
+      const readInputs = () => root.querySelectorAll<HTMLInputElement>('input[data-answer]').forEach(read);
+      const refresh = () => render(computeModel(a, rate()), {});
+      root.querySelectorAll<HTMLInputElement>('input[data-answer]').forEach((x) => x.addEventListener('change', () => { read(x); refresh(); }));
+      // Die Finanzierungsfrage nur fuer Studentenvisa; Fachkraefte bringen den Sperrbetrag selbst mit
+      const goTo = (target: string, delay = 0) => { const work = group(a.purpose ?? 0) === 'work'; if (work) { a.funding = undefined; a.guarantor = undefined; } goId(target === 'funding' && work ? 'email' : target, delay); };
+      const advance = (b: HTMLElement) => {
+        const isOpt = b.classList.contains('opt'); if (isOpt) press(b);
+        read(b); readInputs(); refresh();
+        const delay = isOpt && !reduce() ? 160 : 0;
+        if (b.hasAttribute('data-next')) go(i + 1, delay); else if (b.dataset.goto) goTo(b.dataset.goto, delay);
+      };
+      root.querySelectorAll<HTMLElement>('.opt').forEach((o) => { o.addEventListener('pointerdown', () => press(o)); o.addEventListener('pointercancel', () => o.classList.remove('is-pressed')); });
+      // Knoepfe; Submit-Knoepfe der Schrittformulare laufen ueber submit (Enter im Feld geht dann genauso weiter)
+      root.querySelectorAll<HTMLElement>('[data-next], [data-goto]').forEach((b) => { if ((b as HTMLButtonElement).type === 'submit' && b.closest('form[data-step-form]')) return; b.addEventListener('click', () => advance(b)); });
+      root.querySelectorAll<HTMLFormElement>('form[data-step-form]').forEach((fm) => fm.addEventListener('submit', (e) => { e.preventDefault(); const b = fm.querySelector<HTMLElement>('button[type="submit"]'); if (b) advance(b); }));
+      semesterCards.forEach((c) => c.addEventListener('click', () => { monthInput.value = c.dataset.pickArrival ?? ''; monthInput.dispatchEvent(new Event('change', { bubbles: true })); press(c); readInputs(); refresh(); goTo('funding', reduce() ? 0 : 160); }));
+      planSee.querySelector('button')?.addEventListener('click', () => goId('result'));
+      // Kurs: nur eine echte Eingabe laesst die Summen weich umlaufen (tween.ts); Skripte sehen den Zielwert sofort
+      rateInput.addEventListener('input', (e) => render(computeModel(a, rate()), { tween: e.isTrusted && !reduce() }));
+
+      // Modell (M12): alles, was Ergebnis und Plan-Karte zeigen, aus Antworten und Kurs
+      const computeModel = (ans: Answers, rate: number): Model => {
+        const g = group(ans.purpose ?? 0);
+        const loan = g === 'study' && ans.funding === 'need';
+        // Versicherung: Studierende unter 30 gesetzlich, ab 30 der private Studententarif; Fachkraefte privat
+        const age = ans.age ?? 23;
+        const statutory = g === 'study' && age < 30;
+        const premium = statutory ? data.premium.statutoryStudent : g === 'study' ? data.premium.privateStudent : data.premium.privateOther;
+        // Finanzierung: Kredit (nur Studium), eigenes Geld mit Bonus, oder Fachkraft ohne Kredit
+        const fund: Fund = loan ? data.fund.need : g === 'study' ? data.fund.have : data.fund.work;
+        // Geld: Sperrbetrag je Visumtyp; beim Kredit zahlt die Partnerbank, es ist nichts zu ueberweisen
+        const dep = g === 'work' ? data.depositWork : data.deposit;
+        const fee = loan ? 0 : dep * data.feePct / 100;
+        const total = loan ? 0 : dep + fee;
+        const arrival = ans.arrival ? new Date(ans.arrival + '-01T00:00:00') : new Date(Date.now() + 120 * 864e5);
+        const today = new Date();
+        const tl = (data.tl as Step[]).map((st) => { const date = new Date(arrival.getTime() - st.weeks * 7 * 864e5); return { key: st.key, label: loan && st.key === 'transfer' ? data.tlLoan : st.label, date, late: date < today && st.weeks > 0 }; });
+        const appt = tl.find((x) => x.key === 'appointment');
+        const docs: string[] = [...data.docsCommon, ...(data.docs[g] ?? [])];
+        return { group: g, statutory, premium, fund, dep, fee, total, arrival, appointmentDate: appt ? appt.date : null, docsCount: docs.length, setupWhy: data.setupWhy[g], embassy: data.embassy[ans.from ?? 'islamabad'], loan, rate, planName: statutory ? data.statutory : data.privatePlan, docs, tl };
+      };
+
+      const setText = (x: HTMLElement, s: string, tween: boolean) => { if (x.textContent === s) return; if (tween) tweenText(x, s, 550); else x.textContent = s; };
+      // Werte im Ergebniskopf zaehlen beim ersten Zeigen von 0 hoch
+      const countIn = (x: HTMLElement, target: string) => { if (reduce()) { x.textContent = target; return; } x.textContent = target.replace(/\d[\d.,]*/g, '0'); tweenText(x, target, 700); };
+      // Plan-Zeilen (Karte und Streifen): Gedankenstrich bis zur Antwort, dann weicher Zahlenlauf und kurzes Aufleuchten der Zeile
+      const plan = (k: string, v: string | null, o: RenderOpts) => root.querySelectorAll<HTMLElement>(`[data-plan="${k}"]`).forEach((s) => {
+        const txt = v ?? '–'; if (s.textContent === txt) return;
+        s.classList.toggle('none', v === null);
+        if (v === null || o.quiet || reduce()) s.textContent = txt; else tweenText(s, txt, 550);
+        if (!o.quiet) { const row = s.closest<HTMLElement>('[data-plan-row]'); if (row) { row.classList.remove('is-changed'); void row.offsetWidth; row.classList.add('is-changed'); } }
+      });
+
+      const render = (m: Model, o: RenderOpts) => {
+        const tw = !!o.tween;
+        out('setupWhy').textContent = m.setupWhy;
+        out('planName').textContent = m.planName; out('premium').textContent = euro(m.premium);
+        out('fundTitle').textContent = m.fund.title; out('fundText').textContent = m.fund.text;
+        const note = out('fundNote'); note.hidden = !(m.loan && a.guarantor === 'no'); note.textContent = data.labels.guarantorNote;
+        out('depositSub').textContent = m.group === 'work' ? data.labels.depositSubWork : data.labels.depositSub;
+        setText(out('depositEur'), euro(m.dep), tw); setText(out('depositPkr'), m.loan ? '' : pkr(m.dep * m.rate), tw);
+        setText(out('feeEur'), euro(m.fee), tw); setText(out('feePkr'), m.loan ? '' : pkr(m.fee * m.rate), tw);
+        setText(out('totalEur'), euro(m.total), tw); setText(out('totalPkr'), m.loan ? data.labels.nothingToTransfer : pkr(m.total * m.rate), tw);
+        // Zeitplan
+        const tl = out('timeline'); tl.replaceChildren();
+        for (const st of m.tl) {
+          if (st.key === 'appointment') root.dataset.appt = ymd(st.date);
+          const li = document.createElement('li');
+          li.append(el('span', 'when', st.late ? data.today : fmt(st.date)), el('span', 'what', st.label));
+          if (st.late) li.classList.add('late');
+          tl.appendChild(li);
+        }
+        // Dokumente (Haken im Browser gespeichert); Zeile als .checklist-Kreis, das Kaestchen bleibt im Label
+        const docs = out('docs'); docs.replaceChildren();
+        const saved: Record<string, boolean> = (() => { try { return JSON.parse(localStorage.getItem('ec-docs') || '{}'); } catch { return {}; } })();
+        const prog = () => { const n = m.docs.filter((_, k) => saved[`${m.group}-${k}`]).length; out('docsProgress').textContent = String(data.docsProgress).replace('{a}', String(n)).replace('{b}', String(m.docs.length)); out('docsBar').style.width = `${Math.round((n / Math.max(1, m.docs.length)) * 100)}%`; };
+        m.docs.forEach((txt, k) => {
+          const id = `${m.group}-${k}`;
+          const li = document.createElement('li');
+          const label = document.createElement('label');
+          const box = document.createElement('input'); box.type = 'checkbox'; box.checked = !!saved[id];
+          li.classList.toggle('ok', box.checked);
+          box.addEventListener('change', () => { saved[id] = box.checked; li.classList.toggle('ok', box.checked); try { localStorage.setItem('ec-docs', JSON.stringify(saved)); } catch {} prog(); });
+          label.append(box, el('span', '', txt));
+          li.appendChild(label);
+          docs.appendChild(li);
+        });
+        prog();
+        out('embassy').textContent = m.embassy;
+        // WhatsApp-Text; letzte Zeile ist der Link auf dieses Ergebnis (?step=result&plan=...)
+        const planUrl = location.origin + location.pathname + '?step=result&plan=' + encPlan();
+        const lines = [data.whatsappText, `${data.setupName} · ${euro(data.monthly)} ${data.perMonth} · ${data.labels.noSetupFee}`, `${m.fund.title}: ${m.fund.text}`, `${data.labels.totalEur}: ${euro(m.total)}${m.loan ? '' : ` (${pkr(m.total * m.rate)} @ ${m.rate})`}`, ...m.tl.map((st) => `${fmt(st.date)}: ${st.label}`), planUrl];
+        root.querySelector<HTMLAnchorElement>('[data-whatsapp]')!.href = 'https://wa.me/?text=' + encodeURIComponent(lines.join('\n'));
+        const mirror = root.querySelector<HTMLInputElement>('[data-mirror="email"]'); if (mirror && a.email) mirror.value = a.email;
+        // Zusammenfassung im Registrierungsschritt
+        out('sumSetup').textContent = `${data.setupName} · ${euro(data.monthly)} ${data.perMonth}`;
+        out('sumFund').textContent = m.fund.title;
+        out('sumAppt').textContent = m.appointmentDate ? `${data.calendarTitle}: ${fmt(m.appointmentDate)}` : data.calendarTitle;
+        // Kopf des Ergebnisses
+        const glanceTotal = m.loan ? data.labels.nothingToTransfer.split(':')[0] : euro(m.total);
+        if (o.first) { countIn(out('glanceTotal'), glanceTotal); countIn(out('glanceDocs'), String(m.docsCount)); }
+        else { setText(out('glanceTotal'), glanceTotal, tw); out('glanceDocs').textContent = String(m.docsCount); }
+        out('glanceAppt').textContent = m.appointmentDate ? fmt(m.appointmentDate) : '';
+        // Lebender Plan (M12): Zeilen erst, wenn die Antwort da ist
+        const known = a.purpose !== undefined;
+        plan('insurance', known ? `${m.planName} · ${euro(m.premium)}` : null, o);
+        plan('financing', known && (m.group === 'work' || a.funding !== undefined) ? m.fund.title : null, o);
+        plan('deposit', known ? euro(m.dep) : null, o);
+        plan('appointment', a.arrival && m.appointmentDate ? fmt(m.appointmentDate) : null, o);
+        plan('docs', known ? String(m.docsCount) : null, o);
+      };
+
+      // Registrierung: Pruefung im Browser, Passwort anzeigen, Staerke bewerten; nichts wird gesendet
+      // Neues Konto: das Portal startet im Zustand "vor der Abreise" (portal-demo.ts)
+      const fresh = () => { try { localStorage.setItem('ec-persona', 'applying'); } catch {} };
+      const acct = root.querySelector<HTMLFormElement>('[data-acct]');
+      if (acct) {
+        const email = acct.querySelector<HTMLInputElement>('input[type="email"]')!, pw = acct.querySelector<HTMLInputElement>('[data-pw]')!;
+        const err = (k: string, on: boolean) => { const e = acct.querySelector<HTMLElement>(`[data-err="${k}"]`); const fld = acct.querySelector<HTMLElement>(`[data-field="${k}"]`); if (e) e.hidden = !on; fld?.classList.toggle('is-invalid', on); };
+        const strength = (v: string) => { let n = 0; if (v.length >= 8) n++; if (/[A-Z]/.test(v) && /[a-z]/.test(v)) n++; if (/\d/.test(v)) n++; if (/[^A-Za-z0-9]/.test(v)) n++; return v.length < 8 ? 1 : n >= 4 ? 3 : n >= 3 ? 2 : 1; };
+        const meter = acct.querySelector<HTMLElement>('[data-meter]')!, hint = acct.querySelector<HTMLElement>('[data-pw-hint]')!; const labels = (hint.dataset.labels ?? '').split('|'); const hint0 = hint.textContent;
+        pw.addEventListener('input', () => { const v = pw.value; const k = v ? strength(v) : 0; meter.className = k ? `w${k}` : ''; hint.textContent = k ? labels[k - 1] ?? hint0 : hint0; if (v.length >= 8) err('pw', false); });
+        email.addEventListener('input', () => { if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) err('email', false); });
+        const toggle = acct.querySelector<HTMLButtonElement>('[data-pw-toggle]')!;
+        toggle.addEventListener('click', () => { const show = pw.type === 'password'; pw.type = show ? 'text' : 'password'; toggle.textContent = show ? toggle.dataset.hide! : toggle.dataset.show!; toggle.setAttribute('aria-pressed', String(show)); pw.focus(); });
+        acct.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const okMail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()), okPw = pw.value.length >= 8;
+          err('email', !okMail); err('pw', !okPw);
+          if (!okMail) { email.focus(); return; } if (!okPw) { pw.focus(); return; }
+          a.email = email.value.trim(); fresh(); goId('done');
+        });
+        root.querySelectorAll<HTMLButtonElement>('[data-social]').forEach((b) => b.addEventListener('click', () => { fresh(); goId('done'); }));
+      }
+      root.querySelector<HTMLElement>('[data-print]')!.addEventListener('click', () => window.print());
+      // Botschaftstermin als Kalenderdatei: ganztaegig am berechneten Tag, Beschreibung ist der Hinweis zur Mission
+      root.querySelector<HTMLElement>('[data-ics]')?.addEventListener('click', () => {
+        const day = root.dataset.appt; if (!day) return;
+        const next = new Date(Number(day.slice(0, 4)), Number(day.slice(4, 6)) - 1, Number(day.slice(6, 8)) + 1);
+        const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//EC Assets//Mockup//EN', 'BEGIN:VEVENT', `UID:ec-${day}@mockup`, `DTSTAMP:${ymd(new Date())}T090000Z`, `DTSTART;VALUE=DATE:${day}`, `DTEND;VALUE=DATE:${ymd(next)}`, `SUMMARY:${data.calendarTitle}`, `DESCRIPTION:${String(data.embassy[a.from ?? 'islamabad']).replace(/,/g, '\\,')}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+        const u = URL.createObjectURL(new Blob([ics], { type: 'text/calendar' })); const l = document.createElement('a'); l.href = u; l.download = 'visa-appointment.ics'; l.click(); setTimeout(() => URL.revokeObjectURL(u), 1000);
+      });
+
+      // Start: Zustand aus der Session nur beim Wiederaufnehmen (Reload, Zurueck, ?step=/?plan=), ein frischer Aufruf beginnt
+      // vorn; dann die URL-Parameter (Planer M06: ?group=student|work&months=N&rate=R) und localStorage ec-plan (months, rate)
+      const params = new URLSearchParams(location.search);
+      const nav = (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)?.type;
+      const resume = params.has('step') || params.has('plan') || nav === 'reload' || nav === 'back_forward';
+      if (resume) { try { const s = JSON.parse(sessionStorage.getItem('ec-wiz') || 'null'); if (s && typeof s === 'object') { a = s.a && typeof s.a === 'object' ? s.a : {}; i = typeof s.i === 'number' && s.i >= 0 && s.i < steps.length ? s.i : 0; hist = Array.isArray(s.hist) ? s.hist.filter((n: unknown): n is number => typeof n === 'number' && n >= 0 && n < steps.length) : []; } } catch {} }
+      const planParam = params.get('plan'); if (planParam) { const p = decPlan(planParam); if (p) a = { ...a, ...p }; }
+      const stepIdx = params.has('step') ? ids.indexOf(params.get('step')!) : -1;
+      const groupParam = params.get('group'), purposeParam = params.get('purpose');
+      if (groupParam === 'student') a.purpose = 0; else if (groupParam === 'work') a.purpose = 7;
+      if (purposeParam !== null && /^[0-8]$/.test(purposeParam)) a.purpose = Number(purposeParam);
+      const fromP = params.get('from'); if (fromP === 'islamabad' || fromP === 'karachi') a.from = fromP;
+      const ageP = params.get('age'); if (ageP && /^\d{1,2}$/.test(ageP)) a.age = Number(ageP);
+      const arrP = params.get('arrival'); if (arrP && /^\d{4}-\d{2}$/.test(arrP)) a.arrival = arrP;
+      const fundP = params.get('funding'); if (fundP === 'have' || fundP === 'need') a.funding = fundP;
+      let saved: { months?: unknown; rate?: unknown } = {}; try { saved = JSON.parse(localStorage.getItem('ec-plan') || '{}') || {}; } catch {}
+      const monthsP = Number(params.get('months') ?? saved.months); if (Number.isFinite(monthsP) && monthsP > 0) a.months = monthsP;
+      const rateP = Number(params.get('rate') ?? saved.rate); if (Number.isFinite(rateP) && rateP > 0) rateInput.value = String(rateP);
+      if (stepIdx >= 0) i = stepIdx; else if (groupParam !== null || purposeParam !== null) i = ids.indexOf('purpose');
+      // Felder aus dem Zustand fuellen
+      const ageIn = root.querySelector<HTMLInputElement>('input[data-answer="age"]'); if (ageIn) ageIn.value = a.age !== undefined ? String(a.age) : '';
+      monthInput.value = a.arrival ?? '';
+      const mailIn = root.querySelector<HTMLInputElement>('input[data-answer="email"]'); if (mailIn) mailIn.value = a.email ?? '';
+      try { history.replaceState({ i }, '', url(i)); } catch {}
+      render(computeModel(a, rate()), { quiet: true });
+      show(0);
+      steps.forEach(syncOptions);
+    };
+    initWizard();
+    document.addEventListener('astro:page-load', initWizard);
+  </script>
+</App>
+<style is:global>
+  /* Blattwechsel (M11): das sichtbare Blatt traegt den Namen, alt blendet aus, neu kommt von der Seite (--wiz-x, vom Skript
+     je Richtung und Schreibrichtung gesetzt). Die Pseudo-Elemente haengen an html, darum global. */
+  :root { --wiz-x: 24px; }
+  :root[dir="rtl"] { --wiz-x: -24px; }
+  .step[data-vt] { view-transition-name: wiz-step; }
+  ::view-transition { pointer-events: none; }
+  ::view-transition-group(wiz-step) { animation-duration: .28s; animation-timing-function: var(--ease-out-soft); }
+  ::view-transition-old(wiz-step) { animation: wizOut .18s ease-out both; }
+  ::view-transition-new(wiz-step) { animation: wizIn .28s var(--ease-out-soft) both; }
+  @keyframes wizOut { to { opacity: 0; transform: translateX(calc(var(--wiz-x) * -.5)); } }
+  @keyframes wizIn { from { opacity: 0; transform: translateX(var(--wiz-x)); } }
+</style>
+<style>
+  .wiz { max-width: 980px; margin: 0 auto; position: relative; }
+  .wiz[data-dir="-1"] { --wiz-x: -24px; }
+  .step[hidden] { display: none !important; } /* hidden muss gewinnen (Rundgang 18.09. 23:00) */
+  .step { padding: 40px; }
+  .step:not(.start):not(.result) { max-width: 640px; width: 100%; margin-inline: auto; }
+  .step.result { padding: 0; background: none; box-shadow: none; display: grid; gap: 16px; }
+  /* Blattwechsel: das alte Blatt bleibt als Overlay stehen (hidden bleibt gesetzt, QA-Skripte sehen nur das neue), das neue ist
+     schon im DOM und nur noch unsichtbar, bis der Uebergang laeuft */
+  .step[hidden].is-leaving { display: block !important; position: absolute; z-index: 2; margin: 0; pointer-events: none; }
+  .step.result[hidden].is-leaving { display: grid !important; }
+  .step.is-entering { opacity: 0; }
+  .step h2 { font-size: 1.55rem; margin-bottom: .6em; }
+  .step h2:focus { outline: none; }
+  .step .q { font-weight: 600; margin: 18px 0 10px; }
+  /* Leiste */
+  .wiz-rail { display: flex; align-items: center; gap: 14px; max-width: 640px; min-height: 44px; margin: 0 auto 16px; }
+  .wiz-rail:has(+ .plan-strip:not([hidden])) { margin-bottom: 0; }
+  .back { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text); display: grid; place-items: center; padding: 0; cursor: pointer; transition: border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+  @media (hover: hover) { .back:hover { border-color: var(--color-text); } }
+  .back:active { transform: scale(.96); transition-duration: var(--dur-press); }
+  .back[hidden] { display: none; }
+  :global([dir="rtl"]) .back svg { transform: scaleX(-1); }
+  .rail-prog { flex: 1; min-width: 0; display: grid; gap: 7px; }
+  .rail-prog[hidden] { display: none; }
+  .rail-count { margin: 0; font-size: .8rem; font-weight: 600; color: var(--color-muted); line-height: 1.2; }
+  .track { display: flex; gap: 4px; height: 4px; }
+  .track > :global(i) { flex: 1; border-radius: 2px; background: var(--color-border); overflow: hidden; position: relative; }
+  .track > :global(i)::after { content: ""; position: absolute; inset: 0; background: var(--color-accent); transform: scaleX(0); transform-origin: 0 50%; }
+  :global([dir="rtl"]) .track > :global(i)::after { transform-origin: 100% 50%; }
+  .track > :global(i.on)::after { transform: scaleX(1); }
+  .track.is-anim > :global(i)::after { transition: transform .45s var(--ease-spring); }
+  /* Laufender Plan als Streifen unter 1000 px */
+  .plan-strip { display: flex; align-items: stretch; height: 56px; max-width: 640px; margin: 0 auto 16px; background: rgba(255,255,255,.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 5; font-variant-numeric: tabular-nums; }
+  .plan-strip[hidden] { display: none; }
+  .plan-strip > div { flex: 1; min-width: 0; padding: 0 12px; display: flex; flex-direction: column; justify-content: center; gap: 1px; border-inline-start: 1px solid var(--color-border); }
+  .plan-strip > div:first-child { border-inline-start: 0; padding-inline-start: 0; }
+  .plan-strip small { font-size: .62rem; line-height: 1.15; font-weight: 600; text-transform: uppercase; letter-spacing: var(--tracking-caps); color: var(--color-muted); overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+  .plan-strip b { font-weight: 600; font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .plan-strip b.none { color: var(--color-muted); font-weight: 400; }
+  .plan-strip > div.is-changed { animation: planFlash .6s var(--ease-out) both; }
+  /* Plan-Karte ab 1000 px */
+  .plan-card { background: var(--color-bg); border-radius: var(--radius-m); padding: 22px 24px 16px; display: none; }
+  .plan-card .lbl { margin-bottom: 4px; }
+  .plan-rows dt { flex: 1 1 auto; }
+  .plan-rows dd { white-space: normal; flex: 0 1 auto; max-width: 62%; }
+  .plan-rows dd.none { color: var(--color-muted); font-weight: 400; }
+  .plan-rows > div.is-changed { animation: planFlash .6s var(--ease-out) both; }
+  @keyframes planFlash { from { background-color: var(--color-accent-soft); } to { background-color: transparent; } }
+  .plan-card .see { margin: 8px 0 0; padding-top: 10px; border-top: 1px solid var(--color-border); }
+  .plan-card .see[hidden] { display: none; }
+  .plan-card .see .btn-link { font-size: .95rem; }
+  /* Start */
+  .start { padding: 0; overflow: hidden; }
+  .start-grid { display: grid; grid-template-columns: 1.05fr .95fr; align-items: stretch; }
+  .start-text { padding: 44px 40px 36px; display: flex; flex-direction: column; }
+  .start-text h2 { font-size: 1.8rem; }
+  .start-list { list-style: none; margin: 18px 0 18px; padding: 0; display: grid; gap: 10px; }
+  .start-list li { display: flex; gap: 12px; align-items: flex-start; font-size: .95rem; line-height: 1.4; }
+  .start-list li > span:not(.icircle) { padding-top: calc((30px - 1lh) / 2); } /* erste Zeile mittig zum Icon (Symmetrie) */
+  .start-list .icircle { width: 30px; height: 30px; background: var(--color-accent-soft); color: var(--color-accent); flex: none; }
+  .start-meta { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 22px; }
+  .start-meta span { font-size: .76rem; font-weight: 600; background: var(--color-surface); border-radius: var(--radius-pill); padding: 6px 12px; color: var(--color-muted); }
+  .start-text .wide { margin-bottom: 12px; }
+  .existing { margin: 0; }
+  .existing a { color: var(--color-text); font-weight: 600; }
+  .start-visual { min-height: 460px; display: grid; }
+  .start-visual > :global(*) { height: 100%; border-radius: 0; }
+  /* Ergebnis */
+  .head { display: grid; grid-template-columns: 1.2fr .8fr; gap: 24px; align-items: center; }
+  .glance { margin: 0; display: grid; gap: 0; background: var(--color-surface); border-radius: var(--radius-m); padding: 6px 18px; }
+  .glance div { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 10px 0; border-top: 1px solid var(--color-border); }
+  .glance div:first-child { border-top: 0; }
+  .glance dt { color: var(--color-muted); font-size: .82rem; }
+  .glance dd { margin: 0; font-family: var(--font-heading); font-weight: 600; font-size: 1.15rem; letter-spacing: -.01em; font-variant-numeric: tabular-nums; text-align: end; }
+  .grid3 .icircle { background: var(--color-accent-soft); color: var(--color-accent); margin-bottom: 12px; }
+  .dbar { height: 6px; border-radius: 3px; background: var(--color-surface-strong); overflow: hidden; margin: 10px 0 6px; }
+  .dbar i { display: block; height: 100%; width: 0; background: var(--color-accent); transition: width .4s var(--ease-out); }
+  .actions.section--dark { padding: 28px; border-radius: var(--radius-l); }
+  .actions h3 { margin-bottom: .2em; }
+  .disclaimer { margin: 0; }
+  .result h3 { font-size: 1.25rem; margin-bottom: .4em; }
+  .result .card { padding: 28px; }
+  .result .head { padding: 32px; }
+  .result .head h2 { max-width: 24ch; }
+  .lbl { color: var(--color-muted); font-size: .68rem; margin-bottom: 8px; }
+  .price { font-family: var(--font-heading); font-size: 1.35rem; font-weight: 600; letter-spacing: -.02em; margin: 0 0 8px; }
+  .price small { font-size: .8rem; font-weight: 500; color: var(--color-muted); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .fund h3 { color: var(--color-accent); }
+  .fund [data-out="fundNote"][hidden] { display: none; }
+  .muted { color: var(--color-muted); }
+  .small { font-size: .85rem; }
+  .wide { width: 100%; margin-bottom: 10px; }
+  .wide :global(.mk) { margin-inline-end: 2px; }
+  .group { color: var(--color-muted); margin: 22px 0 10px; font-size: .68rem; }
+  /* Optionen: Antwort beim Druecken (70 ms), Haken federt am Zeilenende ein, Hover nur mit Maus */
+  .opt { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; text-align: start; padding: 15px 44px 15px 18px; margin-bottom: 8px; background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-s); font: inherit; font-weight: 500; color: var(--color-text); cursor: pointer; transition: border-color .2s var(--ease-out), transform .2s var(--ease-out), background-color .2s var(--ease-out); }
+  :global([dir="rtl"]) .opt { padding: 15px 18px 15px 44px; }
+  /* Chevron aus physischen Rahmen (rechts + unten), damit die Drehung in beiden Schreibrichtungen stimmt */
+  .opt::after { content: ""; position: absolute; inset-inline-end: 20px; top: 50%; width: 8px; height: 8px; margin-top: -5px; border-right: 1.5px solid var(--color-muted); border-bottom: 1.5px solid var(--color-muted); transform: rotate(-45deg); opacity: .6; transition: transform .2s, opacity .2s; }
+  :global([dir="rtl"]) .opt::after { transform: rotate(135deg); }
+  .opt::before { content: ""; position: absolute; inset-inline-end: 18px; top: 50%; width: 14px; height: 14px; margin-top: -7px; border-radius: 50%; background: var(--color-accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 8.5l3 3 6-6.5'/%3E%3C/svg%3E") no-repeat center / 64%; transform: scale(0); opacity: 0; }
+  @media (hover: hover) { .opt:hover { border-color: var(--color-ink); transform: translateX(2px); } :global([dir="rtl"]) .opt:hover { transform: translateX(-2px); } }
+  .opt:active { transform: translateX(2px) scale(.985); transition-duration: var(--dur-press); }
+  :global([dir="rtl"]) .opt:active { transform: translateX(-2px) scale(.985); }
+  .opt.is-pressed, .opt.is-on { background: var(--color-accent-soft); border-color: var(--color-accent-tint); }
+  .opt.is-pressed::before, .opt.is-on::before { transform: scale(1); opacity: 1; }
+  .opt.is-pressed::before { transition: transform .22s var(--ease-spring), opacity .08s; }
+  .opt.is-pressed::after, .opt.is-on::after { opacity: 0; }
+  /* Ankunft: Semesterkarten zuerst, "anderer Monat" aufklappbar */
+  .arrival-pick { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+  .semesters { order: -1; display: grid; gap: 8px; margin-bottom: 4px; }
+  .opt.semester { display: grid; grid-template-columns: 1fr; row-gap: 2px; padding-top: 16px; padding-bottom: 16px; margin: 0; }
+  .opt.semester b { font-weight: 600; }
+  .opt.semester small { color: var(--color-muted); font-size: .85rem; font-weight: 400; }
+  .other-month summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 10px 0; font-size: .9rem; font-weight: 600; color: var(--color-muted); user-select: none; }
+  .other-month summary::-webkit-details-marker { display: none; }
+  .other-month summary::before { content: ""; width: 7px; height: 7px; margin-top: -3px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); transition: transform .2s var(--ease-out); flex: none; }
+  .other-month[open] summary::before { transform: rotate(225deg); margin-top: 3px; }
+  .other-month .field { margin: 4px 0 6px; }
+  .or { text-align: center; color: var(--color-muted); margin: 10px 0 16px; font-size: .72rem; letter-spacing: var(--tracking-caps); display: flex; align-items: center; gap: 12px; }
+  .or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--color-border); }
+  /* Geld: Hauptbuch aus base.css, Rupien als Nebenzeile unter dem Eurobetrag */
+  .money .rate { max-width: 340px; margin: 6px 0 14px; }
+  .money .rate small { color: var(--color-muted); font-size: .8rem; margin-top: 6px; }
+  .sums dt { flex: 1 1 auto; }
+  .sums dd { flex: 0 1 auto; max-width: 56%; }
+  .sums dd small { white-space: normal; }
+  .sums > div.total dd small { color: var(--color-text); font-size: .85rem; }
+  /* Zeitplan */
+  .tl { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 0; position: relative; }
+  .tl::before { content: ""; position: absolute; top: 12px; bottom: 12px; inset-inline-start: 7px; width: 2px; background: var(--color-border); }
+  .tl :global(li) { display: grid; grid-template-columns: 104px 1fr; gap: 12px; padding: 9px 0 9px 28px; font-size: .95rem; position: relative; }
+  :global([dir="rtl"]) .tl :global(li) { padding: 9px 28px 9px 0; }
+  .tl :global(li)::before { content: ""; position: absolute; top: 15px; inset-inline-start: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--color-bg); border: 2px solid var(--color-accent); box-sizing: border-box; }
+  .tl :global(li:last-child)::before { background: var(--color-accent); }
+  .tl :global(.when) { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .tl :global(li.late .when) { color: var(--color-accent); }
+  .tl :global(li.late)::before { background: var(--color-accent); }
+  /* Dokumente: Zeilen mit Haken-Kreis (base.css .checklist li.ok), das Kaestchen unsichtbar im Label, die ganze Zeile klickbar */
+  .docs { margin: 12px 0 0; }
+  .docs.checklist :global(li) { position: relative; margin: 0; padding-block: 10px; padding-inline: 2em 0; border-top: 1px solid var(--color-border); font-size: .95rem; }
+  .docs.checklist :global(li:not(.ok))::before { top: calc(10px + .2em); width: 1.3em; height: 1.3em; inset-inline-start: 0; border-radius: 50%; background: var(--color-bg); border: 1.5px solid var(--color-border); box-sizing: border-box; transition: border-color .2s var(--ease-out); }
+  .docs.checklist :global(li.ok)::before { top: calc(10px + .2em); }
+  .docs :global(label) { display: block; cursor: pointer; }
+  .docs :global(label)::after { content: ""; position: absolute; inset: 0; }
+  .docs :global(input) { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; inset-inline-start: .4em; top: 50%; }
+  .docs :global(li.ok span) { color: var(--color-muted); text-decoration: line-through; }
+  @media (hover: hover) { .docs.checklist :global(li:not(.ok):hover)::before { border-color: var(--color-text); } }
+  .docs :global(input:focus-visible) + :global(span) { outline: 2px solid var(--color-focus); outline-offset: 3px; border-radius: 4px; }
+  .emb { margin-top: 24px; }
+  .actions .btns { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0 0; }
+  .actions .btn { display: inline-flex; align-items: center; gap: 8px; }
+  .chipline { margin: -4px 0 14px; }
+  .chip-note { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; font-weight: 600; color: var(--color-accent); background: var(--color-accent-soft); border-radius: var(--radius-pill); padding: 5px 11px; }
+  .privacy { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 14px 0 0; font-size: .78rem; color: var(--color-muted); }
+  /* Registrierung */
+  .acct .summary { background: var(--color-surface); border-radius: var(--radius-m); padding: 16px 18px 14px; margin: 16px 0 22px; }
+  .acct .summary ul { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+  .acct .summary li { display: flex; align-items: center; gap: 10px; font-size: .92rem; font-weight: 500; }
+  .acct .summary .icircle { width: 26px; height: 26px; background: var(--color-accent-soft); color: var(--color-accent); flex: none; }
+  .acct .field { margin-bottom: 14px; }
+  .pw-wrap { position: relative; display: flex; }
+  .pw-wrap input { flex: 1; padding-inline-end: 64px; }
+  .pw-toggle { position: absolute; inset-inline-end: 12px; top: 50%; transform: translateY(-50%); background: none; border: 0; font: inherit; font-size: .78rem; font-weight: 600; color: var(--color-muted); cursor: pointer; padding: 6px 4px; }
+  .pw-toggle:hover { color: var(--color-text); }
+  .meter { display: block; height: 4px; border-radius: 2px; background: var(--color-border); margin-top: 8px; overflow: hidden; }
+  .meter i { display: block; height: 100%; width: 0; background: var(--color-accent); transition: width .3s var(--ease-out), background-color .3s; }
+  .meter i.w1 { width: 33%; background: var(--color-accent); } .meter i.w2 { width: 66%; background: #d9a441; } .meter i.w3 { width: 100%; background: #2f9e6d; }
+  .hint { display: block; margin-top: 6px; font-size: .78rem; }
+  .err { display: block; margin-top: 6px; font-size: .8rem; color: var(--color-accent); font-weight: 500; }
+  .err[hidden] { display: none; }
+  .field.is-invalid input { border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-soft); }
+  .consent { margin: 4px 0 0; font-size: .78rem; }
+  .consent :global(a) { color: var(--color-text); }
+  .acct .or { margin-top: 18px; }
+  /* Erfolg */
+  .done { text-align: center; }
+  .done h2 { margin-top: 10px; }
+  .done .muted { max-width: 40ch; margin: 0 auto 20px; }
+  .ck { display: block; margin: 6px auto 0; animation: ckIn .5s cubic-bezier(.2, 1.3, .3, 1) both; }
+  .ck-c { fill: var(--color-accent-soft); stroke: var(--color-accent); stroke-width: 2; }
+  .ck-p { fill: none; stroke: var(--color-accent); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 40; stroke-dashoffset: 40; animation: ckDraw .5s var(--ease-out) .35s forwards; }
+  @keyframes ckIn { from { transform: scale(.5); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes ckDraw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) { .ck { animation: none; } .ck-p { animation: none; stroke-dashoffset: 0; } .opt.is-pressed::before { transition: none; } }
+  .next { list-style: none; counter-reset: n; margin: 0 auto 24px; padding: 0; max-width: 420px; text-align: start; display: grid; gap: 10px; }
+  .next li { display: flex; gap: 12px; align-items: flex-start; font-size: .95rem; }
+  .next .n { counter-increment: n; flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--color-surface-strong); display: grid; place-items: center; font-size: .78rem; font-weight: 600; }
+  .next .n::before { content: counter(n); }
+  /* Zwei Spalten ab 1000 px (M12): Fragen links (520 px, mittig), Plan rechts (380 px, klebend); Start und Ergebnis ueber beide */
+  @media (min-width: 1000px) {
+    .wiz { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 0 32px; align-items: start; }
+    .wiz-rail, .step:not(.start):not(.result) { grid-column: 1; max-width: 520px; }
+    .step.start, .step.result { grid-column: 1 / -1; }
+    .plan-card { grid-column: 2; grid-row: 1 / span 3; position: sticky; top: calc(var(--hdr-sticky) + 24px); }
+    .plan-card:not([hidden]) { display: block; }
+    .privacy { grid-column: 1; }
+    .plan-strip { display: none !important; }
+  }
+  @media (max-width: 800px) {
+    .grid2, .grid3 { grid-template-columns: 1fr; } .tl :global(li) { grid-template-columns: 92px 1fr; } .start-grid { grid-template-columns: 1fr; } .start-visual { min-height: 300px; order: -1; } .head { grid-template-columns: 1fr; }
+    /* Leiste klebt oben in der Spalte, 44 px hoch; der Streifen direkt darunter */
+    .wiz-rail { position: sticky; top: 0; z-index: 6; min-height: 44px; margin-inline: calc(-1 * var(--gutter)); padding: 0 var(--gutter); max-width: none; background: rgba(255,255,255,.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+    .plan-strip { top: 44px; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); max-width: none; }
+  }
+  @media (max-width: 600px) {
+    .step { padding: 26px 22px; } .result .card { padding: 22px 18px; }
+    /* Start: Foto als schmaler Streifen, damit "Let's go" auf 812 px im Bild steht */
+    .start-visual { height: 150px; min-height: 0; overflow: hidden; }
+    .start-visual :global(.photo-stage) { aspect-ratio: auto; height: 100%; }
+    .start-text { padding: 16px 20px 20px; } .start-text .kicker { margin-bottom: 8px; } .start-text h2 { font-size: 1.4rem; } .start-text > .muted { font-size: .95rem; line-height: 1.45; margin-bottom: .5em; }
+    .start-list { margin: 10px 0 12px; gap: 6px; } .start-list li { font-size: .9rem; line-height: 1.35; } .start-list .icircle { width: 26px; height: 26px; } .start-list li > span:not(.icircle) { padding-top: calc((26px - 1lh) / 2); }
+    .start-meta { margin-bottom: 12px; gap: 6px; } .start-meta span { padding: 5px 10px; font-size: .72rem; } .start-text .wide { margin-bottom: 8px; }
+    /* Ergebnis: Aktionskarte klebt unten, der Primaerknopf bleibt im Bild */
+    .result .actions.section--dark { position: sticky; bottom: 0; z-index: 4; padding: 14px 18px; border-radius: var(--radius-m); }
+    .result .actions h3 { display: none; }
+    .actions .btns { margin: 0; gap: 8px; }
+    .actions .btn { justify-content: center; min-height: 48px; }
+    .actions .btn-primary { flex: 1 1 100%; order: -1; }
+    .actions .btn-outline { flex: 1 1 calc(50% - 4px); font-size: .9rem; padding: 0 .8em; }
+    .sums dd { max-width: 50%; }
+    .plan-strip > div { padding: 0 8px; } .plan-strip small { letter-spacing: .04em; }
+  }
+  @media print {
+    .wiz-rail, .plan-card, .plan-strip, .actions .btns, :global(.app-top), :global(.ama), :global(footer), :global(.mobile-cta) { display: none !important; }
+    .step.result { display: grid !important; }
+    .result .card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+  }
+</style>

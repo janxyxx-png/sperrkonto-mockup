@@ -1,0 +1,310 @@
+{
+  "slug": "blocked-account",
+  "path": "/blocked-account",
+  "title": "Blocked Account for your German visa | Open online in minutes",
+  "description": "Open a Blocked Account for your German visa with EC Assets: fully online, recognised by every German authority, with a confirmation letter the day your deposit arrives and a refund if your visa is refused.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "The Blocked Account your German visa requires"
+        },
+        {
+          "type": "paragraph",
+          "html": "Online, recognised everywhere, refunded if your visa is refused"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "Recognised by every German embassy and authority.",
+              "mark": "ok"
+            },
+            {
+              "html": "Account in your own name with a German IBAN.",
+              "mark": "ok"
+            },
+            {
+              "html": "Deposit in Pakistani rupees through our payments partner.",
+              "mark": "ok"
+            }
+          ]
+        },
+        {
+          "type": "button",
+          "text": "{{product.start}}",
+          "href": "/app/start",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "From your kitchen table to the visa appointment"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Tell us who you are"
+        },
+        {
+          "type": "paragraph",
+          "html": "A few minutes with your passport and your admission letter. No branch, no notary, no German."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Send the deposit from Pakistan"
+        },
+        {
+          "type": "paragraph",
+          "html": "Pay in rupees through our payments partner. You see the rate and the fee before you confirm; the money usually lands within a few business days."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Hold the letter every embassy recognises"
+        },
+        {
+          "type": "paragraph",
+          "html": "The day your deposit arrives, your confirmation letter is in the portal. Print it, add it to your file, book the appointment."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Unlock your money after landing"
+        },
+        {
+          "type": "paragraph",
+          "html": "Send us your visa and your German address in the portal. We verify them within 24 hours, and from then on your monthly amount arrives in your Bank Account by itself."
+        }
+      ],
+      "anchor": "how-it-works"
+    },
+    {
+      "id": 6,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Why open your Blocked Account with us"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": "",
+          "illo": "documents",
+          "photo": "/img/photos/cine-phone-night.jpg"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "A process you can finish in one sitting"
+        },
+        {
+          "type": "paragraph",
+          "html": "Our Blocked Account is one of the <strong>quickest routes to the proof of funds a German visa requires</strong>. The application is <strong>fully online</strong> and <strong>deliberately short</strong>. In your <strong><a href=\"/app/login\">EC Assets portal</a></strong> you can see your deposit, your documents and every other product in one place."
+        },
+        {
+          "type": "paragraph",
+          "html": "To <a href=\"/app/start\">open the account</a>, follow the steps in the application and you will have it set up within minutes. Our <a href=\"/help\">support team</a> is there for questions before, during and after your move."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": "",
+          "illo": "money",
+          "photo": "/img/photos/desk-bokeh.jpg"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Fees that stay small"
+        },
+        {
+          "type": "paragraph",
+          "html": "The fees are kept low on purpose, so your money goes towards <strong>your move</strong> and not towards the paperwork."
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "<strong>Monthly fee:</strong> {{price.monthly}}, no set-up fee",
+              "mark": "ok"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": "",
+          "illo": "bank",
+          "photo": "/img/photos/cine-railing-night-woman.jpg"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Deposit in your own currency"
+        },
+        {
+          "type": "paragraph",
+          "html": "To avoid poor exchange rates when sending money from home, you can <strong>pay your deposit in Pakistani rupees (PKR)</strong> through our <a href=\"/help\">international payments partner.</a>"
+        },
+        {
+          "type": "paragraph",
+          "html": "You see the rate and the fee before you confirm, and most transfers arrive within a few business days."
+        }
+      ],
+      "anchor": "what-you-get"
+    },
+    {
+      "id": 10,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "What a Blocked Account costs in total"
+        },
+        {
+          "type": "paragraph",
+          "html": "The German authorities currently require <strong>€992 for every month</strong> of your planned stay. <br> If you are staying longer than a year, open a twelve-month account first and extend it later. <br> The deposit remains <em>your</em> money. It is simply held as proof that you can support yourself."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "A twelve-month Blocked Account at a glance"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Deposit required by the authorities</strong>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "€11,904"
+        },
+        {
+          "type": "paragraph",
+          "html": "€992 × 12 months"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Monthly fees, 12 months</strong>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "{{price.year}}"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Total</strong>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "{{price.total}}"
+        }
+      ],
+      "anchor": "costs"
+    },
+    {
+      "id": 8,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "quote",
+          "text": "\"Three products, one login. When I landed in Munich my bank account was already active and my first payout was waiting.\"",
+          "author": "Bilal R.",
+          "role": "Master's student in Mechanical Engineering, Munich, from Lahore"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Frequently asked questions"
+        },
+        {
+          "type": "faq",
+          "items": [
+            {
+              "q": "What is a Blocked Account?",
+              "a": "An account that the German authorities require as proof that you can support yourself during your stay. It applies to international students, language students, au-pairs, job seekers and many other newcomers. The monthly amount is adjusted regularly to the cost of living in Germany. For 2026 it is €992 per month, or €11,904 for a full year."
+            },
+            {
+              "q": "How much do I need for 2026?",
+              "a": "For 2026 the standard amount is €992 per month, which is €11,904 for a twelve-month visa. Applicants for a job seeker visa or an Opportunity Card need €1,091 per month. The figure is set by the German authorities and follows the national student support rate."
+            },
+            {
+              "q": "Why do I need one?",
+              "a": "If you are moving to Germany for longer than a short visit and need a visa, the embassy will almost certainly ask for proof of funds. A Blocked Account is the standard way to provide it. <br> We issue the confirmation letter as soon as your deposit arrives, and every German authority recognises it."
+            },
+            {
+              "q": "Is the EC Assets Blocked Account accepted for a German visa?",
+              "a": "Yes. Our confirmation letter is recognised by every German embassy, consulate and immigration office."
+            },
+            {
+              "q": "What does it cost?",
+              "a": "<p>A monthly fee of {{price.monthly}}, no set-up fee. On top of that you deposit the amount the authorities require, which depends on how long you plan to stay.</p>"
+            },
+            {
+              "q": "How do I transfer money into the account?",
+              "a": "After the account is open you can send your deposit in Pakistani rupees through our <a href=\"/partners/international-payments\">international payments partner</a>, with the rate and fee shown before you confirm."
+            },
+            {
+              "q": "What happens if my visa is refused?",
+              "a": "We refund the full deposit and the service fees you have paid."
+            },
+            {
+              "q": "Can I deposit more than the required amount?",
+              "a": "Yes. You can deposit up to €25,000. <br> <br> <strong>Note</strong>: anything above the official blocked amount is paid out to you in full with your first monthly payout after activation."
+            },
+            {
+              "q": "How do I know the money has arrived?",
+              "a": "You receive an email confirmation the moment the funds are credited. That confirmation is the proof of funds you take to your visa appointment."
+            },
+            {
+              "q": "When do I get my first payout?",
+              "a": "Once you have submitted the documents needed for activation, we verify them within 24 hours. The first transfer then takes two to three business days. <br> <br> Because the Bank Account is part of the setup, every following monthly payout arrives there instantly and is visible in the app."
+            },
+            {
+              "q": "Which documents do I need to activate my accounts?",
+              "a": "You will need: <br> - your passport <br> - proof of your address in Germany <br> - proof of residence status <br> <br> Examples and exceptions are explained in <a href=\"/help\">our Help Center article.</a>"
+            }
+          ]
+        }
+      ],
+      "anchor": "faq",
+      "photo": "/img/photos/chair-laptop.jpg"
+    }
+  ]
+}

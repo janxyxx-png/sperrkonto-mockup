@@ -1,0 +1,60 @@
+---
+/** Drei Datensektionen als Kartenreihe (Rundgang 20.09.): Ueberschrift, erster Absatz, Rest eingeklappt. Ersetzt auf
+ *  /health-insurance die drei Textbloecke "The insurers", "Private cover", "The bonus tariff", die als Prosa mit drei
+ *  Aufklappern untereinander standen. Bilder der Sektionen entfallen (Partnerlogos sind noch Platzhalter). */
+import BlockView from './Block.astro';
+import type { Block, Page } from '../lib/content';
+import { rewriteHtml } from '../lib/content';
+import { type Locale, t } from '../lib/i18n';
+type Sec = Page['sections'][number];
+interface Props { sections: Sec[]; locale: Locale; bg?: boolean }
+const { sections, locale, bg = false } = Astro.props;
+const split = (s: Sec) => {
+  const blocks = s.blocks.filter((b) => b.type !== 'image');
+  const hi = blocks.findIndex((b) => b.type === 'heading');
+  const heading = hi >= 0 && blocks[hi].type === 'heading' ? (blocks[hi] as { text: string }).text : '';
+  const rest = blocks.filter((_, i) => i !== hi);
+  const pi = rest.findIndex((b) => b.type === 'paragraph');
+  const lead = pi >= 0 ? (rest[pi] as { html: string }).html : '';
+  const more: Block[] = rest.filter((_, i) => i !== pi).filter((b) => !(b.type === 'button'));
+  return { heading, lead, more, anchor: s.anchor };
+};
+const cards = sections.map(split);
+---
+<section class:list={['section', 'trio-sec', { alt: bg }]}>
+  <div class="container">
+    <ul class="trio">
+      {cards.map((c) => (
+        <li class="card" id={c.anchor}>
+          <h3>{c.heading}</h3>
+          <p class="lead" set:html={rewriteHtml(c.lead, locale)} />
+          {c.more.length > 0 && <details class="more">
+            <summary>{t(locale, 'more')}</summary>
+            <div class="more-body">{c.more.map((b) => <BlockView locale={locale} block={b} />)}</div>
+          </details>}
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+<style>
+  .trio-sec { padding: var(--section-y) 0; }
+  .trio-sec.alt { background: var(--color-surface); }
+  .trio { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap); align-items: stretch; } /* gleich hohe Karten (Symmetrie, Jan 21.09.) */
+  .trio-sec.alt .card { background: var(--color-bg); }
+  .card { padding: 28px; display: flex; flex-direction: column; }
+  .card > .more:last-child { margin-top: auto; } /* "Mehr" in allen drei Karten unten auf einer Linie (Symmetrie, Jan 21.09.) */
+  h3 { font-size: 1.25rem; margin: 0 0 .5em; }
+  .lead { color: var(--color-muted); font-size: .98rem; line-height: 1.55; margin: 0; }
+  .lead :global(strong) { color: var(--color-text); }
+  .more { margin-top: 16px; border-top: 1px solid var(--color-border); padding-top: 12px; }
+  .more summary { cursor: pointer; font-weight: 600; font-size: var(--fs-small); list-style: none; display: flex; align-items: center; justify-content: space-between; }
+  .more summary::-webkit-details-marker { display: none; }
+  .more summary::after { content: "+"; font-size: 1.2rem; line-height: 1; color: var(--color-muted); }
+  .more[open] summary::after { content: "−"; }
+  .more-body { margin-top: 12px; font-size: .92rem; color: var(--color-muted); }
+  .more-body :global(h3), .more-body :global(h4) { font-size: 1rem; margin: 1em 0 .3em; color: var(--color-text); }
+  .more-body :global(p) { margin: 0 0 .7em; }
+  .more-body :global(.checklist) { margin: .4em 0 .8em; }
+  @media (max-width: 900px) { .trio { grid-template-columns: 1fr; } }
+</style>

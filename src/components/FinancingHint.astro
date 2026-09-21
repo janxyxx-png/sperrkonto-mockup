@@ -1,0 +1,35 @@
+---
+/** Verweisblock auf /study-loan unter den Kostenbloecken der Produktseiten (07-PROMPT Aufgabe 4). Seit 20.09. in der Sprache
+ *  der Finanzierungswege (Startseite, /pricing): Figur "0% interest, we pay it" links, Satz und Link rechts; ganze Karte ist der Link. */
+import Icon from './Icon.astro';
+import { type Locale, localePath } from '../lib/i18n';
+import { LOAN } from '../lib/loan-copy';
+import { PRICING } from '../lib/pricing-copy';
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const c = LOAN[locale] ?? LOAN.en;
+const pc = PRICING[locale] ?? PRICING.en;
+---
+<section class="hint">
+  <div class="container">
+    <a class="card is-link box" href={localePath(locale, '/study-loan')}>
+      <span class="fig"><b>{pc.paths.loan.figure}</b><small>{pc.paths.loan.tag}</small></span>
+      <span class="txt">{c.hint.text}</span>
+      <span class="lnk">{c.hint.link}<Icon name="arrow" size={16} /></span>
+    </a>
+  </div>
+</section>
+<style>
+  /* Bruecke wie die Trust-Karte: die Karte sitzt auf der Kante zwischen grauer Preissektion und weisser Folgesektion (Jan 18.09.) */
+  .hint { padding: 0 0 calc(var(--section-y) - 36px); margin-top: -36px; position: relative; z-index: 2; }
+  .box { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 28px; max-width: 920px; margin: 0 auto; padding: 22px 28px; text-decoration: none; color: inherit; background: var(--color-bg); box-shadow: 0 24px 50px -28px rgba(11,15,25,.35); }
+  .box:hover { background: var(--color-bg); }
+  .fig { display: flex; flex-direction: column; line-height: 1; padding-inline-end: 28px; border-inline-end: 1px solid var(--color-border); }
+  .fig b { font-family: var(--font-heading); font-size: 2.2rem; font-weight: var(--fw-number); letter-spacing: var(--tracking-number); color: var(--color-accent); }
+  .fig small { font-size: .74rem; color: var(--color-muted); margin-top: 6px; white-space: nowrap; }
+  .txt { font-weight: 600; font-size: 1.1rem; }
+  .lnk { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; font-size: var(--fs-small); color: var(--color-accent); white-space: nowrap; }
+  .lnk :global(svg) { transition: transform .2s var(--ease-out); }
+  .box:hover .lnk :global(svg) { transform: translateX(3px); }
+  @media (max-width: 600px) { .hint { margin-top: -28px; padding-bottom: calc(var(--section-y) - 28px); } .box { grid-template-columns: 1fr; gap: 12px; padding: 20px 18px; } .fig { border: 0; padding: 0; flex-direction: row; align-items: baseline; gap: 10px; } .txt { font-size: 1rem; } }
+</style>

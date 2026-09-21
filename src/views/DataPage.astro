@@ -1,0 +1,139 @@
+---
+/** Generische Marketing-Seite aus src/data/<locale>/pages/*.json ueber den Sektions-Renderer.
+ *  Zulassungsliste heroes.ts: diese Slugs bekommen Foto-Hero (aus der Hero-Sektion gebaut), Trust-Leiste und
+ *  Abschluss-CTA vor den Fussnoten (08-SPEC 4.2, 4.4). Finanzierungshinweis (07-PROMPT Aufgabe 4) auf zwei Slugs.
+ *  Alle Regeln lesen die englische Referenz (ref), gerendert wird die Sprachkopie. */
+import Base from '../layouts/Base.astro';
+import Section from '../components/Section.astro';
+import PhotoHero from '../components/PhotoHero.astro';
+import TrustBar from '../components/TrustBar.astro';
+import ClosingCta from '../components/ClosingCta.astro';
+import FinancingHint from '../components/FinancingHint.astro';
+import DepositEstimator from '../components/DepositEstimator.astro';
+import Stage from '../components/Stage.astro';
+import PhotoBand from '../components/PhotoBand.astro';
+import CompareTwo from '../components/CompareTwo.astro';
+import TrioCards from '../components/TrioCards.astro';
+import FeatureGrid from '../components/FeatureGrid.astro';
+import ScrollStory from '../components/ScrollStory.astro';
+import { parseSteps } from '../lib/steps';
+import { INSURANCE_COMPARE } from '../lib/insurance-copy';
+import type { Page, Block } from '../lib/content';
+import { route, rewriteHtml, stripTags } from '../lib/content';
+import { type Locale, localePath, t } from '../lib/i18n';
+import { heroFor } from '../lib/heroes';
+interface Props { page: Page; locale?: Locale; translated?: boolean; ref?: Page }
+const { page, locale = 'en', translated = true, ref } = Astro.props;
+const en = ref ?? page;
+const photo = heroFor(en.slug);
+
+// Hero-Sektion: erste der ersten zwei Sektionen mit H1
+const heroIndex = photo ? en.sections.findIndex((s, i) => i <= 1 && s.blocks.some((b) => b.type === 'heading' && b.level === 1)) : -1;
+const heroBlocks: Block[] = heroIndex >= 0 ? page.sections[heroIndex].blocks : [];
+const heroRef: Block[] = heroIndex >= 0 ? en.sections[heroIndex].blocks : [];
+const h1i = heroRef.findIndex((b) => b.type === 'heading' && b.level === 1);
+const txt = (b: Block | undefined) => (b && b.type === 'heading' ? b.text : b && b.type === 'paragraph' ? b.html : '');
+// Kurze Absaetze direkt nach der H1 sind die grosse Zeile (Kicker-als-H1, T16); sonst ist die H1 selbst die Headline
+const displayIdx: number[] = [];
+for (let i = h1i + 1; i < heroRef.length; i++) { const b = heroRef[i]; if (b.type === 'paragraph' && b.html.length <= 16) displayIdx.push(i); else break; }
+const kicker = displayIdx.length ? stripTags(txt(heroBlocks[h1i])) : undefined;
+const title = displayIdx.length ? displayIdx.map((i) => stripTags(txt(heroBlocks[i]))).join('<br />') : stripTags(txt(heroBlocks[h1i]));
+const paras = heroRef.map((b, i) => [b, i] as const).filter(([b, i]) => b.type === 'paragraph' && !displayIdx.includes(i)).map(([, i]) => i);
+const isStrong = (i: number) => /^\s*<strong>/.test(txt(heroRef[i]));
+const leadIdx = paras.find((i) => !isStrong(i));
+const subIdx = paras.filter((i) => i !== leadIdx).slice(0, 2);
+const lead = leadIdx !== undefined ? rewriteHtml(txt(heroBlocks[leadIdx]), locale) : undefined;
+const sub = subIdx.length ? subIdx.map((i) => rewriteHtml(txt(heroBlocks[i]), locale)).join(' ') : undefined;
+const ctas = heroBlocks.filter((b) => b.type === 'button').slice(0, 2).map((b, k) => (b.type === 'button' ? { text: b.text, href: route(b.href, locale), ghost: k === 1 } : null)).filter(Boolean) as { text: string; href: string; ghost?: boolean }[];
+const checks = (heroBlocks.find((b) => b.type === 'list') as { items: { html: string }[] } | undefined)?.items.slice(0, 4).map((i) => rewriteHtml(i.html, locale)) ?? [];
+
+// Finanzierungshinweis (09-PROMPT B1): hinter der Preissektion (Anker "pricing"), sonst hinter dem Kostenabschnitt
+// (Anker "costs"), sonst hinter der ersten Sektion mit Preisblock oder Euro-Kennzahl. Auf Seiten ohne Preis kein Hinweis.
+const PRICED = new Set(['blocked-account', 'complete-setup', 'health-insurance', 'german-bank-account']);
+const byAnchor = (a: string) => en.sections.findIndex((s) => s.anchor === a);
+const byPrice = () => en.sections.findIndex((s) => s.blocks.some((b) => b.type === 'pricing' || (b.type === 'heading' && /^€\s?[\d.,]+$/.test(b.text.trim()))));
+// Sperrkonto-Planer (M06) hinter dem Kostenblock der Sperrkonto- und Buendelseite; er ersetzt Kennzahlenraster und Rupien-Rechner
+// und traegt die Kreditzeile selbst, deshalb dort kein FinancingHint (er wuerde sie wiederholen)
+const PLANNER = new Set(['blocked-account', 'complete-setup']);
+const hintIndex = PRICED.has(en.slug) && !PLANNER.has(en.slug) ? [byAnchor('pricing'), byAnchor('costs'), byPrice()].find((i) => i >= 0) ?? -1 : -1;
+const calcIndex = PLANNER.has(en.slug) ? byAnchor('costs') : -1;
+// Produktseiten zeigen nur ihre eigene Preiskarte, der Vergleich steht auf /pricing (18-NAECHSTES-LEVEL Hebel 5)
+const pricingKeep = ({ 'blocked-account': /Blocked Account only/i, 'health-insurance': /Health Insurance only/i, 'complete-setup': /Complete Setup/i, 'german-bank-account': /Complete Setup/i } as Record<string, RegExp>)[en.slug];
+// Abschluss-CTA vor der Fussnoten-Sektion (erster Block Ueberschrift "Footnotes"), nur fuer Seiten mit Foto
+const last = en.sections[en.sections.length - 1];
+const footish = (b: Block) => b.type === 'paragraph' && /^\s*(\*|\[\d+\]|<em>\*)/.test(b.html);
+const isFoot = !!last && (last.blocks.some((b) => b.type === 'heading' && /^footnotes$/i.test(b.text)) || (last.blocks.length > 0 && last.blocks.every((b) => b.type === 'paragraph') && last.blocks.some(footish)));
+// (Rundgang 18.09. spaet: Fussnoten mit vorangestelltem Hinweis-Absatz oder nur aus Sternchen-Absaetzen standen als eigene helle Sektion ueber dem Footer)
+const footIndex = isFoot ? en.sections.length - 1 : -1;
+// Abschluss-CTA auf jeder Seite mit Foto-Hero, auch ohne Fussnoten (seit 20.09. haben nicht mehr alle Datenseiten welche)
+const closingBefore = photo ? (isFoot ? footIndex : en.sections.length) : -1;
+const footBlocks: Block[] = isFoot ? page.sections[footIndex].blocks : [];
+// Breadcrumb-Sektion (s0 = kurze Liste) entfaellt unter dem Foto-Hero
+const skip = (i: number) => (!!photo && i === 0 && heroIndex === 1) || i === footIndex;
+// Ohne Foto-Hero steht die Trust-Leiste hinter der Sektion mit der H1 (09-PROMPT A6)
+// Produktbuehne und Atempause-Band (14-PROMPT Aufgaben 1 und 2), je Seite im Code, Texte aus ui-strings
+const STAGE: Record<string, 'card' | 'app' | 'doc' | 'cert'> = { 'blocked-account': 'doc', 'german-bank-account': 'card', 'complete-setup': 'app', 'health-insurance': 'cert' }; // cert seit 28: Zertifikat-Objekt auf der Versicherungsseite
+const BAND: Record<string, { src: string; key: Parameters<typeof t>[1]; pos?: string }> = {
+  'blocked-account': { src: '/img/photos/cine-terminal-golden.jpg', key: 'band.blocked', pos: '50% 60%' },
+  'complete-setup': { src: '/img/photos/cine-hiker-clouds.jpg', key: 'band.vp', pos: '50% 45%' },
+  'health-insurance': { src: '/img/photos/cine-rooftop-fog-woman.jpg', key: 'band.hi', pos: '50% 60%' },
+  'german-bank-account': { src: '/img/photos/cine-elbphilharmonie-blue.jpg', key: 'band.bank', pos: '50% 35%' },
+};
+const stageObj = STAGE[en.slug]; const band = BAND[en.slug];
+// ScrollStory (M05): auf diesen Seiten wird aus Buehne und Schrittkarten ein Kapitel, in dem das Objekt den Schritten antwortet
+const STORY: Record<string, 'doc'> = { 'blocked-account': 'doc' };
+const storyObj = STORY[en.slug];
+const storyIndex = storyObj ? en.sections.findIndex((s) => s.anchor === 'how-it-works') : -1;
+// Je Seite ein Set der schon gezeigten Mockup-Arten; Section.astro ersetzt Wiederholungen durch Fotos
+const seen = new Set<string>();
+// Seiten ohne eigene Flaechenangaben (kein background in den Daten) wechseln automatisch weiss/grau, damit keine Seite
+// eine einzige weisse Bahn ist (Seitenharmonie, Jan 18.09. spaet). Hero, Kicker-Zeile und Fussnoten zaehlen nicht.
+const autoAlt = !en.sections.some((s) => s.background) && en.sections.length >= 4;
+let altCount = 0;
+const bgFor = (i: number): boolean | undefined => { if (!autoAlt || skip(i)) return undefined; const s = en.sections[i]; if (i <= 1 && s.blocks.some((b) => b.type === 'heading' && b.level === 1)) return undefined; if (i === 0 && s.blocks.length === 1 && s.blocks[0].type === 'list') return undefined; if (s.blocks.some((b) => b.type === 'pricing')) return undefined; altCount += 1; return altCount % 2 === 0; };
+if (stageObj) seen.add(stageObj === 'app' ? 'phone' : stageObj === 'card' ? 'card' : stageObj === 'cert' ? 'doc:Insurance certificate' : 'doc:Visa application');
+const bandAfter = band ? en.sections.findIndex((s) => s.anchor === 'how-it-works') : -1;
+// Rundgang 20.09. (design-upgrade/26-RUNDGANG-PREMIUM.md): Versicherungsseite mit Vergleich gesetzlich/privat hinter
+// "Public or private" und einer Kartenreihe statt der drei Textbloecke Versicherer/Privat/Bonustarif; Bankseite mit
+// Merkmalsraster statt flacher Haken-Liste ("Banking that moves with you").
+const ic = INSURANCE_COMPARE[locale] ?? INSURANCE_COMPARE.en;
+const compareAfter = en.slug === 'health-insurance' ? byAnchor('public-or-private') : -1;
+const trioIdx = en.slug === 'health-insurance' ? ['insurers', 'private-cover', 'bonus-tariff'].map(byAnchor).filter((i) => i >= 0) : [];
+const featIdx = en.slug === 'german-bank-account' ? byAnchor('what-you-get') : -1;
+const featHeading = featIdx >= 0 ? (page.sections[featIdx].blocks.find((b) => b.type === 'heading') as { text: string } | undefined)?.text ?? '' : '';
+const featItems = featIdx >= 0 ? (page.sections[featIdx].blocks.find((b) => b.type === 'list') as { items: { html: string }[] } | undefined)?.items ?? [] : [];
+const featRef = featIdx >= 0 ? (en.sections[featIdx].blocks.find((b) => b.type === 'list') as { items: { html: string }[] } | undefined)?.items ?? [] : [];
+// Abschlusszeile je Produktseite (M08), sonst die allgemeine
+const CLOSING: Record<string, Parameters<typeof t>[1]> = { 'blocked-account': 'closing.blocked', 'german-bank-account': 'closing.bank', 'complete-setup': 'closing.setup', 'health-insurance': 'closing.hi' };
+const closingTitle = t(locale, CLOSING[en.slug] ?? 'closing.title');
+const TRUST_PAGES = new Set(['about-us']);
+const trustAfter = photo || !TRUST_PAGES.has(en.slug) ? -1 : en.sections.findIndex((s, i) => i <= 1 && s.blocks.some((b) => b.type === 'heading' && b.level === 1));
+---
+<Base title={page.title} description={page.description} locale={locale} path={page.path} translated={translated} photoHero={!!photo}>
+  <main id="main">
+    {page.sections.map((s, i) => skip(i) ? null : <>
+      {i === heroIndex ? <>
+        <PhotoHero size="page" underHeader kicker={kicker} title={title} lead={lead} sub={sub} ctas={ctas} checks={checks} photo={photo} />
+        <TrustBar locale={locale} bridge />
+        {stageObj && storyIndex < 0 && <Stage object={stageObj} locale={locale} kicker={t(locale, 'stage.kicker')} title={t(locale, `stage.${stageObj}.title`)} text={t(locale, `stage.${stageObj}.text`)} cta={{ text: t(locale, `stage.${stageObj}.cta`), href: localePath(locale, '/app/start') }} />}
+      </> : i === storyIndex && storyObj ? (() => { const p = parseSteps(s, ref?.sections[i]); return p.isSteps
+        ? <ScrollStory object={storyObj} locale={locale} kicker={t(locale, 'stage.kicker')} title={t(locale, `stage.${storyObj}.title`)} lead={t(locale, `stage.${storyObj}.text`)} stepsTitle={p.heading && p.heading.type === 'heading' ? p.heading.text : undefined} steps={p.steps} cta={{ text: t(locale, `stage.${storyObj}.cta`), href: localePath(locale, '/app/start') }} id={s.anchor ?? `s${s.id}`} />
+        : <Section section={s} index={i} locale={locale} refSection={ref?.sections[i]} seen={seen} bg={bgFor(i)} pricingKeep={pricingKeep} />; })()
+      : trioIdx.includes(i) ? (i === trioIdx[0] ? <TrioCards sections={trioIdx.map((j) => page.sections[j])} locale={locale} bg={!!en.sections[i].background} /> : null)
+        : i === featIdx ? <FeatureGrid heading={featHeading} items={featItems} refItems={featRef} locale={locale} bg={!!en.sections[i].background} />
+        : <Section section={s} index={i} locale={locale} refSection={ref?.sections[i]} seen={seen} bg={bgFor(i)} pricingKeep={pricingKeep} skipStats={i === calcIndex} compact={i === calcIndex} />}
+      {i === compareAfter && <section class="section alt cmp-sec"><div class="container"><h2>{ic.title}</h2><CompareTwo head={ic.head} rows={ic.rows} /><p class="cmp-note">{ic.note}</p></div></section>}
+      {i === bandAfter && band && <PhotoBand src={band.src} pos={band.pos} text={t(locale, band.key)} />}
+      {i === trustAfter && <TrustBar locale={locale} />}
+      {i === calcIndex && <DepositEstimator locale={locale} />}
+      {i === hintIndex && <FinancingHint locale={locale} />}
+    </>)}
+    {closingBefore >= 0 && <ClosingCta title={closingTitle} cta={t(locale, 'getValuePackage')} href={localePath(locale, '/app/start')} tone="surface" />}
+  </main>
+  {isFoot && <Fragment slot="footnotes">{footBlocks.map((b) => b.type === 'heading' ? <h4>{b.text}</h4> : b.type === 'paragraph' ? <p set:html={rewriteHtml(b.html, locale)} /> : null)}</Fragment>}
+</Base>
+<style>
+  .cmp-sec { padding: var(--section-y) 0; background: var(--color-surface); }
+  .cmp-sec h2 { margin-bottom: 28px; }
+  .cmp-note { margin: 18px 0 0; font-size: .85rem; color: var(--color-muted); max-width: 70ch; }
+</style>

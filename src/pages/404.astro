@@ -1,0 +1,8 @@
+---
+/** dist/404.html: Hosting liefert sie bei unbekannten Adressen. Sie ist die englische Fehlerseite; beginnt die Adresse mit
+ *  /ur/ oder /pa/, springt sie sofort auf die Fehlerseite in dieser Sprache (/ur/not-found, /pa/not-found), damit auch
+ *  Kopf, Fuss und Sprachmenue in der Sprache des Besuchers stehen. */
+import NotFound from '../views/NotFound.astro';
+---
+<script is:inline>(function(){var m=location.pathname.match(/^\/(ur|pa)(\/|$)/);if(m)location.replace('/'+m[1]+'/not-found');})();</script>
+<NotFound locale="en" path="/" />

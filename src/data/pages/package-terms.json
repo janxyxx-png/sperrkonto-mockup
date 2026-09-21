@@ -1,0 +1,55 @@
+{
+  "slug": "package-terms",
+  "path": "/package-terms",
+  "title": "Special terms for packages | EC Assets",
+  "description": "Special terms and conditions for EC Assets product packages.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Special terms and conditions for packages"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>This is a structural placeholder for the mockup. The final wording must come from EC Assets' legal counsel before publication.</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "These special terms apply in addition to the general terms whenever you order a package such as the {{product}}."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "1. Package contents"
+        },
+        {
+          "type": "paragraph",
+          "html": "A package bundles several products at a combined price. The contents are listed on the product page at the time of ordering."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "2. Extras"
+        },
+        {
+          "type": "paragraph",
+          "html": "Extras such as the digital student ID, travel health insurance and the insurance bonus tariff are provided by partners and are subject to their conditions and availability."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "3. Changes and withdrawal"
+        },
+        {
+          "type": "paragraph",
+          "html": "If you remove a product from the package, the package price no longer applies and the individual prices are charged."
+        }
+      ]
+    }
+  ]
+}

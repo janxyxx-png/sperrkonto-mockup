@@ -1,0 +1,141 @@
+{
+  "slug": "partner-agencies",
+  "path": "/partner-agencies",
+  "title": "Partner agencies | EC Assets",
+  "description": "EC Assets works with education agencies in many countries. What agency partners do, and how their students get the Blocked Account, health insurance and {{product}}.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Partner agencies"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ],
+      "figure": "/img/photos/cine-dusk-silhouette.jpg"
+    },
+    {
+      "id": 1,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Education agencies and EC Assets"
+        },
+        {
+          "type": "paragraph",
+          "html": "How our agency partners support students on the way to Germany"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "paragraph",
+          "html": "Many students plan their studies abroad with the help of an education agency in their home country. Agencies advise on programmes, handle applications and coordinate the practical side of the move. For the German visa requirements, a growing number of them work with EC Assets."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "What agency partners do"
+        },
+        {
+          "type": "paragraph",
+          "html": "A good agency looks at the whole picture: the course, the budget, the insurance requirements of the destination country and the deadlines. Our partners integrate the EC Assets products into that process, so that students receive their Blocked Account and health insurance as part of a single plan."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Working with an agency"
+        },
+        {
+          "type": "paragraph",
+          "html": "If you are already advised by an agency, ask whether they work with EC Assets. If you are an agency and would like to partner with us, get in touch through the partner login."
+        },
+        {
+          "type": "button",
+          "text": "Partner login",
+          "href": "/partner/login",
+          "style": "btn btn-m btn-solid btn-white text-base fill-base btn-icon btn-icon-back"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "More questions?"
+        },
+        {
+          "type": "paragraph",
+          "html": "The Help Center answers the most common ones."
+        },
+        {
+          "type": "button",
+          "text": "Go to the Help Center",
+          "href": "/help",
+          "style": "btn btn-m btn-solid btn-secondary text-base fill-base btn-icon btn-icon-back"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Follow us"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Footnotes"
+        },
+        {
+          "type": "paragraph",
+          "html": "[1] The bonus tariff is an optional tariff offered by our statutory insurance partner and is available once your membership is active. Members can opt out of selected service packages in exchange for a yearly bonus; if those services are used after all, a deductible applies. Amounts and conditions are set by the insurer and shown before you choose the tariff."
+        },
+        {
+          "type": "paragraph",
+          "html": "[2] To keep your Bank Account active you will need to provide a valid visa <strong>or</strong> residence permit after arrival. We will tell you the deadline for submitting these documents."
+        }
+      ]
+    }
+  ]
+}

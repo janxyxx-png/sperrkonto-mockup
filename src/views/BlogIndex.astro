@@ -1,0 +1,74 @@
+---
+/** Guides-Uebersicht. Seit 28 mit dem ersten Artikel als grosser Karte (Foto links, Titel und Anriss rechts), die uebrigen im Raster. */
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import Pic from '../components/Pic.astro';
+import { posts, postsIn, tagSlug, tagLabel, BRAND, readMinutes } from '../lib/content';
+import { photoForPost, focusFor } from '../lib/photos';
+import { type Locale, localePath, t as tr } from '../lib/i18n';
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const t = (k: Parameters<typeof tr>[1]) => tr(locale, k);
+const lp = (p: string) => localePath(locale, p);
+const tags = [...new Set(posts.flatMap((p) => p.tags))].sort();
+const [first, ...rest] = postsIn(locale);
+const firstPhoto = first ? photoForPost(first) : '';
+---
+<Base title={t('blog.title')} description={t('blog.lead')} locale={locale} path="/guides" cta={false}>
+  <main id="main" class="container">
+    <header class="head">
+      <p class="kicker">{t('blog.eyebrow')}</p>
+      <h1>{t('blog.title')}</h1>
+      <p class="lead">{t('blog.lead')}</p>
+      <nav class="tags">{tags.map((x) => <a href={lp(`/guides/tag/${tagSlug(x)}`)}>{tagLabel(x, locale)}</a>)}</nav>
+    </header>
+    {first && (
+      <a class="featured card" href={lp(`/guides/${first.slug}`)}>
+        <span class="f-img" aria-hidden="true"><Pic src={firstPhoto} alt="" sizes="(max-width: 800px) 100vw, 660px" style={`object-position:${focusFor(firstPhoto)}`} /></span>
+        <span class="f-body">
+          <span class="f-tags">{first.tags.map((x) => <span>{tagLabel(x, locale)}</span>)}</span>
+          <span class="f-title">{first.title}</span>
+          <span class="f-text">{first.description}</span>
+          <span class="f-meta">{BRAND} · {t('blog.readMin').replace('{n}', String(readMinutes(first)))}</span>
+        </span>
+      </a>
+    )}
+    <div class="grid">{rest.map((p) => <PostCard post={p} locale={locale} />)}</div>
+  </main>
+</Base>
+<style>
+  .head { text-align: start; max-width: 720px; margin: 64px 0 48px; }
+  .lead { color: var(--color-muted); font-size: var(--fs-body); }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; margin-top: 24px; }
+  .tags a { font-size: .8rem; font-weight: 500; padding: 7px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-pill); text-decoration: none; color: var(--color-text); transition: border-color .2s, color .2s, background-color .2s; }
+  .tags a:hover { border-color: var(--color-text); color: var(--color-text); background: var(--color-surface); }
+  /* Erster Artikel gross: Foto links, Text rechts, die ganze Karte ist der Link */
+  .featured { display: grid; grid-template-columns: 1.15fr 1fr; padding: 0; overflow: hidden; text-decoration: none; color: inherit; margin-bottom: var(--grid-gap); min-height: 380px; }
+  .featured:hover { background: var(--color-surface); }
+  .f-img { position: relative; display: block; min-height: 300px; background: var(--color-surface-strong); }
+  .f-img :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: var(--photo-grade); transition: transform .9s var(--ease-out); }
+  .featured:hover .f-img :global(img) { transform: scale(1.03); }
+  @media (hover: none) { .tags a:hover { border-color: var(--color-border); background: none; } .featured:hover { background: var(--color-surface); } .featured:hover .f-img :global(img) { transform: none; } } /* M10 */
+  .f-body { display: flex; flex-direction: column; padding: 40px 44px 36px; min-width: 0; }
+  .f-tags { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; font-size: .8rem; font-weight: 500; color: var(--color-accent); }
+  .f-title { font-family: var(--font-heading); font-weight: var(--fw-display); font-size: clamp(1.6rem, 2.6vw, 2.2rem); line-height: 1.1; letter-spacing: -.02em; margin-bottom: 14px; text-wrap: balance; }
+  .f-text { color: var(--color-muted); font-size: 1.05rem; line-height: var(--lh-lead); text-wrap: pretty; }
+  .f-meta { margin-top: auto; padding-top: 18px; border-top: 1px solid var(--color-border); color: var(--color-muted); font-size: .78rem; letter-spacing: .02em; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap); }
+  @media (max-width: 1000px) { .grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 800px) {
+    .featured { grid-template-columns: 1fr; min-height: 0; }
+    .f-img { min-height: 0; aspect-ratio: 16 / 9; }
+    .f-body { padding: 22px 22px 20px; }
+    .f-title { font-size: 1.45rem; }
+    .f-text { font-size: .98rem; }
+  }
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; gap: 0; border-top: 1px solid var(--color-border); }
+    /* Schlagwort-Chips als eine wischbare Zeile statt acht Zeilen */
+    .tags { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--gutter)); padding-inline: var(--gutter); padding-bottom: 6px; scrollbar-width: none; }
+    .tags::-webkit-scrollbar { display: none; }
+    .tags a { flex: 0 0 auto; min-height: 40px; display: inline-flex; align-items: center; }
+    .featured { margin-bottom: 20px; }
+  }
+</style>

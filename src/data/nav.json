@@ -1,0 +1,181 @@
+{
+  "topbar": [
+    {
+      "label": "We answer in English, Urdu and Punjabi, within 24 hours.",
+      "href": "/help/contact"
+    },
+    {
+      "label": "Help Center",
+      "href": "/help"
+    },
+    {
+      "label": "Careers",
+      "href": "/careers"
+    },
+    {
+      "label": "Partners",
+      "href": "/partner/login"
+    },
+    {
+      "label": "Log In",
+      "href": "/app/login"
+    }
+  ],
+  "menu": [
+    {
+      "label": "{{product}}",
+      "href": "/complete-setup",
+      "children": []
+    },
+    {
+      "label": "Study Loan",
+      "href": "/study-loan",
+      "children": []
+    },
+    {
+      "label": "Pricing",
+      "href": "/pricing",
+      "children": []
+    },
+    {
+      "label": "Guides",
+      "href": "/guides",
+      "children": []
+    },
+    {
+      "label": "Help",
+      "href": "/help",
+      "children": []
+    }
+  ],
+  "headerCta": {
+    "label": "{{product.start}}",
+    "href": "/app/start"
+  },
+  "footerCols": [
+    {
+      "heading": "Company",
+      "links": [
+        {
+          "label": "About Us",
+          "href": "/about-us"
+        },
+        {
+          "label": "Careers",
+          "href": "/careers"
+        },
+        {
+          "label": "Press",
+          "href": "/press"
+        },
+        {
+          "label": "Partners",
+          "href": "/partners"
+        },
+        {
+          "label": "Partner Login",
+          "href": "/partner/login"
+        }
+      ]
+    },
+    {
+      "heading": "Products",
+      "links": [
+        {
+          "label": "Blocked Account",
+          "href": "/blocked-account"
+        },
+        {
+          "label": "Study Loan",
+          "href": "/study-loan"
+        },
+        {
+          "label": "Health Insurance",
+          "href": "/health-insurance"
+        },
+        {
+          "label": "Bank Account",
+          "href": "/german-bank-account"
+        },
+        {
+          "label": "{{product}}",
+          "href": "/complete-setup"
+        },
+        {
+          "label": "Pricing",
+          "href": "/pricing"
+        }
+      ]
+    },
+    {
+      "heading": "Guides",
+      "links": [
+        {
+          "label": "Living in Germany",
+          "href": "/guides/tag/living-in-germany"
+        },
+        {
+          "label": "Studying in Germany",
+          "href": "/guides/tag/studying-in-germany"
+        },
+        {
+          "label": "Working in Germany",
+          "href": "/guides/tag/working-in-germany"
+        },
+        {
+          "label": "Renting in Germany",
+          "href": "/guides/renting-germany"
+        }
+      ]
+    },
+    {
+      "heading": "Resources",
+      "links": [
+        {
+          "label": "All guides",
+          "href": "/guides"
+        },
+        {
+          "label": "Embassy checklist",
+          "href": "/embassy-checklist"
+        },
+        {
+          "label": "FAQs",
+          "href": "/help"
+        },
+        {
+          "label": "Verification for authorities",
+          "href": "/authorities"
+        },
+        {
+          "label": "News",
+          "href": "/guides/tag/news"
+        }
+      ]
+    }
+  ],
+  "legal": [
+    {
+      "label": "Imprint",
+      "href": "/legal-notice"
+    },
+    {
+      "label": "Terms & Conditions",
+      "href": "/general-terms-and-conditions"
+    },
+    {
+      "label": "Privacy Policy",
+      "href": "/privacy-policy"
+    },
+    {
+      "label": "Broker Information",
+      "href": "/broker-information"
+    }
+  ],
+  "copyright": "© 2026 EC Assets | Accounts are held with a licensed partner bank in the EU",
+  "languages": [
+    "English",
+    "اردو",
+    "پنجابی"
+  ]
+}

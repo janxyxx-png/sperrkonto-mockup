@@ -1,0 +1,335 @@
+{
+  "slug": "home",
+  "path": "/",
+  "title": "جرمنی جاݨ لئی بلاکڈ اکاؤنٹ، ہیلتھ انشورنس تے بینک اکاؤنٹ",
+  "description": "جرمنی جا رہے او؟ EC Assets تہاڈی ویزا درخواست دیاں تنے لوڑاں، بلاکڈ اکاؤنٹ، ہیلتھ انشورنس تے جرمن بینک اکاؤنٹ، اک آن لائن درخواست وچ اکٹھیاں کر دیندا اے۔ تیز، صاف تے واجب قیمت تے۔",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "hero-frontpage__section",
+      "background": true,
+      "blocks": [
+        {
+          "type": "paragraph",
+          "html": "تیار ہو کے پہنچو۔"
+        },
+        {
+          "type": "paragraph",
+          "html": "جرمن ویزا جو کجھ منگدا اے، اوہ سفر توں پہلاں آن لائن تیار۔ پاکستان توں جرمنی جاݨ والے طالب علماں تے پیشہ وراں لئی بݨایا گیا۔"
+        },
+        {
+          "type": "button",
+          "text": "{{product.start}}",
+          "href": "/app/start",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon- btn-icon"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "جس دن رقم پہنچے، اوسے دن تصدیقی خط",
+              "mark": "ok"
+            },
+            {
+              "html": "پہلے ہفتیاں لئی ٹریول ہیلتھ انشورنس شامل",
+              "mark": "ok"
+            },
+            {
+              "html": "اڈاݨ توں پہلاں جرمن IBAN تیار",
+              "mark": "ok"
+            },
+            {
+              "html": "ساڈے پارٹنر بینکاں راہیں بغیر سود تعلیمی قرضہ",
+              "mark": "ok"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "quote",
+          "text": "\"میں کراچی وچ آپݨے رسوئی دے میز توں بلاکڈ اکاؤنٹ کھولیا۔ تصدیقی خط اگلے دن آ گیا تے سفارت خانے نے بغیر کسے سوال دے اوہنوں منظور کر لیا۔\"",
+          "author": "عریبہ ع۔",
+          "role": "ڈیٹا سائنس دی ماسٹرز طالبہ، برلن، کراچی توں"
+        },
+        {
+          "type": "quote",
+          "text": "\"کرایہ، فون بل، سودا سلف: پہلے ہفتے توں سبھ کجھ اکاؤنٹ راہیں چلیا۔ فزیکل کارڈ آؤن توں پہلاں ای کارڈ میری والٹ ایپ وچ سی۔\"",
+          "author": "سلمیٰ ب۔",
+          "role": "ماسٹرز طالبہ، ملتان"
+        },
+        {
+          "type": "quote",
+          "text": "\"تنے پراڈکٹ، اک لاگ اِن۔ جدوں میں میونخ اتریا تے میرا بینک اکاؤنٹ پہلاں ای فعال سی تے میری پہلی رقم اُڈیک رہی سی۔\"",
+          "author": "بلال ر۔",
+          "role": "مکینیکل انجینئرنگ دا ماسٹرز طالب علم، میونخ، لاہور توں"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تنے پراڈکٹ۔ اک سیٹ اپ۔"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "بلاکڈ اکاؤنٹ"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>مالی ثبوت جو تہاڈا ویزا منگدا اے</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "بلاکڈ اکاؤنٹ (<em>Sperrkonto</em>) جرمن ادارےآں نوں وکھاندا اے کہ تسی آپݨے قیام دوران آپݨا خرچ چک سکدے او۔ ساڈا اکاؤنٹ ہر سفارت خانے تے امیگریشن دفتر ولوں منظور اے، تے تصدیقی خط اوسے دن جاری ہوندا اے جس دن تہاڈی رقم پہنچدی اے۔"
+        },
+        {
+          "type": "button",
+          "text": "ہور جاݨو",
+          "href": "/blocked-account",
+          "style": "relative btn-s btn btn-outline btn-tertiary btn-outline-1 text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "button",
+          "text": "ہݨے کھولو",
+          "href": "/app/start",
+          "style": "relative btn-s btn btn-solid btn-secondary text-base fill-base btn-icon-back btn-icon"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "ہیلتھ انشورنس"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>کوریج جو تہاڈی صورتحال نال میل کھاوے</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "اوہناں پارٹنراں توں <strong>سرکاری یا نجی ہیلتھ انشورنس</strong> چݨو جو بین الاقوامی درخواست دہندیاں نوں سمجھدے نیں۔ دونویں آپشن <strong>ویزے لئی منظور</strong> نیں تے انگریزی وچ سروس نال آؤندے نیں۔ تہاڈے پہلے ہفتیاں لئی <strong>ٹریول ہیلتھ انشورنس</strong> شامل اے۔"
+        },
+        {
+          "type": "button",
+          "text": "ہور جاݨو",
+          "href": "/health-insurance",
+          "style": "relative btn-s btn btn-outline btn-tertiary btn-outline-1 text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "button",
+          "text": "کوریج چݨو",
+          "href": "/app/start",
+          "style": "relative btn-s btn btn-solid btn-secondary text-base fill-base btn-icon-back btn-icon"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "بینک اکاؤنٹ"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>روز دی زندگی لئی جرمن اکاؤنٹ</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>کرایہ دیو، تنخواہ وصول کرو تے آپݨے پیسے اک ایپ وچ سنبھالو۔</strong> تہاڈا اکاؤنٹ <strong>تہاڈے بلاکڈ اکاؤنٹ نال جڑیا</strong> اے تے جرمن <strong>IBAN</strong> نال آؤندا اے، جو مالک مکان تے آجر منگݨ گے۔ <strong>کوئی اکاؤنٹ فیس نئیں</strong> تے کوئی گھٹ توں گھٹ بیلنس نئیں۔ <strong>{{product}} وچ شامل۔</strong>"
+        },
+        {
+          "type": "button",
+          "text": "ہور جاݨو",
+          "href": "/german-bank-account",
+          "style": "relative btn-s btn btn-outline btn-tertiary btn-outline-1 text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "button",
+          "text": "ہݨے کھولو",
+          "href": "/app/start",
+          "style": "relative btn-s btn btn-solid btn-secondary text-base fill-base btn-icon-back btn-icon"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "{{product}}"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>تنے {{price.monthly}} مہینہ وچ۔</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "تیار ہو کے پہنچݨ دا سبھ توں سوکھا طریقہ۔ اک درخواست وچ آپݨا <strong>بلاکڈ اکاؤنٹ تے بینک اکاؤنٹ</strong> کھولو تے اوہ <strong>ہیلتھ انشورنس</strong> پکی کرو جو تہاڈے ویزے نوں چاہیدی اے۔ ڈیجیٹل اسٹوڈنٹ آئی ڈی تے انشورنس بونس ٹیرف ورگیاں وادھو سہولتاں شامل نیں۔ <br>"
+        },
+        {
+          "type": "button",
+          "text": "ہور جاݨو",
+          "href": "/complete-setup",
+          "style": "relative btn-s btn btn-outline btn-tertiary btn-outline-1 text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "button",
+          "text": "{{product.choose}}",
+          "href": "/app/start",
+          "style": "relative btn-s btn btn-solid btn-secondary text-base fill-base btn-icon-back btn-icon"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "اوہناں لوکاں دیاں کہاݨیاں جنہاں نے ایہ قدم چکیا"
+        },
+        {
+          "type": "paragraph",
+          "html": "طالب علم تے پیشہ ور سانوں دسدے نیں کہ اوہناں نے جرمنی لئی کیویں تیاری کیتی، کیہ حیران کن سی تے اوہ کیہ وکھرا کردے۔ ہر مہینے نویاں کہاݨیاں۔"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "ساڈے گاہک کیہ کہندے نیں"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "جرمنی جاݨ لئی اک ایپ"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>بلاکڈ اکاؤنٹ، ہیلتھ انشورنس تے بینک اکاؤنٹ، تہاڈے فون توں سنبھالے جاندے۔</strong>"
+        },
+        {
+          "type": "image",
+          "src": "icon",
+          "alt": ""
+        },
+        {
+          "type": "image",
+          "src": "icon",
+          "alt": ""
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "تہاڈے سفر لئی گائیڈ"
+        },
+        {
+          "type": "button",
+          "text": "ساری گائیڈاں",
+          "href": "/guides",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "اکثر پچھے جاݨ والے سوال"
+        },
+        {
+          "type": "faq",
+          "items": [
+            {
+              "q": "{{product}} وچ کیہ اے؟",
+              "a": "<p>{{product}} وچ بلاکڈ اکاؤنٹ، جرمن بینک اکاؤنٹ تے اوہ ہیلتھ انشورنس شامل اے جیہڑی تہاڈی ویزا درخواست منگدی اے، سب اک ای درخواست وچ۔ مہینے دی فیس دوواں اکاؤنٹاں لئی اے؛ انشورنس پریمیم انشورر نوں جاندا اے تے صرف پہنچݨ توں بعد لگدا اے۔</p>"
+            },
+            {
+              "q": "درخواست کیویں کم کردی اے؟",
+              "a": "سبھ کجھ آن لائن ہوندا اے۔ اک پراڈکٹ چݨو، چند سوالاں دے جواب دیو تاں جے اسی تہاڈی صورتحال نال ٹھیک انشورنس تے اکاؤنٹ سیٹ اپ ملا سکیے، تے درخواستی فارم مکمل کرو۔ تسی آپݨیاں دستاویزاں ڈیجیٹل وصول کردے او تے آپݨی ویزا اپائنٹمنٹ لئی ڈاؤن لوڈ کر سکدے او۔"
+            },
+            {
+              "q": "کیہ مینوں پوری رقم توں بغیر بلاکڈ اکاؤنٹ مل سکدا اے؟",
+              "a": "ہاں۔ ساڈے پارٹنر بینک ڈپازٹ دیندے نیں تے EC Assets سود سدھا بینک نوں ادا کردا اے، ایس لئی تسی صرف اوہو واپس کردے او جو تہانوں ملیا۔ اہلیت چیک وچ دو منٹ لگدے نیں۔ <a href=\"/study-loan\">بغیر سود تعلیمی قرضے بارے ہور۔</a>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "paragraph",
+          "html": "تہاڈا EC Assets ڈیبٹ کارڈ ایپل پے تے گوگل پے وچ شامل کیتا جا سکدا اے، تاں جے تسی پہنچݨ والے دن توں ای فون نال ادائیگی کر سکو۔"
+        }
+      ]
+    }
+  ]
+}

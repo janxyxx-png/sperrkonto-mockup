@@ -1,0 +1,117 @@
+{
+  "slug": "partners/travel-insurance",
+  "path": "/partners/travel-insurance",
+  "title": "Our travel insurance partner | EC Assets",
+  "description": "The specialist broker behind the travel and incoming insurance in EC Assets packages: decades of experience with students, au-pairs and travellers, and award-winning service.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Our travel insurance partner"
+        },
+        {
+          "type": "paragraph",
+          "html": "The travel health insurance that covers your first weeks in Germany comes from a specialist broker for stays abroad."
+        },
+        {
+          "type": "paragraph",
+          "html": "Students, language students, au-pairs, researchers and business travellers: the company has built its products around people who are temporarily in a country that is not their own."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ],
+      "figure": "/img/photos/cine-plane-wing.jpg"
+    },
+    {
+      "id": 1,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "About the partner"
+        },
+        {
+          "type": "paragraph",
+          "html": "The broker designs and manages insurance for foreign guests in Germany and for Germans abroad, and handles advice, contracts and claims with its own team."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "What to look for in private cover"
+        },
+        {
+          "type": "paragraph",
+          "html": "Two things matter when comparing private insurance for a stay abroad, according to our partner:"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "You fall ill and need medication"
+            },
+            {
+              "html": "You have an accident"
+            },
+            {
+              "html": "You damage something in your rented flat"
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "html": "Some of this is unpredictable, which is why the partner recommends combining health, liability and accident cover. <br> A few details worth checking:"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "Whether the policy covers outpatient and inpatient treatment and medically necessary rehabilitation."
+            },
+            {
+              "html": "Whether accident cover includes death and disability."
+            },
+            {
+              "html": "Whether liability cover includes personal injury, property damage and damage to rented property. Many landlords in Germany require the last of these."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "html": "2. Germany and the other Schengen states set their own insurance requirements, based on EU regulation and German residence law. The minimum insured sum is €30,000; unlimited cover for medical costs is recommended."
+        },
+        {
+          "type": "paragraph",
+          "html": "The <a href=\"/partners/travel-insurance-plans\">incoming insurance plans</a> offered through our partner meet these requirements."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Footnotes"
+        },
+        {
+          "type": "paragraph",
+          "html": "Complaints to the insurance ombudsman must be submitted in text form, for example by letter or email."
+        }
+      ]
+    }
+  ]
+}

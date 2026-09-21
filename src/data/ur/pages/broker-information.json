@@ -1,0 +1,82 @@
+{
+  "slug": "broker-information",
+  "path": "/broker-information",
+  "title": "بروکر معلومات | EC Assets",
+  "description": "انشورنس بروکر کے طور پر EC Assets کے بارے میں قانونی معلومات۔",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "بروکر معلومات"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>یہ ماک اپ کے لیے ایک ساختی پلیس ہولڈر ہے۔ حتمی عبارت اشاعت سے پہلے EC Assets کے قانونی مشیر سے آنی چاہیے۔</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "انشورنس بروکر کے کردار میں EC Assets کے بارے میں معلومات، جیسا کہ جرمن قانون کا تقاضا ہے۔"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "کمپنی"
+        },
+        {
+          "type": "paragraph",
+          "html": "<span dir=\"ltr\">EC Assets GmbH, Musterstraße 1, 10178 Berlin</span>"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "لائسنس"
+        },
+        {
+          "type": "paragraph",
+          "html": "جرمن ٹریڈ ریگولیشن ایکٹ کی دفعہ 34d (1) کے تحت انشورنس بروکر کے طور پر لائسنس یافتہ۔ رجسٹریشن نمبر D-1234-ABCDE-56۔"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "رجسٹر"
+        },
+        {
+          "type": "paragraph",
+          "html": "رجسٹریشن جرمن چیمبر آف انڈسٹری اینڈ کامرس کے زیرِ انتظام انشورنس ثالثوں کے عوامی رجسٹر میں چیک کی جا سکتی ہے۔"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "آزادی"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets کسی بھی انشورنس کمپنی میں 10 فیصد سے زیادہ کا براہِ راست یا بالواسطہ حصہ نہیں رکھتا، اور کوئی انشورنس کمپنی EC Assets میں ایسا حصہ نہیں رکھتی۔"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "معاوضہ"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets ان انشورنس کمپنیوں سے کمیشن وصول کرتا ہے جن کی پروڈکٹس کی وہ بروکریج کرتا ہے۔ بروکریج کے لیے صارف سے کوئی الگ فیس نہیں لی جاتی۔"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "شکایات"
+        },
+        {
+          "type": "paragraph",
+          "html": "شکایات legal@ecassets.com پر یا انشورنس محتسب کو بھیجی جا سکتی ہیں: Versicherungsombudsmann e. V., Postfach 08 06 32, 10006 Berlin۔"
+        }
+      ]
+    }
+  ]
+}

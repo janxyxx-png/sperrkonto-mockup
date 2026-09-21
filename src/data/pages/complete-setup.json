@@ -1,0 +1,362 @@
+{
+  "slug": "complete-setup",
+  "path": "/complete-setup",
+  "title": "{{product}} | Blocked Account, Health Insurance and Bank Account in one",
+  "description": "The {{product}} combines a Blocked Account, health insurance and a German Bank Account in a single online application, with extras included. Prepare your German visa in one go.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "{{product}}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Blocked Account, health insurance and bank account in one setup."
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Everything your German visa asks for, arranged in a single application.</strong>"
+        },
+        {
+          "type": "button",
+          "text": "{{product.start}}",
+          "href": "/app/start",
+          "style": "relative btn-m btn btn-solid btn-secondary text-base fill-base btn-icon-back "
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "Everything your visa asks for in one application",
+              "mark": "ok"
+            },
+            {
+              "html": "Blocked Account, health insurance and travel cover",
+              "mark": "ok"
+            },
+            {
+              "html": "German Bank Account linked to your Blocked Account",
+              "mark": "ok"
+            },
+            {
+              "html": "Full refund if your visa is refused",
+              "mark": "ok"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "One evening, and your visa file is complete"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "One form for all three"
+        },
+        {
+          "type": "paragraph",
+          "html": "Blocked Account, health insurance and Bank Account in a single application. You type your details once."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "One transfer in rupees"
+        },
+        {
+          "type": "paragraph",
+          "html": "Send the deposit through our payments partner; the insurance premium is billed only after you arrive. Nothing else is due before you fly."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "One folder for the embassy"
+        },
+        {
+          "type": "paragraph",
+          "html": "Confirmation letter and insurance certificates appear in your portal together. Download, print, done."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "One tap when you land"
+        },
+        {
+          "type": "paragraph",
+          "html": "Activate everything in the portal in a single step. Payouts start, cover starts, the card is live."
+        }
+      ],
+      "anchor": "how-it-works"
+    },
+    {
+      "id": 4,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "What you get for {{price.monthly}} a month"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": "",
+          "photo": "/img/photos/kitchen-document.jpg"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Blocked Account"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>The financial proof behind your visa</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "A Blocked Account (<em>Sperrkonto</em>) holds the money you will live on in Germany and proves to the authorities that it exists. Without it, most applicants from outside the EU cannot get a visa."
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "A clear, fully digital process",
+              "mark": "ok"
+            },
+            {
+              "html": "Deposits in Pakistani rupees at transparent rates",
+              "mark": "ok"
+            },
+            {
+              "html": "Support replies within 24 hours",
+              "mark": "ok"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": "",
+          "photo": "/img/photos/chair-laptop.jpg"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Health Insurance"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Cover that matches your situation</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "Choose <strong>comprehensive</strong> cover from <strong>established German insurers</strong>. The bundle is <strong>accepted for your visa application</strong>, <strong>matched to your age and purpose of stay,</strong> and stays with you for your whole time in Germany."
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "Travel health insurance for the first weeks after arrival",
+              "mark": "ok"
+            },
+            {
+              "html": "Public or private health insurance, depending on your status",
+              "mark": "ok"
+            }
+          ]
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": "",
+          "photo": "/img/photos/kitchen-laptop.jpg"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Bank Account"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Your German account, ready on arrival</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "Pay rent, receive money and keep an eye on your spending in one app. The account is linked to your Blocked Account, has no fees and no minimum balance, and is made for people who have just arrived. <strong>You will not need a second German account.</strong> <br>"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "Opened before you have a residence permit.",
+              "mark": "ok"
+            },
+            {
+              "html": "Digital debit card that works worldwide, with Apple Pay and Google Pay.",
+              "mark": "ok"
+            },
+            {
+              "html": "Deposits protected up to €100,000 under the European deposit guarantee scheme.",
+              "mark": "ok"
+            }
+          ]
+        }
+      ],
+      "anchor": "what-you-get"
+    },
+    {
+      "id": 14,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "What it costs"
+        },
+        {
+          "type": "paragraph",
+          "html": "The monthly fee covers the Blocked Account and the German Bank Account; there is no set-up fee. Your health insurance premium depends on your age and situation and is shown during the application."
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Monthly fee</strong>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "{{price.monthly}}"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>Set-up fee</strong>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "{{price.setup}}"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>First year in total</strong>"
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "{{price.year}}"
+        },
+        {
+          "type": "paragraph",
+          "html": "12 × {{price.monthly}}"
+        }
+      ],
+      "anchor": "costs"
+    },
+    {
+      "id": 9,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Built with established partners"
+        },
+        {
+          "type": "paragraph",
+          "html": "We choose partners for one reason: they are good at serving people who have just arrived in Germany. The accounts are held by a <strong>licensed partner bank in the EU</strong>, deposits from abroad run through an <strong><a href=\"/partners/international-payments\">international payments provider</a>,</strong> and cover comes from <strong>statutory and private health insurers</strong> that specialise in international customers."
+        },
+        {
+          "type": "image",
+          "src": "icon",
+          "alt": ""
+        },
+        {
+          "type": "paragraph",
+          "html": "Our insurance partners are established German insurers with English-speaking service and apps that work in English. Details are available on request."
+        }
+      ],
+      "collapse": true,
+      "photo": "/img/photos/kitchen-phone-laptop.jpg",
+      "anchor": "partners",
+      "more": "our partners"
+    },
+    {
+      "id": 7,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "quote",
+          "text": "\"Health insurance was the part I was most nervous about. Having it sorted together with the Blocked Account, in one place and in English, took a lot of stress out of the visa appointment.\"",
+          "author": "Lucas F.",
+          "role": "Medical graduate, Hamburg"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Frequently asked questions"
+        },
+        {
+          "type": "faq",
+          "items": [
+            {
+              "q": "What is the {{product}}?",
+              "a": "<p>The {{product}} is everything a German visa application requires, set up together in one application: a Blocked Account, health insurance and a German Bank Account. The monthly fee covers the two accounts; the insurance premium goes to the insurer and is billed only after you arrive.</p>"
+            },
+            {
+              "q": "What does the {{product}} cost?",
+              "a": "<p>{{price.monthly}} per month and no set-up fee. Your health insurance premium is calculated separately from your age and situation and shown to you during the application.</p>"
+            },
+            {
+              "q": "Can I deposit more than the required amount?",
+              "a": "Yes. You can deposit up to €25,000 into your Blocked Account. <br> <br> <strong>Note</strong>: anything above the official blocked amount is paid out to you in full with your first monthly payout after activation."
+            }
+          ]
+        }
+      ],
+      "anchor": "faq"
+    }
+  ]
+}

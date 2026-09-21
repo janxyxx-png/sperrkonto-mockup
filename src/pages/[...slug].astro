@@ -1,0 +1,70 @@
+---
+/**
+ * Ein Router fuer alle Sprachen: '' und 'ur/...', 'pa/...'. Jede Route zeigt auf eine View in src/views.
+ * Datenseiten kommen aus src/data/pages (uebersetzt: src/data/<locale>/pages), fehlt die Uebersetzung,
+ * erscheint der englische Inhalt mit Hinweis.
+ */
+import { pages, posts, pageIn, tagSlug, OVERRIDDEN } from '../lib/content';
+import { LOCALES, type Locale } from '../lib/i18n';
+import Home from '../views/Home.astro';
+import DataPage from '../views/DataPage.astro';
+import BlogIndex from '../views/BlogIndex.astro';
+import BlogTag from '../views/BlogTag.astro';
+import BlogPost from '../views/BlogPost.astro';
+import StudyLoan from '../views/StudyLoan.astro';
+import AppStart from '../views/AppStart.astro';
+import AppLogin from '../views/AppLogin.astro';
+import AppDashboard from '../views/AppDashboard.astro';
+import AppScreens from '../views/AppScreens.astro';
+import StubPage, { type StubKind } from '../views/StubPage.astro';
+import HelpCenter from '../views/HelpCenter.astro';
+import Pricing from '../views/Pricing.astro';
+import EmbassyChecklist from '../views/EmbassyChecklist.astro';
+import NotFound from '../views/NotFound.astro';
+
+type View =
+  | { view: 'home' } | { view: 'page'; slug: string } | { view: 'blog' } | { view: 'tag'; tag: string } | { view: 'post'; slug: string }
+  | { view: 'loan' }
+  | { view: 'appStart' } | { view: 'appLogin' } | { view: 'appDashboard' } | { view: 'stub'; kind: StubKind } | { view: 'help' } | { view: 'pricing' } | { view: 'embassy' } | { view: 'notFound' } | { view: 'appScreen'; kind: 'transfer' | 'documents' | 'activate' };
+
+export function getStaticPaths() {
+  const tags = [...new Set(posts.flatMap((p) => p.tags))];
+  for (const t of ['Living in Germany', 'Studying in Germany', 'Working in Germany', 'News', 'German Business Culture', 'Visa for Germany']) if (!tags.includes(t)) tags.push(t);
+  const routes: [string, View][] = [
+    ['', { view: 'home' }],
+    ...pages.filter((p) => !OVERRIDDEN.has(p.slug)).map((p): [string, View] => [p.path.slice(1), { view: 'page', slug: p.slug }]),
+    ['guides', { view: 'blog' }],
+    ['study-loan', { view: 'loan' }],
+    ...tags.map((t): [string, View] => [`guides/tag/${tagSlug(t)}`, { view: 'tag', tag: t }]),
+    ...posts.map((p): [string, View] => [`guides/${p.slug}`, { view: 'post', slug: p.slug }]),
+    ['app/start', { view: 'appStart' }], ['app/login', { view: 'appLogin' }], ['app/dashboard', { view: 'appDashboard' }],
+    ['app/transfer', { view: 'appScreen', kind: 'transfer' }], ['app/documents', { view: 'appScreen', kind: 'documents' }], ['app/activate', { view: 'appScreen', kind: 'activate' }],
+    ['help', { view: 'help' }], ['pricing', { view: 'pricing' }], ['embassy-checklist', { view: 'embassy' }], ['help/contact', { view: 'stub', kind: 'contact' }], ['partner/login', { view: 'stub', kind: 'partnerLogin' }],
+    ['search', { view: 'stub', kind: 'search' }], ['authorities', { view: 'stub', kind: 'authorities' }],
+    // study-loan/check ist seit 20.09. der Kreditschritt im Funnel; die Route leitet um (redirects.mjs)
+    ['not-found', { view: 'notFound' }],
+  ];
+  return LOCALES.flatMap((locale) => routes.map(([path, v]) => {
+    const slug = locale === 'en' ? path : `${locale}${path ? '/' + path : ''}`;
+    return { params: { slug: slug || undefined }, props: { locale, ...v } };
+  }));
+}
+const props = Astro.props as View & { locale: Locale };
+const { locale } = props;
+const pathOf = (kind: StubKind) => ({ help: '/help', contact: '/help/contact', partnerLogin: '/partner/login', search: '/search', authorities: '/authorities' })[kind];
+---
+{props.view === 'home' && <Home locale={locale} />}
+{props.view === 'page' && (() => { const { page, translated } = pageIn(props.slug, locale); return <DataPage page={page} locale={locale} translated={translated} ref={pageIn(props.slug, 'en').page} />; })()}
+{props.view === 'blog' && <BlogIndex locale={locale} />}
+{props.view === 'tag' && <BlogTag tag={props.tag} locale={locale} />}
+{props.view === 'post' && <BlogPost post={posts.find((p) => p.slug === props.slug)!} locale={locale} />}
+{props.view === 'loan' && <StudyLoan locale={locale} />}
+{props.view === 'appStart' && <AppStart locale={locale} />}
+{props.view === 'appLogin' && <AppLogin locale={locale} />}
+{props.view === 'appDashboard' && <AppDashboard locale={locale} />}
+{props.view === 'appScreen' && <AppScreens locale={locale} kind={props.kind} />}
+{props.view === 'stub' && <StubPage kind={props.kind} locale={locale} path={pathOf(props.kind)} />}
+{props.view === 'help' && <HelpCenter locale={locale} />}
+{props.view === 'pricing' && <Pricing locale={locale} />}
+{props.view === 'embassy' && <EmbassyChecklist locale={locale} />}
+{props.view === 'notFound' && <NotFound locale={locale} path="/not-found" />}

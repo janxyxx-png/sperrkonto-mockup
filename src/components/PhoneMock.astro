@@ -1,0 +1,141 @@
+---
+/** App-Screen als reines CSS-Mockup (kein Fremdbild). Varianten je Seitenthema, Standard ist der Produktstatus des Buendels (Name und Preis aus facts.ts). */
+import Icon from './Icon.astro';
+import Wordmark from './Wordmark.astro';
+import type { Locale } from '../lib/i18n';
+import { PRODUCT } from '../lib/ui-strings';
+import { PRICE, money } from '../lib/facts';
+import { DEMO_DATA, demoDateShort } from '../lib/portal-demo';
+export type Variant = 'setup' | 'account' | 'insurance' | 'study' | 'work' | 'events' | 'money';
+interface Props { tone?: 'light' | 'dark'; class?: string; variant?: Variant; locale?: Locale }
+const { tone = 'light', class: cls, variant = 'setup', locale = 'en' } = Astro.props;
+// M02: Konto- und Sperrkonto-Screen zeigen die Demo-Welt (portal-demo.ts): Kontostand, IBAN-Maske, Buchungen, naechste Auszahlung
+const eur0 = (n: number) => `€${Math.abs(n).toLocaleString('en-US')}`;
+const eur2 = (n: number) => `€${Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+const txAmt = (key: (typeof DEMO_DATA.tx)[number]['key']) => { const x = DEMO_DATA.tx.find((t) => t.key === key)!; return `${x.amount < 0 ? '-' : '+'}${eur0(x.amount)}`; };
+const ibanLine = `${DEMO_DATA.iban} · available`;
+const nextPayout = demoDateShort(DEMO_DATA.nextPayout);
+const screens: Record<Variant, { k: string; v: string; s: string; cta: string; rows: { icon: string; name: string; state: string; done: boolean }[] }> = {
+  setup: { k: 'Your setup', v: PRODUCT.en.name, s: `${money(PRICE.monthly)}/month · all products connected`, cta: 'Show transfer details', rows: [
+    { icon: 'bank', name: 'Blocked Account', state: 'Confirmed', done: true },
+    { icon: 'shield', name: 'Health Insurance', state: 'Active', done: true },
+    { icon: 'card', name: 'Bank Account', state: 'IBAN ready', done: true },
+    { icon: 'doc', name: 'Visa documents', state: 'Ready', done: false } ] },
+  account: { k: 'Blocked Account', v: eur2(DEMO_DATA.deposit), s: 'Deposit received · 12 months', cta: 'Download confirmation', rows: [
+    { icon: 'check', name: 'Confirmation letter', state: 'Issued', done: true },
+    { icon: 'euro', name: 'Monthly payout', state: eur0(DEMO_DATA.payout), done: true },
+    { icon: 'card', name: 'Bank Account', state: 'Linked', done: true },
+    { icon: 'clock', name: 'Next payout', state: nextPayout, done: false } ] },
+  money: { k: 'Bank Account', v: eur2(DEMO_DATA.balance), s: ibanLine, cta: 'Send money', rows: [
+    { icon: 'euro', name: 'Payout received', state: txAmt('payout'), done: true },
+    { icon: 'home', name: 'Rent', state: txAmt('rent'), done: false },
+    { icon: 'shield', name: 'Health insurance', state: txAmt('premium'), done: false },
+    { icon: 'phone', name: 'Mobile plan', state: '-€15', done: false } ] },
+  insurance: { k: 'Health Insurance', v: 'Statutory plan', s: 'Active from arrival · English service', cta: 'Show certificate', rows: [
+    { icon: 'check', name: 'Insurance certificate', state: 'Issued', done: true },
+    { icon: 'plane', name: 'Travel cover', state: '92 days', done: true },
+    { icon: 'id', name: 'Insurance card', state: 'On its way', done: false },
+    { icon: 'euro', name: 'Bonus tariff', state: 'Optional', done: false } ] },
+  study: { k: 'Your roadmap', v: 'Winter semester', s: 'Munich · 3 programmes saved', cta: 'Continue roadmap', rows: [
+    { icon: 'graduation', name: 'Programme chosen', state: 'Done', done: true },
+    { icon: 'doc', name: 'Application sent', state: 'Done', done: true },
+    { icon: 'bank', name: 'Blocked Account', state: 'Open now', done: false },
+    { icon: 'plane', name: 'Visa appointment', state: '12 Aug', done: false } ] },
+  work: { k: 'Opportunity Card', v: '6 of 6 points', s: 'Eligible · job search visa', cta: 'Start application', rows: [
+    { icon: 'briefcase', name: 'Qualification', state: 'Recognised', done: true },
+    { icon: 'chat', name: 'Language level', state: 'B2', done: true },
+    { icon: 'bank', name: 'Proof of funds', state: 'Open now', done: false },
+    { icon: 'shield', name: 'Health insurance', state: 'Pending', done: false } ] },
+  events: { k: 'Live webinar', v: 'How to apply', s: 'Thu 17 Sep · 4 PM Berlin', cta: 'Reserve a seat', rows: [
+    { icon: 'calendar', name: 'Studying abroad', state: '17 Sep', done: true },
+    { icon: 'calendar', name: 'Your first 90 days', state: '25 Sep', done: false },
+    { icon: 'calendar', name: 'University applications', state: '13 Oct', done: false },
+    { icon: 'play', name: 'Recordings', state: '12', done: false } ] },
+};
+// Uebersetzung der Screen-Texte fuer Urdu und Punjabi (Shahmukhi); Zahlen und IBAN bleiben lateinisch
+const TR: Record<'ur' | 'pa', Record<string, string>> = {
+  ur: {
+    'Your setup': 'آپ کا سیٹ اپ', [PRODUCT.en.name]: PRODUCT.ur.name, [`${money(PRICE.monthly)}/month · all products connected`]: `${money(PRICE.monthly, 'ur')}/ماہ · تمام پراڈکٹس منسلک`, 'Show transfer details': 'ٹرانسفر کی تفصیل دیکھیں',
+    'Blocked Account': 'بلاکڈ اکاؤنٹ', 'Confirmed': 'تصدیق شدہ', 'Health Insurance': 'ہیلتھ انشورنس', 'Active': 'فعال', 'Bank Account': 'بینک اکاؤنٹ', 'IBAN ready': 'IBAN تیار', 'Visa documents': 'ویزا دستاویزات', 'Ready': 'تیار',
+    'Deposit received · 12 months': 'ڈپازٹ موصول · 12 ماہ', 'Download confirmation': 'تصدیق ڈاؤن لوڈ کریں', 'Confirmation letter': 'تصدیقی خط', 'Issued': 'جاری', 'Monthly payout': 'ماہانہ ادائیگی', 'Linked': 'منسلک', 'Next payout': 'اگلی ادائیگی', [nextPayout]: demoDateShort(DEMO_DATA.nextPayout, 'ur'),
+    [ibanLine]: `${DEMO_DATA.iban} · دستیاب`, 'Send money': 'رقم بھیجیں', 'Payout received': 'ادائیگی موصول', 'Rent': 'کرایہ', 'Health insurance': 'ہیلتھ انشورنس', 'Mobile plan': 'موبائل پلان',
+    'Statutory plan': 'سرکاری پلان', 'Active from arrival · English service': 'آمد سے فعال · انگریزی سروس', 'Show certificate': 'سرٹیفکیٹ دیکھیں', 'Insurance certificate': 'انشورنس سرٹیفکیٹ', 'Travel cover': 'ٹریول کوریج', '92 days': '92 دن', 'Insurance card': 'انشورنس کارڈ', 'On its way': 'راستے میں', 'Bonus tariff': 'بونس ٹیرف', 'Optional': 'اختیاری',
+    'Your roadmap': 'آپ کا روڈ میپ', 'Winter semester': 'ونٹر سمسٹر', 'Munich · 3 programmes saved': 'میونخ · 3 پروگرام محفوظ', 'Continue roadmap': 'روڈ میپ جاری رکھیں', 'Programme chosen': 'پروگرام منتخب', 'Done': 'مکمل', 'Application sent': 'درخواست بھیج دی', 'Open now': 'ابھی کھولیں', 'Visa appointment': 'ویزا اپائنٹمنٹ', '12 Aug': '12 اگست',
+    'Opportunity Card': 'اپرچونٹی کارڈ', '6 of 6 points': '6 میں سے 6 پوائنٹس', 'Eligible · job search visa': 'اہل · جاب سرچ ویزا', 'Start application': 'درخواست شروع کریں', 'Qualification': 'قابلیت', 'Recognised': 'تسلیم شدہ', 'Language level': 'زبان کی سطح', 'Proof of funds': 'مالی ثبوت', 'Pending': 'زیر التوا',
+    'Live webinar': 'لائیو ویبینار', 'How to apply': 'درخواست کیسے دیں', 'Thu 17 Sep · 4 PM Berlin': 'جمعرات 17 ستمبر · شام 4 بجے برلن', 'Reserve a seat': 'نشست محفوظ کریں', 'Studying abroad': 'بیرون ملک تعلیم', '17 Sep': '17 ستمبر', 'Your first 90 days': 'آپ کے پہلے 90 دن', '25 Sep': '25 ستمبر', 'University applications': 'یونیورسٹی درخواستیں', '13 Oct': '13 اکتوبر', 'Recordings': 'ریکارڈنگز',
+  },
+  pa: {
+    'Your setup': 'تہاڈا سیٹ اپ', [PRODUCT.en.name]: PRODUCT.pa.name, [`${money(PRICE.monthly)}/month · all products connected`]: `${money(PRICE.monthly, 'pa')}/مہینہ · سارے پراڈکٹ جڑے ہوئے`, 'Show transfer details': 'ٹرانسفر دی تفصیل ویکھو',
+    'Blocked Account': 'بلاکڈ اکاؤنٹ', 'Confirmed': 'تصدیق شدہ', 'Health Insurance': 'ہیلتھ انشورنس', 'Active': 'فعال', 'Bank Account': 'بینک اکاؤنٹ', 'IBAN ready': 'IBAN تیار', 'Visa documents': 'ویزا دستاویزاں', 'Ready': 'تیار',
+    'Deposit received · 12 months': 'ڈپازٹ مل گیا · 12 مہینے', 'Download confirmation': 'تصدیق ڈاؤن لوڈ کرو', 'Confirmation letter': 'تصدیقی خط', 'Issued': 'جاری', 'Monthly payout': 'مہینے دی ادائیگی', 'Linked': 'جڑیا ہویا', 'Next payout': 'اگلی ادائیگی', [nextPayout]: demoDateShort(DEMO_DATA.nextPayout, 'pa'),
+    [ibanLine]: `${DEMO_DATA.iban} · موجود`, 'Send money': 'پیسے بھیجو', 'Payout received': 'ادائیگی ملی', 'Rent': 'کرایہ', 'Health insurance': 'ہیلتھ انشورنس', 'Mobile plan': 'موبائل پلان',
+    'Statutory plan': 'سرکاری پلان', 'Active from arrival · English service': 'آون توں فعال · انگریزی سروس', 'Show certificate': 'سرٹیفکیٹ ویکھو', 'Insurance certificate': 'انشورنس سرٹیفکیٹ', 'Travel cover': 'ٹریول کوریج', '92 days': '92 دن', 'Insurance card': 'انشورنس کارڈ', 'On its way': 'راہ وچ', 'Bonus tariff': 'بونس ٹیرف', 'Optional': 'اختیاری',
+    'Your roadmap': 'تہاڈا روڈ میپ', 'Winter semester': 'ونٹر سمسٹر', 'Munich · 3 programmes saved': 'میونخ · 3 پروگرام محفوظ', 'Continue roadmap': 'روڈ میپ جاری رکھو', 'Programme chosen': 'پروگرام چنیا', 'Done': 'مکمل', 'Application sent': 'درخواست بھیجی', 'Open now': 'ہن کھولو', 'Visa appointment': 'ویزا اپائنٹمنٹ', '12 Aug': '12 اگست',
+    'Opportunity Card': 'اپرچونٹی کارڈ', '6 of 6 points': '6 وچوں 6 پوائنٹ', 'Eligible · job search visa': 'اہل · جاب سرچ ویزا', 'Start application': 'درخواست شروع کرو', 'Qualification': 'قابلیت', 'Recognised': 'تسلیم شدہ', 'Language level': 'زبان دی سطح', 'Proof of funds': 'مالی ثبوت', 'Pending': 'باقی',
+    'Live webinar': 'لائیو ویبینار', 'How to apply': 'درخواست کیویں دینی اے', 'Thu 17 Sep · 4 PM Berlin': 'جمعرات 17 ستمبر · شام 4 وجے برلن', 'Reserve a seat': 'سیٹ محفوظ کرو', 'Studying abroad': 'باہرلے ملک پڑھائی', '17 Sep': '17 ستمبر', 'Your first 90 days': 'تہاڈے پہلے 90 دن', '25 Sep': '25 ستمبر', 'University applications': 'یونیورسٹی درخواستاں', '13 Oct': '13 اکتوبر', 'Recordings': 'ریکارڈنگاں',
+  },
+};
+const L = (s: string) => (locale === 'en' ? s : TR[locale][s] ?? s.replace(/([+-]?)€\s?([\d.,]+)/g, '$1$2 یورو')); // Betraege in Urdu/Punjabi: "992 یورو"
+const sc = screens[variant];
+const rows = sc.rows;
+---
+<div class:list={['phone', tone, cls]} aria-hidden="true">
+  <div class="screen" dir={locale === 'en' ? undefined : 'rtl'}>
+    <div class="status" dir="ltr"><span>9:41</span><span class="sig"><i></i><i></i><i></i></span></div>
+    <div class="top"><Wordmark size=".8rem" /><span class="avatar"></span></div>
+    <div class="hero-card">
+      <div class="k">{L(sc.k)}</div>
+      <div class="v">{/^[€\d.,+]+$/.test(sc.v) ? <span data-count>{L(sc.v)}</span> : L(sc.v)}</div>
+      <div class="s">{L(sc.s)}</div>
+    </div>
+    <div class="list">
+      {rows.map((r) => (
+        <div class="row">
+          <span class="ic"><Icon name={r.icon} size={16} /></span>
+          <span class="nm">{L(r.name)}</span>
+          <span class:list={['st', { done: r.done }]}>{L(r.state)}</span>
+        </div>
+      ))}
+    </div>
+    <div class="cta">{L(sc.cta)}</div>
+    <div class="tabs"><i class="on"></i><i></i><i></i><i></i></div>
+  </div>
+</div>
+<style>
+  .phone { width: 300px; aspect-ratio: 300 / 610; border-radius: 44px; padding: 10px; background: #0b0f19; box-shadow: var(--shadow-float); position: relative; }
+  .phone::before { content: ""; position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 92px; height: 26px; border-radius: 999px; background: #0b0f19; z-index: 2; }
+  .screen { height: 100%; border-radius: 36px; background: #fff; padding: 18px 18px 14px; display: flex; flex-direction: column; gap: 14px; overflow: hidden; font-size: 13px; color: var(--color-text); }
+  .status { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 12.5px; padding: 0 6px; }
+  .sig { display: inline-flex; gap: 2px; align-items: flex-end; }
+  .sig i { width: 3px; background: #0b0f19; border-radius: 1px; }
+  .sig i:nth-child(1) { height: 5px; } .sig i:nth-child(2) { height: 8px; } .sig i:nth-child(3) { height: 11px; }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; }
+  .top :global(.wordmark) { direction: ltr; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--color-surface-strong); }
+  .hero-card { background: var(--color-dark); color: #fff; border-radius: 18px; padding: 16px; }
+  .hero-card .k { font-size: 11px; opacity: .6; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
+  .hero-card .v { font-size: 20px; font-weight: 600; letter-spacing: -.02em; margin: 4px 0 2px; }
+  .hero-card .s { font-size: 11.5px; opacity: .7; }
+  .list { display: flex; flex-direction: column; gap: 8px; }
+  .row { display: flex; align-items: center; gap: 10px; background: var(--color-surface); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+  .ic { width: 28px; height: 28px; border-radius: 9px; background: #fff; color: var(--color-text); display: grid; place-items: center; flex: none; }
+  .nm { font-weight: 600; flex: 1 1 auto; min-width: 0; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .st { flex: none; font-size: 10.5px; font-weight: 600; color: var(--color-muted); white-space: nowrap; }
+  .st.done { color: var(--color-text); }
+  /* Die Zeilen-Bestaetigung (data-flip, motion.ts phoneFlip) ist seit M01 weg: das Telefon zeigt Zustaende (M05), keine Ambient-Bewegung */
+  .cta { margin-top: auto; background: var(--color-surface-strong); border-radius: 999px; text-align: center; padding: 11px; font-weight: 600; font-size: 12.5px; }
+  .tabs { display: flex; justify-content: space-around; padding: 6px 10px 0; }
+  .tabs i { width: 18px; height: 4px; border-radius: 2px; background: var(--color-surface-strong); }
+  .tabs i.on { background: var(--color-accent); }
+  .dark .screen { background: #131826; color: #fff; }
+  .dark .row { background: #1c2233; }
+  .dark .ic { background: #262d40; color: #fff; }
+  .dark .st { color: #9aa3b5; } .dark .st.done { color: #fff; }
+  .dark .hero-card { background: var(--color-dark); }
+  .dark .cta { background: #262d40; color: #fff; }
+  .dark .tabs i { background: #262d40; } .dark .tabs i.on { background: #fff; }
+  .dark .status, .dark .sig i { color: #fff; background-color: #fff; }
+  .dark .status { background: none; }
+  .dark .avatar { background: #262d40; }
+  .dark .top :global(.wordmark) { color: #fff; }  /* Bordeaux auf Tinte hat 1,6:1, deshalb weiss (tokens.css) */
+</style>

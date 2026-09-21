@@ -1,0 +1,140 @@
+---
+/**
+ * Studienkredit (/study-loan), handkomponiert nach dem Muster von Home.astro (07-PROMPT Aufgabe 3).
+ * Texte je Sprache in src/lib/loan-copy.ts; unbekannte Zahlen sind Platzhalter, Liste in design-upgrade/OFFENE-ZAHLEN.md.
+ * Der Abschnitt "Why we do this" ist laut Prompt ein Platzhaltertext und redaktionell noch nicht abgenommen.
+ */
+import Base from '../layouts/Base.astro';
+import BlockView from '../components/Block.astro';
+import PhotoHero from '../components/PhotoHero.astro';
+import TrustBar from '../components/TrustBar.astro';
+import Steps from '../components/Steps.astro';
+import CompareTwo from '../components/CompareTwo.astro';
+import ClosingCta from '../components/ClosingCta.astro';
+import { type Locale, localePath } from '../lib/i18n';
+import { LOAN } from '../lib/loan-copy';
+import { markPh } from '../lib/placeholders';
+import { heroFor } from '../lib/heroes';
+import Photo from '../components/Photo.astro';
+import Icon from '../components/Icon.astro';
+import LoanReceipt from '../components/LoanReceipt.astro';
+import { stepIcon } from '../lib/step-icons';
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const c = LOAN[locale] ?? LOAN.en;
+const lp = (p: string) => localePath(locale, p);
+const photo = heroFor('study-loan');
+const faqBlock = { type: 'faq' as const, items: c.faq.items.map((f) => ({ q: f.q, a: markPh(f.a) })) };
+---
+<Base title={c.title} description={c.description} locale={locale} path="/study-loan" photoHero>
+<main id="main">
+  <PhotoHero size="page" underHeader photo={photo} kicker={c.kicker} title={c.h1} lead={c.lead}
+    ctas={[{ text: c.ctaQualify, href: lp('/app/start') }, { text: c.ctaHow, href: '#how-it-works', ghost: true }]} />
+  <TrustBar locale={locale} bridge />
+
+  <section class="section chapter" id="how-it-works">
+    <div class="container">
+      <div class="head"><h2 class="chapter">{c.how.h2}</h2></div>
+      <Steps steps={c.how.steps} icons={LOAN.en.how.steps.map((s) => stepIcon(s.title))} />
+    </div>
+  </section>
+
+  <!-- Rundgang 20.09.: der Kreditbeleg der Startseite steht auch hier, neben dem Vergleich mit einem gewoehnlichen Kredit -->
+  <section class="section alt chapter">
+    <div class="container costs">
+      <div>
+        <div class="head"><h2 class="chapter">{c.costs.h2}</h2></div>
+        <CompareTwo head={c.costs.head} rows={c.costs.rows} />
+        <p class="note" set:html={markPh(c.costs.note)} />
+      </div>
+      <div class="costs-obj"><LoanReceipt locale={locale} class="on-grey" vt="loan-receipt" /></div>
+    </div>
+  </section>
+
+  <!-- Rundgang 18.09. spaet (Jan: "die Punkte da unten sind kalt"): Bedingungen als Kacheln mit Icon, "Why we do this" mit Foto -->
+  <section class="section">
+    <div class="container">
+      <div class="head"><h2>{c.who.h2}</h2></div>
+      <ul class="who-grid">{c.who.items.map((x, i) => <li><span class="icircle"><Icon name={['users', 'graduation', 'bank', 'check'][i] ?? 'check'} size={22} /></span><p set:html={markPh(x)} /></li>)}</ul>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="container two-col">
+      <div>
+        <h2>{c.why.h2}</h2>
+        <!-- Platzhaltertext laut 07-PROMPT-STUDIENKREDIT.md, Abschnitt "Why we do this": Wortlaut noch nicht abgenommen -->
+        <p class="body">{c.why.text}</p>
+      </div>
+      <Photo src="/img/photos/cine-rooftop-friends-sunset.jpg" ratio="4 / 3" pos="50% 40%" />
+    </div>
+  </section>
+
+  <section class="section" id="welcome-bonus">
+    <div class="container">
+      <div class="bonus-card">
+        <div>
+          <p class="kicker">{c.bonusH2}</p>
+          <h2>{c.bonus.h3}</h2>
+          <p class="body">{c.bonus.text}</p>
+          <p class="body small" set:html={markPh(c.bonus.conditions)} />
+        </div>
+        <!-- Jan 20.09. ("cooler animieren"): die 500 zaehlen hoch (motion.ts, data-count), danach landet die Gutschrift als
+             Benachrichtigung wie in der App. Ausloeser ist der Sichtbarkeitsmarker der Karte; ohne JS steht alles sofort da. -->
+        <div class="bonus-num" aria-hidden="true">
+          <span class="amount" data-count>{locale === 'en' ? '€500' : '500 یورو'}</span>
+          <div class="toast"><span class="icircle sm"><Icon name="check" size={16} /></span><span class="tt"><b>{c.bonus.toast.title}</b><small>{c.bonus.toast.sub}</small></span><span class="ta">{c.bonus.toast.amount}</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="container narrow">
+      <h2 class="util">{c.faq.h2}</h2>
+      <BlockView locale={locale} block={faqBlock} />
+    </div>
+  </section>
+
+  <!-- Abschluss hell: der rote Footer folgt direkt, zwei rote Flaechen uebereinander wirkten wie eine (Rundgang 18.09. spaet) -->
+  <!-- Der Kredit-Check ist seit 20.09. der Schritt "I need financing" im Funnel (25-EIN-PRODUKT-ZWEI-WEGE) -->
+  <ClosingCta title={c.closing.h2} cta={c.closing.cta} href={lp('/app/start')} tone="surface" />
+</main>
+<Fragment slot="footnotes"><p set:html={markPh(c.footnote)} /></Fragment>
+</Base>
+
+<style>
+  .section { padding: var(--section-y) 0; }
+  .section.alt { background: var(--color-surface); }
+  .who-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .who-grid li { background: var(--color-surface); border-radius: var(--radius-m); padding: 26px 24px; display: flex; flex-direction: column; gap: 16px; }
+  .who-grid p { margin: 0; font-size: 1rem; line-height: 1.5; }
+  .who-grid :global(.ph-num) { font-size: .78rem; }
+  .two-col { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
+  .costs { display: grid; grid-template-columns: 1.15fr .85fr; gap: 56px; align-items: center; }
+  .costs-obj :global(.receipt) { box-shadow: 0 30px 60px -32px rgba(11,15,25,.35); }
+  @media (max-width: 900px) { .costs { grid-template-columns: 1fr; gap: 32px; } .costs-obj :global(.receipt) { margin-inline-start: 0; max-width: 520px; } }
+  .bonus-card { background: var(--color-surface); border-radius: var(--radius-l); padding: 48px 56px; display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center; }
+  .bonus-card h2 { margin-bottom: .5em; }
+  .bonus-card .small { font-size: .95rem; margin-top: 12px; }
+  .bonus-num { display: flex; flex-direction: column; align-items: flex-end; gap: 20px; }
+  .amount { font-family: var(--font-heading); font-size: clamp(3rem, 8vw, 6.5rem); font-weight: 600; letter-spacing: -.04em; line-height: 1; color: var(--color-accent); font-variant-numeric: tabular-nums; }
+  .toast { display: flex; align-items: center; gap: 12px; background: var(--color-bg); border-radius: var(--radius-m); padding: 12px 16px; box-shadow: 0 18px 40px -20px rgba(11,15,25,.35); min-width: 300px; font-size: .9rem; }
+  .toast .icircle { background: var(--color-accent-soft); color: var(--color-accent); }
+  .tt { display: flex; flex-direction: column; line-height: 1.25; }
+  .tt small { color: var(--color-muted); font-size: .78rem; }
+  .ta { margin-inline-start: auto; font-weight: 600; color: var(--color-accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  :global([data-rv]:not(.in)) .toast { opacity: 0; }
+  :global([data-rv].in) .toast { animation: toastIn .6s var(--ease-out) both; animation-delay: 1.15s; }
+  /* Keyframe toastIn: motion.css (M01) */
+  @media (max-width: 1000px) { .who-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; gap: 28px; } .bonus-card { grid-template-columns: 1fr; padding: 32px 24px; } .bonus-num { align-items: flex-start; } .amount { font-size: 3.2rem; } .toast { min-width: 0; width: 100%; } }
+  @media (max-width: 560px) { .who-grid { grid-template-columns: 1fr; } }
+  .head { max-width: 760px; margin-bottom: 48px; }
+  .head h2 { margin: 0; }
+  .narrow h2 { margin-bottom: .6em; }
+  .narrow h3 { font-size: 1.3rem; margin-top: 1.2em; }
+  .body { color: var(--color-muted); font-size: 1.08rem; line-height: var(--lh-body); max-width: 66ch; }
+  .note { margin-top: 20px; font-size: .9rem; color: var(--color-muted); max-width: 70ch; }
+  .who li { font-size: 1.05rem; margin: .7em 0; }
+</style>

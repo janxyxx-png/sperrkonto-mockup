@@ -1,0 +1,275 @@
+---
+import { navFor, route } from '../lib/content';
+import Mark from './Mark.astro';
+import Icon from './Icon.astro';
+import { LOCALES, LOCALE_INFO, localePath, t, type Locale, type UiKey } from '../lib/i18n';
+import Wordmark from './Wordmark.astro';
+import { heroFor } from '../lib/heroes';
+interface Props { locale?: Locale; path?: string; overPhoto?: boolean }
+const { locale = 'en', path = '/', overPhoto = false } = Astro.props;
+const nav = navFor(locale);
+const r = (h?: string) => route(h, locale);
+// Flache Navigation (16-PROMPT F): fuenf Links, kein Mega-Menue. Der aktuelle Bereich bekommt aria-current.
+const current = (href: string) => { const base = href.split('#')[0]; return base !== '/' && (path === base || path.startsWith(base + '/')); };
+// Mobil-Sheet (M09): jede Zeile traegt ein Strich-Icon und eine Kurzbeschreibung (ui-strings nav.desc.*), gefunden ueber den Pfad
+const ROW: Record<string, { icon: string; desc: UiKey }> = {
+  '/complete-setup': { icon: 'spark', desc: 'nav.desc.setup' },
+  '/study-loan': { icon: 'bank', desc: 'nav.desc.loan' },
+  '/pricing': { icon: 'euro', desc: 'nav.desc.pricing' },
+  '/guides': { icon: 'doc', desc: 'nav.desc.guides' },
+  '/help': { icon: 'chat', desc: 'nav.desc.help' },
+};
+const rowFor = (href?: string) => ROW[(href ?? '').split('#')[0]];
+// M14: Menuepunkte mit Foto-Hero tragen data-hero (JPEG-Pfad); motion.ts prefetchHero laedt die AVIF-Variante beim Hover vor
+const heroOf = (href?: string) => heroFor((href ?? '').split('#')[0].replace(/^\//, ''))?.src;
+const waLabel = nav.topbar[0]?.label ?? 'WhatsApp';
+const waHref = r(nav.topbar[0]?.href ?? '/help/contact');
+---
+<!-- Topbar nur auf dem Desktop (M09): mobil ersetzt das WhatsApp-Zeichen im Header den Chip, die Service-Links liegen im Footer -->
+<div class:list={['topbar', { 'over-photo': overPhoto }]}>
+  <div class="container topbar-inner">
+    <!-- WhatsApp-Chip (Jan 20.09.): der wichtigste Kanal fuer Pakistan, sichtbar auf jeder Seite; Ziel ist die Kontaktseite -->
+    <a class="promo" href={waHref}><Mark name="whatsapp" label={false} size={15} class="wa" /><span class="promo-t">{waLabel}</span></a>
+    <nav class="toplinks" aria-label="Service">
+      {nav.topbar.slice(1).map((l) => <a href={r(l.href)}>{l.label}</a>)}
+    </nav>
+  </div>
+</div>
+<header class:list={['header', { 'over-photo': overPhoto }]} data-over-photo={overPhoto ? '1' : undefined} transition:name="site-header">
+  <div class="container header-inner">
+    <a class="logo" href={localePath(locale, '/')} aria-label="EC Assets, home" style="view-transition-name: wordmark"><Wordmark size="1.25rem" /></a>
+    <button class="burger" aria-label={t(locale, 'menu')} aria-expanded="false" data-toggle-nav>
+      <span></span><span></span><span></span>
+    </button>
+    <!-- Desktop: Zeile aus Links. Mobil (bis 1120): Sheet unter dem Header, bleibt im DOM und ist zu inert -->
+    <nav class="mainnav" data-nav aria-label="Main">
+      <ul class="links">{nav.menu.map((m, i) => { const row = rowFor(m.href); return (
+        <li style={`--i:${i}`}>
+          <a class="nav-link" href={r(m.href)} aria-current={current(m.href ?? '') ? 'page' : undefined} data-hero={heroOf(m.href)}>
+            <Icon name={row?.icon ?? 'arrow'} size={20} class="nl-ic" />
+            <span class="nl-body"><span class="nl-label">{m.label}</span>{row && <small class="nl-desc">{t(locale, row.desc)}</small>}</span>
+          </a>
+        </li>); })}</ul>
+      <!-- Nur im Sheet: WhatsApp-Zeile, Suche, Sprachwahl als Segment-Schalter (Links, kein JS noetig) -->
+      <a class="sheet-row" href={waHref}><Mark name="whatsapp" label={false} size={20} /><span>{waLabel}</span></a>
+      <a class="sheet-row" href={localePath(locale, '/search')}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><span>{t(locale, 'search')}</span></a>
+      <div class="seg-ctl light sheet-lang" role="group" aria-label={t(locale, 'language')}>
+        {LOCALES.map((l) => <a href={localePath(l, path)} hreflang={LOCALE_INFO[l].lang} lang={LOCALE_INFO[l].lang} class:list={{ 'is-on': l === locale }} aria-current={l === locale ? 'true' : undefined}>{LOCALE_INFO[l].label}</a>)}
+      </div>
+      <div class="tools">
+        <details class="lang">
+          <summary aria-label={t(locale, 'language')} aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/></svg>{LOCALE_INFO[locale].short}</summary>
+          <ul>{LOCALES.map((l) => <li><a href={localePath(l, path)} hreflang={LOCALE_INFO[l].lang} lang={LOCALE_INFO[l].lang} class:list={{ current: l === locale }}>{LOCALE_INFO[l].label}</a></li>)}</ul>
+        </details>
+        <a class="search" href={localePath(locale, '/search')} aria-label={t(locale, 'search')}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></a>
+        <!-- Login fuer Bestandskunden neben dem CTA (Jan 20.09.: "es fehlt irgendwo ein login") -->
+        <a class="btn btn-outline btn-sm login" href={localePath(locale, '/app/login')}>{t(locale, 'login')}</a>
+        <a class="btn btn-primary btn-sm cta" href={r(nav.headerCta.href)} data-commit style="view-transition-name: primary-cta">{nav.headerCta.label}</a>
+      </div>
+    </nav>
+    <!-- Schleier hinter dem Sheet; ein Tipp darauf schliesst -->
+    <div class="nav-backdrop" data-nav-backdrop aria-hidden="true"></div>
+    <!-- Mobil-Sprachwahl in der Kopfzeile (nach .mainnav im DOM, per order nach vorn gerueckt; die Desktop-.lang bleibt erster Treffer der QA) -->
+    <details class="lang lang-m">
+      <summary aria-label={t(locale, 'language')} aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/></svg>{LOCALE_INFO[locale].short}</summary>
+      <ul>{LOCALES.map((l) => <li><a href={localePath(l, path)} hreflang={LOCALE_INFO[l].lang} lang={LOCALE_INFO[l].lang} class:list={{ current: l === locale }}>{LOCALE_INFO[l].label}</a></li>)}</ul>
+    </details>
+    <!-- WhatsApp mobil in der Kopfzeile (Jan: auf jeder Seite sichtbar); currentColor, nie gruen -->
+    <a class="wa" href={waHref} aria-label={waLabel} title={waLabel}><Mark name="whatsapp" label={false} size={18} /></a>
+  </div>
+</header>
+<script>
+  // Burger-Sheet und Sprach-Popover (M09). Alle Listener haengen an einem AbortController (window.__ecHeader): vor jedem
+  // Seitenwechsel (astro:before-swap) wird er abgebrochen, auf astro:page-load ein neuer angelegt. So sammeln sich keine
+  // document-Listener (keydown, pointerdown) ueber die Seitenwechsel des ClientRouters an.
+  type W = Window & { __ecHeader?: AbortController };
+  const bind = () => {
+    const w = window as W;
+    w.__ecHeader?.abort();
+    const ac = new AbortController();
+    w.__ecHeader = ac;
+    const { signal } = ac;
+    const btn = document.querySelector<HTMLButtonElement>('[data-toggle-nav]');
+    const menu = document.querySelector<HTMLElement>('[data-nav]');
+    const header = btn?.closest<HTMLElement>('.header') ?? null;
+    const mq = matchMedia('(max-width: 1120px)');
+    const isOpen = () => !!menu?.classList.contains('open');
+    const set = (open: boolean) => {
+      if (!btn || !menu) return;
+      menu.classList.toggle('open', open);
+      // Zu und mobil: Sheet fuer Tastatur und Screenreader aus dem Weg; Desktop-Zeile bleibt bedienbar
+      menu.inert = mq.matches && !open;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.classList.toggle('is-open', open);
+      header?.classList.toggle('nav-open', open);
+      document.documentElement.classList.toggle('nav-lock', open);
+    };
+    if (btn && menu) {
+      set(false);
+      btn.addEventListener('click', () => set(!isOpen()), { signal });
+      header?.querySelector('[data-nav-backdrop]')?.addEventListener('click', () => set(false), { signal });
+      // Tipp auf eine Zeile oder einen Knopf im Sheet: zu, bevor der ClientRouter die Seite tauscht
+      menu.addEventListener('click', (e) => { if ((e.target as Element).closest('a')) set(false); }, { signal });
+      mq.addEventListener('change', () => set(false), { signal });
+    }
+    // Sprach-Popover (details.lang, Desktop und mobil): aria-expanded mitfuehren, nur eins offen, zu bei Klick aussen,
+    // Escape und Fokusverlust nach draussen
+    const langs = [...document.querySelectorAll<HTMLDetailsElement>('details.lang')];
+    const closeLangs = (except?: HTMLDetailsElement) => langs.forEach((d) => { if (d !== except && d.open) d.open = false; });
+    langs.forEach((d) => {
+      const sum = d.querySelector('summary');
+      d.addEventListener('toggle', () => { sum?.setAttribute('aria-expanded', String(d.open)); if (d.open) closeLangs(d); }, { signal });
+      d.addEventListener('focusout', (e) => { const to = e.relatedTarget as Node | null; if (d.open && to && !d.contains(to)) d.open = false; }, { signal });
+    });
+    document.addEventListener('pointerdown', (e) => { const target = e.target as Node; langs.forEach((d) => { if (d.open && !d.contains(target)) d.open = false; }); }, { signal });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const openLang = langs.find((d) => d.open);
+      if (openLang) { openLang.open = false; openLang.querySelector('summary')?.focus(); return; }
+      if (isOpen()) set(false);
+    }, { signal });
+    document.addEventListener('astro:before-swap', () => { set(false); closeLangs(); ac.abort(); }, { signal });
+  };
+  bind();
+  document.addEventListener('astro:page-load', bind);
+</script>
+<style>
+  .topbar { background: var(--color-surface); color: var(--color-muted); font-size: .82rem; border-bottom: 1px solid var(--color-border); }
+  .topbar-inner { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 38px; padding-top: 4px; padding-bottom: 4px; flex-wrap: wrap; }
+  .promo { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: .76rem; text-decoration: none; color: var(--color-accent); background: var(--color-accent-soft); border-radius: var(--radius-pill); padding: 4px 12px 4px 9px; max-width: 100%; }
+  .promo .wa { color: #25d366; flex: none; }
+  .promo-t { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .promo span + * { min-width: 0; }
+  .promo:hover { background: var(--color-accent); color: #fff; }
+  .promo:hover .wa { color: #fff; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-accent); flex: none; }
+  .toplinks { display: flex; gap: 22px; font-size: .8rem; font-weight: 500; }
+  .toplinks a { text-decoration: none; color: var(--color-muted); transition: color .2s; }
+  .toplinks a:hover { color: var(--color-text); }
+  .toplinks a:last-child { color: var(--color-text); font-weight: 600; }
+
+  /* M14: contain layout+style entkoppelt das Layout des Headers vom Rest der Seite; KEIN paint, das wuerde Mobil-Sheet und
+     Sprach-Popover (absolut unter dem Header) am Header-Rand abschneiden */
+  .header { position: sticky; top: 0; z-index: 50; contain: layout style; background: rgba(255,255,255,.88); backdrop-filter: saturate(180%) blur(14px); -webkit-backdrop-filter: saturate(180%) blur(14px); border-bottom: 1px solid transparent; transition: border-color .3s var(--ease-out), box-shadow .3s var(--ease-out), background-color .3s var(--ease-out), color .3s var(--ease-out); }
+  /* Kante und Hauch Schatten erst, wenn Inhalt darunter liegt */
+  /* Glas-Header (Jan 18.09. spaet): beim Scrollen mehr Milchglas, Logo eine Spur kleiner. M14: die Hoehe bleibt konstant
+     (72 px, unter 1120 66 px = --hdr-sticky in tokens.css), das Logo schrumpft nur per transform: kein Layout-Sprung beim Scrollen */
+  .header.scrolled { border-bottom-color: rgba(11,15,25,.08); box-shadow: 0 12px 30px -24px rgba(11,15,25,.25); background: rgba(255,255,255,.72); backdrop-filter: saturate(180%) blur(18px); -webkit-backdrop-filter: saturate(180%) blur(18px); }
+  .header-inner { display: flex; align-items: center; justify-content: space-between; min-height: 72px; gap: 32px; }
+  .logo :global(.wordmark) { transform-origin: 0 50%; transition: transform .35s var(--ease-out); }
+  :global([dir="rtl"]) .logo :global(.wordmark) { transform-origin: 100% 50%; }
+  .header.scrolled .logo :global(.wordmark) { transform: scale(.88); }
+  .logo { display: inline-flex; align-items: center; text-decoration: none; transition: opacity .2s; }
+  .logo:hover { opacity: .75; }
+  .mainnav { display: flex; align-items: center; gap: 28px; flex: 1; justify-content: flex-end; }
+  .links { display: flex; align-items: center; gap: 4px; list-style: none; margin: 0; padding: 0; }
+  .nav-link { display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: var(--radius-pill); color: var(--color-text); font-weight: 500; font-size: .95rem; text-decoration: none; white-space: nowrap; transition: color .2s, background-color .2s; }
+  .nav-link:hover { color: var(--color-text); background: var(--color-surface); }
+  .nav-link[aria-current="page"] { font-weight: 600; box-shadow: inset 0 -2px 0 var(--color-accent); border-radius: 0; }
+  /* Icon und Kurzbeschreibung der Zeilen gibt es nur im Mobil-Sheet */
+  .nav-link :global(.nl-ic), .nl-desc { display: none; }
+  .lang summary { list-style: none; cursor: pointer; padding: 0 10px; min-height: 40px; border-radius: var(--radius-pill); color: var(--color-text); font-weight: 500; font-size: .95rem; display: inline-flex; align-items: center; gap: 6px; transition: color .2s var(--ease-out), background-color .2s var(--ease-out); }
+  .lang summary:hover { background: var(--color-surface); color: var(--color-text); }
+  .lang summary::-webkit-details-marker { display: none; }
+  /* Glas-Panel wie der Header selbst (28): Milchglas, weicher Schein oben, Punkt in Bordeaux bei der aktiven Sprache */
+  .lang ul {
+    position: absolute; top: calc(100% + 10px); min-width: 300px; margin: 0; padding: 8px; list-style: none;
+    background: rgba(255,255,255,.84); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(11,15,25,.08); border-radius: var(--radius-m); box-shadow: 0 30px 60px -24px rgba(11,15,25,.35), inset 0 1px 0 rgba(255,255,255,.7);
+    animation: drop .24s var(--ease-out-soft); transform-origin: top;
+  }
+  @keyframes drop { from { opacity: 0; transform: translateY(-6px) scale(.98); } to { opacity: 1; transform: none; } }
+  .lang li a { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: 12px; text-decoration: none; color: var(--color-text); font-size: .93rem; font-weight: 500; transition: background-color .2s var(--ease-out); }
+  .lang li a:hover { background: rgba(11,15,25,.05); color: var(--color-text); }
+  .lang li a.current { color: var(--color-text); font-weight: 600; }
+  .lang li a.current::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--color-accent); flex: none; }
+  .tools { display: flex; align-items: center; gap: 14px; margin-inline-start: 4px; padding-inline-start: 22px; border-inline-start: 1px solid var(--color-border); }
+  .lang { position: relative; }
+  .lang summary { font-size: .88rem; font-weight: 600; }
+  .lang ul { inset-inline-start: auto; inset-inline-end: 0; min-width: 200px; max-height: 60vh; overflow: auto; }
+  .search { display: inline-flex; color: var(--color-muted); text-decoration: none; padding: 6px; transition: color .2s; }
+  .search:hover { color: var(--color-text); }
+  /* Mobil-Elemente der Kopfzeile und des Sheets: auf dem Desktop nicht da */
+  .lang-m, a.wa, .nav-backdrop, .sheet-row, .sheet-lang { display: none; }
+  .lang-m { position: relative; z-index: 3; }
+  .lang-m summary { min-height: 44px; min-width: 44px; justify-content: center; }
+  .lang-m ul { top: calc(100% + 6px); }
+  a.wa { width: 44px; height: 44px; border-radius: 50%; align-items: center; justify-content: center; color: var(--color-text); text-decoration: none; transition: color .2s var(--ease-out), background-color .2s var(--ease-out); }
+  a.wa:hover { background: var(--color-surface); color: var(--color-text); }
+
+  /* Ueber dem Foto-Hero: transparent, weisse Schrift; ab wenigen Pixeln Scroll (motion.ts setzt .scrolled) weiss mit Kante, damit die Hero-Headline nicht unter die weisse Navigation laeuft */
+  .topbar.over-photo { position: relative; z-index: 40; background: rgba(255,255,255,.1); color: rgba(255,255,255,.85); border-bottom: 0; backdrop-filter: blur(8px); }
+  .topbar.over-photo .promo { background: rgba(255,255,255,.14); color: #fff; }
+  .topbar.over-photo .promo:hover { background: rgba(255,255,255,.28); }
+  .topbar.over-photo .toplinks a { color: #fff; }
+  .topbar.over-photo .toplinks a:last-child { color: #fff; }
+  .topbar.over-photo .dot { background: #fff; }
+  .header.over-photo:not(.scrolled) { background: transparent; backdrop-filter: none; -webkit-backdrop-filter: none; color: #fff; }
+  .header.over-photo:not(.scrolled) .nav-link, .header.over-photo:not(.scrolled) .lang summary, .header.over-photo:not(.scrolled) .search, .header.over-photo:not(.scrolled) a.wa { color: #fff; }
+  .header.over-photo:not(.scrolled) .nav-link:hover, .header.over-photo:not(.scrolled) .lang summary:hover, .header.over-photo:not(.scrolled) a.wa:hover { color: #fff; background: rgba(255,255,255,.12); }
+  .header.over-photo:not(.scrolled) .nav-link[aria-current="page"] { box-shadow: inset 0 -2px 0 #fff; }
+  /* Ueber dem Foto liegt das Mobil-Popover mitten auf der weissen H1; etwas dichter, sonst scheint sie durch */
+  .header.over-photo:not(.scrolled) .lang-m ul { background: rgba(255,255,255,.96); backdrop-filter: blur(28px) saturate(160%); -webkit-backdrop-filter: blur(28px) saturate(160%); }
+  .header.over-photo:not(.scrolled) .tools { border-color: rgba(255,255,255,.25); }
+  .header.over-photo:not(.scrolled) .login { background: transparent; color: #fff; border-color: rgba(255,255,255,.45); }
+  .header.over-photo:not(.scrolled) .login:hover { background: rgba(255,255,255,.12); border-color: #fff; color: #fff; }
+  .header.over-photo:not(.scrolled) .cta { background: #fff; color: var(--color-ink); }
+  .header.over-photo:not(.scrolled) .cta:hover { background: var(--color-surface-strong); color: var(--color-ink); }
+  .header.over-photo:not(.scrolled) :global(.wordmark) { color: #fff; }
+  .header.over-photo:not(.scrolled) .burger span { background: #fff; }
+  .header.over-photo:not(.scrolled) .mainnav.open { color: var(--color-text); }
+  /* Menue offen (mobil): Header deckend weiss, Marke in Markenfarbe, Burger, Sprachwahl und WhatsApp dunkel */
+  .header.nav-open, .header.over-photo:not(.scrolled).nav-open { background: var(--color-bg); backdrop-filter: none; -webkit-backdrop-filter: none; color: var(--color-text); border-bottom-color: var(--color-border); }
+  .header.nav-open :global(.wordmark), .header.over-photo:not(.scrolled).nav-open :global(.wordmark) { color: var(--color-brand); }
+  .header.nav-open .burger span, .header.over-photo:not(.scrolled).nav-open .burger span { background: var(--color-text); }
+  .header.over-photo:not(.scrolled).nav-open .lang summary, .header.over-photo:not(.scrolled).nav-open a.wa { color: var(--color-text); }
+  .header.over-photo:not(.scrolled).nav-open .lang summary:hover, .header.over-photo:not(.scrolled).nav-open a.wa:hover { background: var(--color-surface); }
+  .header.over-photo:not(.scrolled) .mainnav.open .nav-link, .header.over-photo:not(.scrolled) .mainnav.open .lang summary { color: var(--color-text); }
+  .header.over-photo:not(.scrolled) .mainnav.open .login { color: var(--color-text); border-color: var(--color-border); }
+  .header.over-photo:not(.scrolled) .mainnav.open .cta { background: var(--color-accent); color: #fff; } /* wie der Knopf ueberall sonst (Rundgang 20.09.) */
+  .burger { display: none; width: 44px; height: 44px; background: none; border: 0; cursor: pointer; flex-direction: column; justify-content: center; align-items: center; gap: 5px; padding: 0; }
+  .burger span { display: block; width: 22px; height: 2px; background: var(--color-text); border-radius: 2px; transition: transform .25s var(--ease-out), opacity .2s; }
+  .burger.is-open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .burger.is-open span:nth-child(2) { opacity: 0; }
+  .burger.is-open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  @media (max-width: 1240px) { .mainnav { gap: 18px; } .nav-link { font-size: .9rem; padding: 0 9px; } .toplinks { display: none; } .tools { padding-inline-start: 14px; gap: 10px; } }
+  /* Mobil (M09): Topbar weg (base.css --hdr-h 66px, der Foto-Hero rueckt nach), Kopfzeile Logo · Sprache · WhatsApp · Burger,
+     Menue als Sheet unter dem Header. Sheet und Schleier haengen absolut am Header (der ist ohne Topbar immer oben, position: fixed
+     wuerde vom backdrop-filter des Headers eingefangen); Hoehe = Viewport minus Header, so bleibt .tools unten. */
+  @media (max-width: 1120px) {
+    .topbar { display: none; }
+    .burger { display: flex; order: 3; }
+    .header-inner { min-height: 66px; gap: 2px; }
+    .logo { margin-inline-end: auto; }
+    .lang-m { display: block; order: 1; }
+    a.wa { display: inline-flex; order: 2; }
+    .mainnav { position: absolute; top: 100%; inset-inline: 0; height: calc(100vh - 100%); height: calc(100dvh - 100%); z-index: 2; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 0; padding: 0 var(--gutter); background: var(--color-bg); overflow: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; opacity: 0; transform: translateY(-8px); visibility: hidden; pointer-events: none; transition: opacity .26s var(--ease-out-soft), transform .26s var(--ease-out-soft), visibility 0s .26s; }
+    .mainnav.open { opacity: 1; transform: none; visibility: visible; pointer-events: auto; transition-delay: 0s; }
+    .nav-backdrop { display: block; position: absolute; top: 100%; inset-inline: 0; height: calc(100vh - 100%); height: calc(100dvh - 100%); z-index: 1; background: rgba(11,15,25,.35); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .26s var(--ease-out-soft), visibility 0s .26s; }
+    .header.nav-open .nav-backdrop { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
+    /* Zeilen: Icon, Titel, gedaempfte Kurzbeschreibung; Haarlinien, gerade Kanten, keine Pillen */
+    .links { flex-direction: column; align-items: stretch; gap: 0; }
+    .links li { border-bottom: 1px solid var(--color-border); }
+    .header .mainnav .nav-link { display: flex; align-items: center; gap: 14px; min-height: 64px; padding: 12px 0; border-radius: 0; font-size: 1.05rem; white-space: normal; color: var(--color-text); background: none; box-shadow: none; }
+    .nav-link :global(.nl-ic) { display: block; flex: none; }
+    .nl-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .nl-desc { display: block; font-size: .82rem; font-weight: 400; line-height: 1.35; color: var(--color-muted); text-wrap: pretty; }
+    .header .mainnav .nav-link[aria-current="page"], .header.over-photo:not(.scrolled) .mainnav.open .nav-link[aria-current="page"] { color: var(--color-accent); box-shadow: none; }
+    .sheet-row { display: flex; align-items: center; gap: 14px; min-height: 56px; padding: 10px 0; border-bottom: 1px solid var(--color-border); color: var(--color-text); text-decoration: none; font-weight: 500; font-size: .95rem; line-height: 1.35; }
+    .sheet-row :global(.mk), .sheet-row svg { flex: none; }
+    /* Sprachwahl als Segment-Schalter (base.css .seg-ctl, Links statt Knoepfe); die aktive Sprache traegt .is-on */
+    .sheet-lang { display: flex; margin: 18px 0 0; }
+    .sheet-lang > a { flex: 1 1 0; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+    /* Login und Start unten im Sheet, mit Luft fuer die Home-Leiste des iPhones */
+    .tools { margin: auto 0 0; border: 0; padding: 20px 0 calc(16px + env(safe-area-inset-bottom)); flex-wrap: wrap; gap: 10px; }
+    .tools .lang, .tools .search { display: none; }
+    .cta, .login { flex: 1 1 100%; }
+    .lang-m summary { padding: 0 10px; }
+  }
+  /* Zeilen folgen gestaffelt (40 ms je Zeile), nur ohne "weniger Bewegung" */
+  @media (max-width: 1120px) and (prefers-reduced-motion: no-preference) {
+    .links li { opacity: 0; transform: translateY(6px); transition: opacity .32s var(--ease-out-soft), transform .32s var(--ease-out-soft); }
+    .mainnav.open .links li { opacity: 1; transform: none; transition-delay: calc(40ms * var(--i)); }
+  }
+</style>

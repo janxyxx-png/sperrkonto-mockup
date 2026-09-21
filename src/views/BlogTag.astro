@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import { posts, postsIn, tagSlug, tagLabel } from '../lib/content';
+import { type Locale, localePath, t as tr } from '../lib/i18n';
+interface Props { tag: string; locale?: Locale }
+const { tag, locale = 'en' } = Astro.props;
+const t = (k: Parameters<typeof tr>[1]) => tr(locale, k);
+const list = postsIn(locale).filter((p) => p.tags.includes(tag));
+---
+<Base title={`${tagLabel(tag, locale)} | ${t('blog.title')}`} description={`${tagLabel(tag, locale)}: ${t('blog.lead')}`} locale={locale} path={`/guides/tag/${tagSlug(tag)}`} cta={false}>
+  <main id="main" class="container">
+    <p class="crumb"><a href={localePath(locale, '/guides')}>{t('blog.title')}</a> <span>/</span> {tagLabel(tag, locale)}</p>
+    <h1 class="h">{tagLabel(tag, locale)}</h1>
+    {list.length ? <div class="grid">{list.map((p) => <PostCard post={p} locale={locale} />)}</div> : <p class="empty">{t('blog.empty')}</p>}
+  </main>
+</Base>
+<style>
+  .crumb { color: var(--color-muted); font-size: .8rem; margin: 40px 0 12px; }
+  .crumb a { color: var(--color-muted); text-decoration: none; }
+  .crumb a:hover { color: var(--color-text); }
+  .crumb span { opacity: .5; margin: 0 4px; }
+  .h { margin-bottom: 40px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap); }
+  @media (max-width: 1000px) { .grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; gap: 0; border-top: 1px solid var(--color-border); } }
+  .empty { color: var(--color-muted); padding: 40px 0; }
+</style>

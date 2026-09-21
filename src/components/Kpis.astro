@@ -1,0 +1,23 @@
+---
+/** Kennzahlen-Reihe: Zahl in H2-Groesse, Label darunter. Platzhalter ([PLACEHOLDER: ...]) als gestrichelter Chip. */
+import { isPh } from '../lib/placeholders';
+interface Props { items: { value: string; label: string }[]; class?: string }
+const { items, class: cls } = Astro.props;
+---
+<div class:list={['kpis', cls]}>
+  {items.map((k) => (
+    <div class="kpi">
+      <div class="v">{isPh(k.value) ? <span class="ph-num">{k.value}</span> : <span data-count>{k.value}</span>}</div>
+      <div class="l">{k.label}</div>
+    </div>
+  ))}
+</div>
+<style>
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--grid-gap); }
+  .kpi .v { font-size: clamp(2.6rem, 4.6vw, 4rem); font-weight: var(--fw-number); letter-spacing: var(--tracking-number); line-height: 1; margin-bottom: 10px; min-height: 1em; display: flex; align-items: flex-end; font-variant-numeric: tabular-nums; }
+  .kpi .l { font-size: var(--fs-small); color: var(--color-muted); line-height: var(--lh-lead); }
+  :global(.section--dark) .kpi .l { color: var(--color-on-dark-muted); }
+  /* Mobil: zwei Kennzahlen nebeneinander (Vergleich auf einen Blick), erst bei drei untereinander */
+  @media (max-width: 700px) { .kpis { grid-template-columns: 1fr 1fr; gap: 20px; } .kpis:has(> :nth-child(3)) { grid-template-columns: 1fr; } .kpi .v { font-size: clamp(1.9rem, 9vw, 2.6rem); } }
+  @media (max-width: 600px) { .kpis { gap: 14px; } .kpi .v { font-size: 2rem; margin-bottom: 4px; } .kpi .l { font-size: .8rem; } }
+</style>

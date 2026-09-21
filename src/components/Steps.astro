@@ -1,0 +1,54 @@
+---
+/** Schrittliste (Kreditseite): Nummer, Titel, kurzer Text. Seit 28 mit Icon je Schritt (lib/step-icons.ts, aus dem englischen
+ *  Titel) im Akzent-Kreis und der Nummer als kleinem Etikett rechts, wie die Schrittkarten der Datenseiten (Section.astro).
+ *  Platzhalter im Text als Chip. */
+import Icon from './Icon.astro';
+import { markPh } from '../lib/placeholders';
+interface Props { steps: { title: string; text: string }[]; id?: string; icons?: string[] }
+const { steps, id, icons = [] } = Astro.props;
+---
+<div class="steps" id={id}>
+  {steps.map((s, i) => (
+    <div class="card step">
+      <div class="step-head" aria-hidden="true">
+        <div class="n">{icons[i] && <Icon name={icons[i]} size={18} />}<i>{String(i + 1).padStart(2, '0')}</i></div>
+        {icons[i] && <span class="no">{String(i + 1).padStart(2, '0')}</span>}
+      </div>
+      <h3>{s.title}</h3>
+      <p set:html={markPh(s.text)} />
+    </div>
+  ))}
+</div>
+<style>
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--grid-gap); }
+  @media (max-width: 1000px) { .steps { grid-template-columns: 1fr 1fr; } }
+  .step { min-height: 220px; }
+  .step-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 22px; }
+  /* Schrittnummer wie in Section.astro: Bordeaux-Ziffer auf zartem Kreis; mit Icon zeigt der Kreis das Icon und die Nummer steht rechts */
+  .n { width: 40px; height: 40px; border-radius: 50%; background: var(--color-accent-soft); color: var(--color-accent); display: grid; place-items: center; font-size: .95rem; font-weight: 600; letter-spacing: .02em; flex: none; }
+  .n i { font-style: normal; }
+  .n:has(svg) i { display: none; }
+  .no { font-size: .74rem; font-weight: 600; letter-spacing: var(--tracking-caps); color: var(--color-muted); font-variant-numeric: tabular-nums; }
+  .step h3 { font-size: 1.15rem; margin-bottom: 6px; }
+  .step p { font-size: var(--fs-small); color: var(--color-muted); margin: 0; line-height: var(--lh-lead); }
+  :global(.section--dark) .n { background: rgba(255,255,255,.14); color: #fff; }
+  :global(.section--dark) .step h3 { color: var(--color-on-dark); }
+  :global(.section.alt) .step { background: var(--color-bg); }
+  :global(.section--dark) .step p { color: var(--color-on-dark-muted); }
+  /* Mobil als Zeitleiste wie die Schritt-Raster der Datenseiten (16-MOBIL-OPTIMIERUNG): Nummer links, Linie, kein Kachelgrund */
+  @media (max-width: 600px) {
+    .steps { grid-template-columns: 1fr; gap: 0; }
+    .step, :global(.section.alt) .step { min-height: 0; background: none; border: 0; box-shadow: none; border-radius: 0; padding: 0 0 26px; display: grid; grid-template-columns: 36px 1fr; column-gap: 14px; position: relative; }
+    .step:last-child { padding-bottom: 0; }
+    .step-head { grid-row: 1 / span 2; margin: 0; display: block; }
+    .n { width: 36px; height: 36px; margin: 0; font-size: .88rem; background: var(--color-surface-strong); color: var(--color-text); }
+    .n :global(svg) { display: none; }
+    .n:has(svg) i { display: inline; }
+    .no { display: none; }
+    .step:not(:last-child)::after { content: ""; position: absolute; inset-inline-start: 17px; top: 42px; bottom: 6px; width: 2px; background: var(--color-border); }
+    .step h3 { grid-column: 2; margin: 6px 0 .35em; font-size: 1.08rem; }
+    .step p { grid-column: 2; }
+  }
+  /* Symmetrie (Jan 21.09.): Schritt-Titel reservieren zwei Zeilen, damit die Absaetze auf einer Hoehe beginnen */
+  @media (min-width: 801px) { h3 { min-height: 2.16em; } }
+</style>

@@ -1,0 +1,58 @@
+---
+import '../styles/base.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import MobileCta from '../components/MobileCta.astro';
+import { brandText } from '../lib/content';
+import { LOCALE_INFO, t, type Locale } from '../lib/i18n';
+import { ClientRouter } from 'astro:transitions';
+interface Props { title: string; description?: string; sourceUrl?: string; app?: boolean; locale?: Locale; path?: string; translated?: boolean; photoHero?: boolean; cta?: boolean }
+// cta (M10): redaktionelle Seiten (Guides, Hilfe, Stubs) bekommen keine feste Knopfleiste am Telefon
+const { title, description = '', sourceUrl, app = false, locale = 'en', path = '/', translated = true, photoHero = false, cta = true } = Astro.props;
+// Flaeche der Seite (M10): Overscroll-Farbe und Toolbar-Farbe folgen dem, was oben und unten liegt (Foto-Hero: Tinte, Portal: Grau)
+const surface = app ? 'app' : photoHero ? 'photo' : 'page';
+const themeColor = app ? '#f5f5f6' : photoHero ? '#0b0f19' : '#ffffff';
+const pageTitle = brandText(title);
+const info = LOCALE_INFO[locale];
+---
+<!doctype html>
+<html lang={info.lang} dir={info.dir} class="no-js" data-surface={surface}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- html.m = schmaler Viewport (unter 560 px), gesetzt vor dem ersten Rendern; muss NACH dem viewport-Meta stehen,
+         sonst misst matchMedia mobil noch den 980-px-Ersatzviewport -->
+    <script is:inline>document.documentElement.classList.remove('no-js');if(matchMedia('(max-width: 560px)').matches)document.documentElement.classList.add('m')</script>
+    <!-- M14: html.fonts-ready, sobald document.fonts.ready aufloest, spaetestens nach 800 ms; PhotoHero haelt die Wort-Einblendung
+         der Headline bis dahin an (kein Umbruch mit der Ersatzschrift). Nach einem Seitenwechsel des ClientRouters setzt Astro die
+         Klassen am <html> aus dem neuen Dokument (also wieder no-js): hier werden no-js, m und fonts-ready dann neu gesetzt. -->
+    <script is:inline>(function(){var h=document.documentElement,on=function(){h.classList.add('fonts-ready')},arm=function(){var t=setTimeout(on,800);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){clearTimeout(t);on()})};arm();document.addEventListener('astro:after-swap',function(){h.classList.remove('no-js');if(matchMedia('(max-width: 560px)').matches)h.classList.add('m');arm()})})()</script>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content={themeColor} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="preload" href="/fonts/instrument-sans-normal-400-700-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- M14: auf RTL-Seiten (Urdu, Punjabi) auch die arabische Schrift vorladen, sonst kommt sie erst nach dem CSS -->
+    {info.dir === 'rtl' && <link rel="preload" href="/fonts/noto-sans-arabic-400-700-arabic.woff2" as="font" type="font/woff2" crossorigin />}
+    <title>{pageTitle}</title>
+    {description && <meta name="description" content={brandText(description)} />}
+    <!-- Vorschau beim Teilen (WhatsApp, LinkedIn): Bild aus public/img/og.png, erzeugt aus dem Hero (Jan 20.09.) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    {description && <meta property="og:description" content={brandText(description)} />}
+    <meta property="og:image" content={new URL('/img/og.jpg', Astro.site ?? 'http://localhost:4321').href} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <!-- M13: der ClientRouter laeuft auch im Portal, damit Wortmarke, Plan-Karte und Objekte in den Funnel und durch das Portal reisen -->
+    <ClientRouter />
+  </head>
+  <body>
+    <a class="skip" href="#main" data-skip>{t(locale, 'skip')}</a>
+    {!app && <Header locale={locale} path={path} overPhoto={photoHero} />}
+    {!translated && <div class="untranslated"><div class="container">{t(locale, 'englishOnly')}</div></div>}
+    <slot />
+    {!app && <Footer locale={locale} withFootnotes={Astro.slots.has('footnotes')}><slot name="footnotes" /></Footer>}
+    {!app && cta && <MobileCta locale={locale} />}
+    <script src="../scripts/motion.ts"></script>
+  </body>
+</html>

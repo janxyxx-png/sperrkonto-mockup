@@ -1,0 +1,76 @@
+---
+/** Geldfluss (Runde 29, M08): Vertrauen aus Mechanik statt aus Siegeln. Ersetzt die Beleg-Reihe (LogoRow: Bewertungen,
+ *  Testsiegel, Ministeriums-Badge, alles Beispielwerte) durch drei Knoten, die zeigen, wo das Geld ist: Du ueberweist aus
+ *  Pakistan, es liegt bei der EU-lizenzierten Partnerbank in deinem Namen, es kommt monatlich zu dir zurueck. Weiss, gerade
+ *  Kanten, kein Foto; die Haarlinien zwischen den Knoten ziehen sich beim Erscheinen. Darunter eine stille Markenzeile
+ *  (Apple Pay, Google Pay, Stores) in Tinte. Die Klasse "logos" bleibt fuer scripts/qa/tweaks.ts. Texte: ui-strings trust.flow*. */
+import Icon from './Icon.astro';
+import Mark from './Mark.astro';
+import { t, type Locale } from '../lib/i18n';
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const tr = (k: Parameters<typeof t>[1]) => t(locale, k);
+const payChip = tr('chip.bank').split('|')[1];
+---
+<section class="logos flow chapter" aria-label={tr('trust.flowKicker')}>
+  <div class="container">
+    <p class="kicker chapter-k">{tr('trust.flowKicker')}</p>
+    <h2 class="chapter">{tr('trust.flowTitle')}</h2>
+    <ol class="nodes">
+      <li class="node" style="--i:0">
+        <span class="icircle"><Icon name="plane" size={22} /></span>
+        <h3>{tr('trust.flow1')}</h3>
+        <p>{tr('trust.flow1Sub')}</p>
+      </li>
+      <li class="node" style="--i:1">
+        <span class="icircle"><Icon name="bank" size={22} /></span>
+        <h3>{tr('trust.bank')}</h3>
+        <strong class="num" data-count>{tr('trust.deposit')}</strong>
+        <p>{tr('trust.depositSub')}</p>
+        <span class="ph-num">{tr('trust.bankName')}</span>
+      </li>
+      <li class="node" style="--i:2">
+        <span class="icircle"><Icon name="euro" size={22} /></span>
+        <h3>{tr('trust.flow3')}</h3>
+        <span class="chip">{payChip}</span>
+        <p>{tr('claim.v1')} {tr('claim.l1')}</p>
+      </li>
+    </ol>
+    <p class="marks" aria-label={`${tr('logos.pay')} · ${tr('logos.app')}`}>
+      <span class="mk-row"><Mark name="applepay" label={false} size={40} /><Mark name="googlepay" label={false} size={40} /><Mark name="apple" label={false} size={20} /><Mark name="googleplay" label={false} size={18} /></span>
+      <span class="cap">{tr('logos.pay')} · {tr('logos.app')}</span>
+    </p>
+  </div>
+</section>
+<style>
+  .flow { padding: var(--section-y) 0; }
+  .flow h2 { margin-bottom: 40px; }
+  .nodes { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 48px; counter-reset: node; }
+  .node { position: relative; background: var(--color-surface); border-radius: var(--radius-m); padding: 28px 28px 26px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+  .node :global(.icircle) { background: var(--color-accent-soft); color: var(--color-accent); margin-bottom: 8px; }
+  .node h3 { font-size: 1.15rem; margin: 0; }
+  .node p { margin: 0; color: var(--color-muted); font-size: .95rem; line-height: 1.5; }
+  .node .num { font-family: var(--font-heading); font-size: 1.35rem; font-weight: 600; letter-spacing: -.025em; font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .node .chip { font-size: .8rem; font-weight: 600; color: var(--color-accent); background: var(--color-accent-soft); border-radius: var(--radius-pill); padding: 5px 11px; }
+  .node .ph-num { margin-top: 2px; }
+  .node > :last-child { margin-top: auto; } /* letzte Zeile aller drei Knoten auf einer Hoehe (Symmetrie, Jan 21.09.) */
+  /* Haarlinie zwischen den Knoten auf Hoehe des Icons; zieht sich beim Erscheinen von links nach rechts (Staffel 120 ms) */
+  .node + .node::before { content: ""; position: absolute; top: 50px; inset-inline-start: -48px; width: 48px; height: 1px; background: var(--color-border); transform: scaleX(0); transform-origin: 0 50%; transition: transform .5s var(--ease-out-soft); transition-delay: calc(var(--i, 0) * 120ms); }
+  :global([dir="rtl"]) .node + .node::before { transform-origin: 100% 50%; }
+  :global([data-rv].in) .node + .node::before { transform: scaleX(1); }
+  :global(html.no-js) .node + .node::before { transform: scaleX(1); }
+  /* Markenzeile: Tinte bei 55 %, eine Zeile, nichts sonst */
+  .marks { margin: 36px 0 0; display: flex; align-items: center; gap: 18px 28px; flex-wrap: wrap; color: var(--color-text); }
+  .mk-row { display: inline-flex; align-items: center; gap: 22px; opacity: .55; }
+  .cap { font-size: .86rem; color: var(--color-muted); }
+  @media (max-width: 900px) { .nodes { gap: 24px; } .node + .node::before { inset-inline-start: -24px; width: 24px; } }
+  @media (max-width: 600px) {
+    .flow h2 { margin-bottom: 24px; }
+    .nodes { grid-template-columns: 1fr; gap: 12px; }
+    .node { padding: 20px 18px 18px; }
+    .node + .node::before { top: -12px; inset-inline-start: 38px; width: 1px; height: 12px; transform: scaleY(0); transform-origin: 50% 0; }
+    :global([data-rv].in) .node + .node::before { transform: scaleY(1); }
+    .marks { margin-top: 24px; gap: 12px 20px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .node + .node::before { transition: none; transform: none; } }
+</style>

@@ -1,0 +1,339 @@
+---
+/**
+ * Preisseite /pricing. Runde 29 (M07, "eine Zahl, ein Objekt, halbe Seite"): die Headline ist der Monatspreis selbst, das eine
+ * Objekt die schwebende Produktkarte, danach nur noch der Rechner als zweites Kapitel (Stepper statt Formularfelder, Ergebnis
+ * als zwei Hauptbuch-Karten "vor dem Abflug" und "nach der Landung, pro Monat"), der Geldfluss, ein Vergleichs-Stub und die
+ * Geld-FAQ. "Wann zahlst du was" und "Zwei Wege" sind weg; die drei Zeitpunkte leben als Leiste ueber dem Ergebnis weiter.
+ * Waehrung ist Seitenzustand (main[data-cur], main[data-rate]): ein Schalter, ein Kurs, jeder Betrag ([data-money]) folgt.
+ * Der Sperrbetrag (11.904, bleibt dein Geld) wird nie mit Lebenskosten summiert. Preise aus facts.ts, Texte aus pricing-copy.ts
+ * und funnel-copy.ts; compRows/compNote/paths bleiben dort als Daten, ungerendert.
+ */
+import Base from '../layouts/Base.astro';
+import Pic from '../components/Pic.astro';
+import Icon from '../components/Icon.astro';
+import TrustBar from '../components/TrustBar.astro';
+import ClosingCta from '../components/ClosingCta.astro';
+import MoneyFlow from '../components/MoneyFlow.astro';
+import BlockView from '../components/Block.astro';
+import { pages, pageIn } from '../lib/content';
+import { type Locale, localePath, t } from '../lib/i18n';
+import { PRICING } from '../lib/pricing-copy';
+import { PRICE, money, expandText } from '../lib/facts';
+import { FUNNEL, PKR_PER_EUR_EXAMPLE, PREMIUM, TRANSFER_FEE_PCT_EXAMPLE } from '../lib/funnel-copy';
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const lp = (p: string) => localePath(locale, p);
+const C = PRICING[locale] ?? PRICING.en;
+const F = FUNNEL[locale] ?? FUNNEL.en;
+const en = PRICING.en;
+// Die Tabelle der Vorlage (drei Spalten) ist Datenbasis geblieben: Zeilen mit Haken in der Setup-Spalte sind der Inhalt des
+// einen Produkts, die Gebuehren- und Praemienzeilen werden am englischen Label erkannt (gerendert wird die Sprachkopie).
+const rowAt = (re: RegExp) => { const i = en.rows.findIndex((r) => re.test(r.label)); return i >= 0 ? C.rows[i] : undefined; };
+const included = C.rows.filter((_, i) => en.rows[i]?.cells[1] === true).map((r) => r.label);
+const premiumRow = rowAt(/premium/i);
+const premiumCell = premiumRow && typeof premiumRow.cells[1] === 'string' ? premiumRow.cells[1] : '';
+const monthlyLabel = rowAt(/monthly/i)?.label ?? C.lines.monthly;
+// Betraege in Fliesstext (Lead, Praemienhinweis, Zeitleiste) als data-money-Knoten, damit auch sie dem Waehrungsschalter folgen
+const esc = (s: string) => s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c] ?? c));
+const moneySpans = (s: string) => esc(expandText(s, locale)).replace(locale === 'en' ? /€(\d[\d,]*)/g : /(\d[\d,]*) یورو/g, (m, n: string) => `<span data-money="${n.replace(/,/g, '')}">${m}</span>`);
+// Geld-FAQ, von Hand kuratiert (Rundgang 20.09.: die Stichwortsuche zeigte drei Kostenfragen nebeneinander): sechs Fragen in
+// fester Reihenfolge, erkannt an der englischen Frage, gerendert in der Sprachkopie
+const PICK = [/^what does it cost/i, /transfer money into/i, /deposit more than/i, /first payout/i, /visa is refused/i, /apple pay or google pay/i];
+const all: { en: string; item: { q: string; a: string } }[] = [];
+for (const enPage of pages) {
+  const { page } = pageIn(enPage.slug, locale);
+  for (const [si, s] of enPage.sections.entries()) for (const [bi, b] of s.blocks.entries()) if (b.type === 'faq') b.items.forEach((it, k) => {
+    const loc = (page.sections[si]?.blocks[bi] as { items?: { q: string; a: string }[] } | undefined)?.items?.[k] ?? it;
+    all.push({ en: it.q, item: loc });
+  });
+}
+const faqBlock = { type: 'faq' as const, items: PICK.map((re) => all.find((f) => re.test(f.en))?.item).filter(Boolean) as { q: string; a: string }[] };
+// Rechner: Startwerte serverseitig, damit die Zahlen auch ohne JS stehen; dieselben Formeln laufen im Skript unten
+const DEF = { age: 23, city: C.cities[0], flight: 650, rate: PKR_PER_EUR_EXAMPLE };
+const r2 = (n: number) => Math.round(n * 100) / 100;
+const fee = r2((PRICE.deposit * TRANSFER_FEE_PCT_EXAMPLE) / 100);
+const before = r2(PRICE.deposit + fee + DEF.flight);
+const premium0 = DEF.age < 30 ? PREMIUM.statutoryStudent : PREMIUM.privateStudent;
+const total0 = PRICE.monthly + premium0 + DEF.city.rent;
+const first90 = 3 * (PRICE.monthly + premium0) + 3 * DEF.city.rent;
+const pct = (v: number) => ((v / before) * 100).toFixed(2);
+const m = (n: number) => money(Math.round(n), locale);
+const calc = { deposit: PRICE.deposit, monthly: PRICE.monthly, feePct: TRANSFER_FEE_PCT_EXAMPLE, premium: PREMIUM, cities: C.cities, rate: PKR_PER_EUR_EXAMPLE };
+// Stepper (base.css .stepper): das echte input bleibt unsichtbar im DOM (QA setzt .value und feuert input); Flug in EUR als
+// data-money, damit die Anzeige dem Schalter folgt; Kurs schreibt main[data-rate]
+const steppers = [
+  { key: 'age', label: C.age, value: DEF.age, min: 16, max: 45, step: 1, money: false, note: '' },
+  { key: 'flight', label: C.flight, value: DEF.flight, min: 0, max: 3000, step: 50, money: true, note: '' },
+  { key: 'rate', label: C.rate, value: DEF.rate, min: 100, max: 1000, step: 1, money: false, note: C.rateNote },
+];
+// Jan 20.09.: das Portrait mit geschlossenen Augen wirkte ohne die Headline seltsam; jetzt das Paar auf dem Dach vor der
+// Stadt bei Nacht (Motiv der Login-Seite), Blick in die Stadt, kein Gesicht im Anschnitt
+const heroPhoto = { src: '/img/photos/cine-rooftop-couple-night.jpg', pos: '58% 42%' };
+const whenIcons = ['plane', 'check', 'calendar'];
+---
+<Base title={`${C.title} | EC Assets`} description={expandText(C.lead, locale)} locale={locale} path="/pricing" photoHero>
+  <main id="main" class="pricing" data-cur="eur" data-rate={PKR_PER_EUR_EXAMPLE} data-locale={locale}>
+    <!-- Hero wie die Produktseiten: Foto unter dem transparenten Header, links der Preis als Headline, rechts das Produkt als Karte -->
+    <section class="p-hero">
+      <div class="p-photo" aria-hidden="true"><Pic class="photo" src={heroPhoto.src} alt="" sizes="100vw" eager priority style={`--pos:${heroPhoto.pos}`} data-parallax /></div>
+      <div class="p-scrim" aria-hidden="true"></div>
+      <div class="container p-grid">
+        <div class="p-text on-dark">
+          <p class="kicker">{C.kicker}</p>
+          <h1 class="price-h1"><span data-money={PRICE.monthly}>{money(PRICE.monthly, locale)}</span> <span>{C.titleTail}</span></h1>
+          <p class="lead" set:html={moneySpans(C.lead)} />
+          <div class="cur">
+            <span class="cur-l">{t(locale, 'currency.show')}</span>
+            <div class="seg-ctl on-dark" role="group" aria-label={t(locale, 'currency.show')}><span class="seg-thumb" aria-hidden="true"></span><button type="button" class="is-on" data-cur-btn="eur" aria-pressed="true">EUR</button><button type="button" data-cur-btn="pkr" aria-pressed="false">PKR</button></div>
+          </div>
+        </div>
+        <div class="plan" style="view-transition-name: plan-card">
+          <p class="caps lbl">{C.includedTitle}</p>
+          <h2>{F.setupComplete}</h2>
+          <ul class="checklist">{included.map((l) => <li class="ok">{l}</li>)}</ul>
+          <p class="muted small" set:html={`${esc(premiumRow?.label ?? '')}: ${esc(expandText(premiumCell, locale))}. ${moneySpans(C.premiumNote)}`} />
+          <a class="btn btn-primary" href={lp('/app/start')} data-cta-anchor data-commit>{C.cta}</a>
+        </div>
+      </div>
+    </section>
+    <TrustBar locale={locale} bridge />
+
+    <!-- Rechner als zweites Kapitel: Stepper, die Zeitleiste "vor dem Abflug / bei der Landung / jeden Monat", zwei Hauptbuecher -->
+    <section class="chapter" id="calculator">
+      <div class="container" data-move={JSON.stringify(calc)}>
+        <h2 class="chapter">{C.calcTitle}</h2>
+        <p class="calc-lead">{C.calcLead}</p>
+        <div class="controls">
+          {steppers.map((s) => (
+            <div class:list={['ctl', `ctl-${s.key}`]}>
+              <span class="ctl-l" id={`lbl-${s.key}`}>{s.label}</span>
+              <div class="stepper" role="group" aria-labelledby={`lbl-${s.key}`}>
+                <button type="button" data-dec aria-label={`${s.label} −`}>−</button>
+                {s.money ? <span class="val" data-val={s.key} data-money={s.value}>{m(s.value)}</span> : <span class="val" data-val={s.key}>{s.value}</span>}
+                <button type="button" data-inc aria-label={`${s.label} +`}>+</button>
+                <input type="number" {...{ [`data-${s.key}`]: '' }} value={s.value} min={s.min} max={s.max} step={s.step} inputmode="numeric" aria-labelledby={`lbl-${s.key}`} />
+              </div>
+              {s.note && <small>{s.note}</small>}
+            </div>
+          ))}
+          <div class="ctl ctl-city">
+            <span class="ctl-l" id="lbl-city">{C.city}</span>
+            <div class="seg-ctl" role="group" aria-labelledby="lbl-city"><span class="seg-thumb" aria-hidden="true"></span>{C.cities.map((c, i) => <button type="button" class:list={{ 'is-on': i === 0 }} data-city-btn={c.key} aria-pressed={i === 0 ? 'true' : 'false'}>{c.label}</button>)}</div>
+            <select data-city hidden aria-hidden="true" tabindex="-1">{C.cities.map((c) => <option value={c.key}>{c.label}</option>)}</select>
+          </div>
+        </div>
+        <ul class="when-row">
+          {C.when.items.map((it, i) => <li><span class="icircle sm"><Icon name={whenIcons[i] ?? 'check'} size={18} /></span><div><strong>{it.title}</strong><span class="txt" set:html={moneySpans(it.text)} /></div></li>)}
+        </ul>
+        <div class="results">
+          <div class="book">
+            <h3>{C.when.items[0].title}</h3>
+            <!-- Anteile am Betrag vor dem Abflug: der Sperrbetrag (bleibt dein Geld) in Akzentfarbe, Gebuehr Tinte, Flug grau -->
+            <div class="bar" aria-hidden="true"><span class="seg s-deposit" data-seg="deposit" style={`width:${pct(PRICE.deposit)}%`}></span><span class="seg s-fee" data-seg="fee" style={`width:${pct(fee)}%`}></span><span class="seg s-flight" data-seg="flight" style={`width:${pct(DEF.flight)}%`}></span></div>
+            <dl class="ledger">
+              <div><dt><i class="sw s-deposit"></i>{F.deposit}</dt><dd data-eur="deposit" data-money={PRICE.deposit}>{m(PRICE.deposit)}</dd></div>
+              <div><dt><i class="sw s-fee"></i>{F.transferFee}</dt><dd data-eur="fee" data-money={fee}>{m(fee)}</dd></div>
+              <div><dt><i class="sw s-flight"></i>{C.lines.flight}</dt><dd data-eur="flight" data-money={DEF.flight}>{m(DEF.flight)}</dd></div>
+              <div class="total"><dt>{C.lines.total}</dt><dd data-eur="before" data-money={before}>{m(before)}</dd></div>
+              <div class="muted"><dt>{C.lines.reserve}</dt><dd data-money={PRICE.deposit}>{m(PRICE.deposit)}</dd></div>
+            </dl>
+          </div>
+          <div class="book">
+            <h3>{C.lines.afterMonthly}</h3>
+            <dl class="ledger">
+              <div><dt>{monthlyLabel}</dt><dd data-eur="monthly" data-money={PRICE.monthly}>{m(PRICE.monthly)}</dd></div>
+              <div><dt>{C.lines.insurance}<small>{premiumRow?.label}: {expandText(premiumCell, locale)}</small></dt><dd data-eur="insurance" data-money={premium0}>{m(premium0)}</dd></div>
+              <div><dt>{C.city}<small data-city-name>{DEF.city.label}</small></dt><dd data-eur="rent" data-money={DEF.city.rent}>{m(DEF.city.rent)}</dd></div>
+              <div class="total"><dt>{C.when.items[2].title}</dt><dd data-eur="total" data-money={total0}>{m(total0)}</dd></div>
+              <div class="first"><dt>{C.lines.first90}</dt><dd data-eur="first90" data-money={first90}>{m(first90)}</dd></div>
+            </dl>
+          </div>
+        </div>
+        <p class="muted small note">{C.exampleNote}</p>
+      </div>
+    </section>
+
+    <MoneyFlow locale={locale} />
+
+    <!-- Vergleich: bis die Zahlen der anderen Anbieter am Stichtag geprueft sind, nur die Ansage und der Weg ins Hilfe-Center -->
+    <section class="section alt" id="competitors">
+      <div class="container">
+        <h2 class="util">{C.compTitle}</h2>
+        <p class="muted lead2">{C.compLead}</p>
+        <p><a class="btn btn-link" href={lp('/help')}>{t(locale, 'stub.help')}</a></p>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="container narrow">
+        <h2 class="util">{C.faqTitle}</h2>
+        <BlockView locale={locale} block={faqBlock} />
+        <p><a class="btn btn-link" href={lp('/help')}>{t(locale, 'stub.help')}</a></p>
+      </div>
+    </section>
+
+    <ClosingCta title={t(locale, 'closing.title')} cta={C.cta} href={lp('/app/start')} tone="surface" />
+  </main>
+  <script>
+    import { tweenText } from '../scripts/tween';
+    // Preisseite (M07): ein Zustand fuer die Waehrung (main[data-cur], main[data-rate]). Jeder Betrag traegt seinen EUR-Wert in
+    // data-money und wird durch denselben Formatierer gerendert; der Rechner schreibt nur data-money und rendert dann mit.
+    // Bewegung: 550 ms Tween (tween.ts) nur nach echten Eingaben (e.isTrusted) und ohne reduzierte Bewegung; synthetische
+    // Ereignisse (QA-Skripte) stehen sofort. Praemienregel wie im Funnel: unter 30 gesetzlich, ab 30 der private Studententarif.
+    // Eingaben landen gemeinsam mit dem Sperrkonto-Planer in localStorage 'ec-plan' (zusammengefuehrt, nichts ueberschrieben).
+    const SPLIT = /(\d[\d.,]*)/;
+    const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const num = (n: number) => Math.round(n).toLocaleString('en-US');
+    type City = { key: string; label: string; rent: number };
+    type Move = { deposit: number; monthly: number; feePct: number; premium: { statutoryStudent: number; privateStudent: number }; cities: City[]; rate: number };
+    const bind = () => {
+      const main = document.querySelector<HTMLElement>('main.pricing:not([data-bound])'); if (!main) return; main.dataset.bound = '1';
+      const box = main.querySelector<HTMLElement>('[data-move]'); if (!box) return;
+      const d = JSON.parse(box.dataset.move!) as Move;
+      const locale = main.dataset.locale ?? 'en';
+      const q = <T extends HTMLElement>(s: string) => main.querySelector<T>(s)!;
+      const fmt = (n: number) => (main.dataset.cur === 'pkr' ? `PKR ${num(n * (Number(main.dataset.rate) || d.rate))}` : locale === 'en' ? `€${num(n)}` : `${num(n)} یورو`);
+      // Anzeige sofort oder weich: der Text um die Zahl (Waehrung) steht vom ersten Frame an aus dem Ziel, die Ziffern laufen nach
+      const show = (el: HTMLElement, target: string, animate: boolean) => {
+        if (!animate) { el.textContent = target; return; }
+        const a = (el.textContent ?? '').split(SPLIT), b = target.split(SPLIT);
+        if (a.length === b.length) el.textContent = b.map((s, i) => (i % 2 ? a[i] : s)).join('');
+        tweenText(el, target, 550);
+      };
+      const repriceAll = (animate: boolean) => main.querySelectorAll<HTMLElement>('[data-money]').forEach((el) => show(el, fmt(Number(el.dataset.money)), animate));
+      const inp = { age: q<HTMLInputElement>('[data-age]'), flight: q<HTMLInputElement>('[data-flight]'), rate: q<HTMLInputElement>('[data-rate]'), city: q<HTMLSelectElement>('[data-city]') };
+      const h1 = q('.price-h1');
+      const stored = (): Record<string, unknown> => { try { return JSON.parse(localStorage.getItem('ec-plan') || '{}') ?? {}; } catch { return {}; } };
+      const persist = () => { try { localStorage.setItem('ec-plan', JSON.stringify({ ...stored(), age: Number(inp.age.value), city: inp.city.value, flight: Number(inp.flight.value), rate: Number(inp.rate.value), cur: main.dataset.cur })); } catch { /* privater Modus */ } };
+      const setMoney = (key: string, v: number) => { const el = main.querySelector<HTMLElement>(`[data-eur="${key}"]`); if (el) el.dataset.money = String(v); };
+      const calc = (animate: boolean) => {
+        const age = Number(inp.age.value) || 23, flight = Number(inp.flight.value) || 0, rate = Number(inp.rate.value) || d.rate;
+        const city = d.cities.find((c) => c.key === inp.city.value) ?? d.cities[0];
+        const premium = age < 30 ? d.premium.statutoryStudent : d.premium.privateStudent;
+        const fee = Math.round(d.deposit * d.feePct) / 100, before = d.deposit + fee + flight;
+        const total = d.monthly + premium + city.rent, first90 = 3 * (d.monthly + premium) + 3 * city.rent;
+        main.dataset.rate = String(rate);
+        setMoney('deposit', d.deposit); setMoney('fee', fee); setMoney('flight', flight); setMoney('before', before);
+        setMoney('monthly', d.monthly); setMoney('insurance', premium); setMoney('rent', city.rent); setMoney('total', total); setMoney('first90', first90);
+        const fv = main.querySelector<HTMLElement>('[data-val="flight"]'); if (fv) fv.dataset.money = String(flight);
+        const cn = main.querySelector<HTMLElement>('[data-city-name]'); if (cn) cn.textContent = city.label;
+        for (const [k, v] of Object.entries({ deposit: d.deposit, fee, flight })) { const s = main.querySelector<HTMLElement>(`[data-seg="${k}"]`); if (s) s.style.width = `${((v / before) * 100).toFixed(2)}%`; }
+        repriceAll(animate); persist();
+      };
+      // Gespeicherte Eingaben zurueckholen (nur innerhalb der Grenzen des jeweiligen Steppers)
+      const saved = stored();
+      const restore = (key: string, input: HTMLInputElement) => { const v = Number(saved[key]); if (Number.isFinite(v) && v >= Number(input.min) && v <= Number(input.max)) input.value = String(v); };
+      restore('age', inp.age); restore('flight', inp.flight); restore('rate', inp.rate);
+      if (typeof saved.city === 'string' && d.cities.some((c) => c.key === saved.city)) inp.city.value = saved.city;
+      // Stepper: Klick aendert das versteckte Feld und rechnet direkt (echter Klick = weich); Tastatur und QA feuern 'input'
+      main.querySelectorAll<HTMLElement>('.stepper').forEach((st) => {
+        const input = st.querySelector<HTMLInputElement>('input'), val = st.querySelector<HTMLElement>('.val'), dec = st.querySelector<HTMLButtonElement>('[data-dec]'), inc = st.querySelector<HTMLButtonElement>('[data-inc]');
+        if (!input || !val || !dec || !inc) return;
+        const min = Number(input.min), max = Number(input.max), step = Number(input.step) || 1;
+        const sync = () => { const v = Number(input.value); if (!('money' in val.dataset)) val.textContent = String(v); dec.disabled = v <= min; inc.disabled = v >= max; };
+        const nudge = (dir: number, trusted: boolean) => { input.value = String(Math.min(max, Math.max(min, (Number(input.value) || 0) + dir * step))); sync(); calc(trusted && !reduce()); };
+        dec.addEventListener('click', (e) => nudge(-1, e.isTrusted)); inc.addEventListener('click', (e) => nudge(1, e.isTrusted));
+        input.addEventListener('input', (e) => { sync(); calc(e.isTrusted && !reduce()); });
+        sync();
+      });
+      // Stadt: fuenf Chips schreiben das versteckte select und feuern change; der Schieber (motion.ts) folgt .is-on
+      const chips = [...main.querySelectorAll<HTMLButtonElement>('[data-city-btn]')];
+      let chipTrusted = false;
+      const syncChips = () => chips.forEach((b) => { const on = b.dataset.cityBtn === inp.city.value; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', String(on)); });
+      chips.forEach((b) => b.addEventListener('click', (e) => { inp.city.value = b.dataset.cityBtn!; chipTrusted = e.isTrusted; inp.city.dispatchEvent(new Event('change', { bubbles: true })); }));
+      inp.city.addEventListener('change', (e) => { syncChips(); calc((e.isTrusted || chipTrusted) && !reduce()); chipTrusted = false; });
+      syncChips();
+      // Waehrung: ein Schalter fuer die ganze Seite; Hero-Headline wird in PKR eine Stufe kleiner (.is-pkr)
+      const btns = [...main.querySelectorAll<HTMLButtonElement>('[data-cur-btn]')];
+      const setCur = (cur: string, animate: boolean) => {
+        main.dataset.cur = cur; h1.classList.toggle('is-pkr', cur === 'pkr');
+        btns.forEach((x) => { const on = x.dataset.curBtn === cur; x.classList.toggle('is-on', on); x.setAttribute('aria-pressed', String(on)); });
+        repriceAll(animate); persist();
+      };
+      btns.forEach((b) => b.addEventListener('click', (e) => setCur(b.dataset.curBtn!, e.isTrusted && !reduce())));
+      if (saved.cur === 'pkr') { main.dataset.cur = 'pkr'; h1.classList.add('is-pkr'); btns.forEach((x) => { const on = x.dataset.curBtn === 'pkr'; x.classList.toggle('is-on', on); x.setAttribute('aria-pressed', String(on)); }); }
+      calc(false);
+    };
+    bind(); document.addEventListener('astro:page-load', bind);
+  </script>
+</Base>
+<style>
+  /* Hero: Foto unter Topbar und Header (wie PhotoHero.under-header), unten Platz fuer die Trust-Bruecke */
+  .p-hero { position: relative; isolation: isolate; overflow: hidden; background: var(--color-ink); margin-top: calc(-1 * var(--hdr-h)); padding: calc(var(--hdr-h) + 56px) 0 124px; }
+  .p-photo { position: absolute; inset: 0; z-index: -2; }
+  /* 27: absolut mit top:-8 % (Prozent der Hoehe); margin-top in Prozent bezog sich auf die Breite und liess am Telefon einen Balken frei */
+  .p-photo :global(.photo) { position: absolute; left: 0; top: -8%; width: 100%; height: 116%; object-fit: cover; object-position: var(--pos, 60% 30%); filter: var(--photo-grade); will-change: transform; }
+  .p-photo::after { content: ""; position: absolute; inset: 0; background: var(--photo-warm); mix-blend-mode: multiply; }
+  .p-scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(11,15,25,.7) 0%, rgba(11,15,25,.3) 55%, rgba(11,15,25,.2) 100%), linear-gradient(180deg, rgba(11,15,25,.3) 0%, rgba(11,15,25,0) 30%, rgba(11,15,25,.5) 100%); }
+  :global([dir="rtl"]) .p-scrim { background: linear-gradient(270deg, rgba(11,15,25,.72) 0%, rgba(11,15,25,.35) 55%, rgba(11,15,25,.25) 100%), linear-gradient(180deg, rgba(11,15,25,.25) 0%, rgba(11,15,25,0) 30%, rgba(11,15,25,.55) 100%); }
+  .p-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; }
+  .p-text { color: var(--color-on-dark); }
+  /* Die eine Zahl: Monatspreis in Display-Groesse, tabellarische Ziffern; in Rupien eine Stufe kleiner (Morph 500 ms) */
+  .price-h1 { color: #fff; margin: 0 0 .28em; max-width: none; font-size: var(--fs-h1); font-weight: 600; letter-spacing: var(--tracking-number); line-height: 1; font-variant-numeric: tabular-nums; text-wrap: balance; transition: font-size var(--dur-morph) var(--ease-out-soft); }
+  .price-h1.is-pkr { font-size: var(--fs-h1-page); }
+  .p-text .lead { color: var(--color-on-dark-muted); font-size: var(--fs-body); max-width: 46ch; margin: 0 0 28px; }
+  .cur { display: inline-flex; align-items: center; gap: 10px; }
+  .cur-l { font-size: .78rem; color: var(--color-on-dark-muted); }
+  .cur :global(.seg-ctl > button) { font-size: .8rem; min-height: 30px; padding: 5px 14px; }
+  /* Produktkarte im Hero: das eine Objekt; der Preis steht nur in der Headline */
+  .plan { background: #fff; color: var(--color-text); border-radius: var(--radius-l); padding: 32px; box-shadow: 0 40px 80px -36px rgba(0,0,0,.7); display: flex; flex-direction: column; max-width: 480px; margin-inline-start: auto; }
+  .lbl { color: var(--color-muted); font-size: .68rem; margin-bottom: 10px; }
+  .plan h2 { margin: 0 0 14px; font-size: 2rem; }
+  .plan .checklist { margin: 0 0 16px; font-size: .95rem; }
+  .plan .small { font-size: .8rem; }
+  .plan .btn { align-self: flex-start; margin-top: 10px; }
+  .section { padding: var(--section-y) 0; }
+  .section.alt { background: var(--color-surface); }
+  .narrow { max-width: 860px; }
+  .muted { color: var(--color-muted); } .small { font-size: .85rem; }
+  .lead2 { font-size: var(--fs-body); max-width: 64ch; margin-bottom: 24px; }
+  /* Rechner: Kapitelabstand oben (base.css .chapter), unten Sektionsmass (entfaellt vor dem naechsten Kapitel) */
+  #calculator { padding: var(--chapter-y) 0 var(--section-y); }
+  #calculator h2 { margin-bottom: 18px; }
+  .calc-lead { color: var(--color-muted); font-size: var(--fs-body); max-width: 60ch; margin: 0 0 36px; }
+  /* Regler in einer Reihe (Alter, Flug, Kurs), die Stadt-Chips darunter in voller Breite */
+  .controls { display: flex; flex-wrap: wrap; gap: 24px 44px; align-items: flex-start; }
+  .ctl { display: flex; flex-direction: column; gap: 10px; }
+  .ctl-city { flex-basis: 100%; }
+  .ctl-l { font-size: .72rem; font-weight: 600; color: var(--color-muted); text-transform: uppercase; letter-spacing: var(--tracking-caps); }
+  .ctl small { color: var(--color-muted); font-size: .78rem; }
+  .ctl :global(.stepper > .val[data-money]) { min-width: 4ch; }
+  .pricing[data-cur="pkr"] .ctl :global(.stepper > .val[data-money]) { font-size: 1.35rem; }
+  /* Zeitleiste: drei Zeitpunkte als Leiste zwischen Haarlinien, keine Karten */
+  .when-row { list-style: none; margin: 40px 0 28px; padding: 22px 0; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 32px; }
+  .when-row li { display: flex; gap: 14px; align-items: flex-start; }
+  .when-row :global(.icircle) { background: var(--color-accent-soft); color: var(--color-accent); }
+  .when-row strong { display: block; font-size: .95rem; font-weight: 600; margin: 8px 0 3px; }
+  .when-row .txt { display: block; color: var(--color-muted); font-size: .88rem; line-height: 1.45; }
+  /* Zwei Hauptbuecher: vor dem Abflug (mit Anteilsbalken), nach der Landung pro Monat */
+  .results { display: grid; grid-template-columns: 1fr 1fr; gap: var(--grid-gap); align-items: start; }
+  .book { background: var(--color-surface); border-radius: var(--radius-m); padding: 24px; }
+  .book h3 { font-size: 1.15rem; margin: 0 0 16px; }
+  .bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--color-border); gap: 2px; margin-bottom: 6px; }
+  .seg { display: block; height: 100%; min-width: 3px; transition: width .6s var(--ease-out); }
+  .sw { width: 8px; height: 8px; border-radius: 2px; display: inline-block; margin-inline-end: 8px; vertical-align: 1px; }
+  .s-deposit { background: var(--color-accent); } .s-fee { background: var(--color-ink); } .s-flight { background: #b2b6c0; }
+  .book :global(.ledger dt small) { margin-top: 2px; }
+  .book :global(.ledger > div.first) { border-top: 1px dashed var(--color-border); }
+  .note { margin: 20px 0 0; max-width: 70ch; }
+  @media (max-width: 900px) {
+    .p-grid { grid-template-columns: 1fr; gap: 28px; } .plan { margin-inline-start: 0; max-width: 560px; }
+    .results { grid-template-columns: 1fr; }
+    .when-row { grid-template-columns: 1fr; gap: 14px; }
+  }
+  @media (max-width: 800px) {
+    /* Telefon: erster CTA innerhalb von 1,4 Bildschirmen (M07); die Karte rueckt an den Text */
+    .p-hero { padding: calc(var(--hdr-h) + 24px) 0 72px; }
+    .p-grid { gap: 0; } .plan { margin-top: 24px; }
+  }
+  @media (max-width: 600px) {
+    .cur :global(.seg-ctl > button) { min-height: 40px; }
+    .plan { padding: 22px 18px; } .plan h2 { font-size: 1.6rem; }
+    .controls { gap: 18px 14px; }
+    .ctl :global(.stepper) { gap: 8px; }
+    .ctl :global(.stepper > .val) { font-size: 1.6rem; }
+    /* Fuenf Stadt-Chips brechen um; der Rahmen wird dann Karte statt Pille */
+    .ctl-city :global(.seg-ctl) { flex-wrap: wrap; border-radius: var(--radius-m); }
+    .book { padding: 18px 16px; }
+  }
+</style>

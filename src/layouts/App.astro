@@ -1,0 +1,138 @@
+---
+/** Layout fuer die Portal-Screens: eigener schlanker Header. */
+import Base from './Base.astro';
+import Wordmark from '../components/Wordmark.astro';
+import { DEMO, fillDates } from '../lib/portal-demo';
+import { type Locale, localePath, t as tr } from '../lib/i18n';
+interface Props { title: string; sourceUrl?: string; locale?: Locale; path?: string; description?: string }
+const { title, sourceUrl, locale = 'en', path = '/app/start', description } = Astro.props;
+const demo = DEMO[locale] ?? DEMO.en;
+const fd = (s: string) => fillDates(s, locale); // M02: Datums-Tokens der Demo-Welt
+const t = (k: Parameters<typeof tr>[1]) => tr(locale, k);
+const lp = (p: string) => localePath(locale, p);
+---
+<Base title={title} description={description ?? `${title} · EC Assets`} sourceUrl={sourceUrl} app locale={locale} path={path}>
+  <!-- Demo-Zustand des Portals (portal-demo.ts) vor dem ersten Rendern setzen, damit nichts umspringt -->
+  <script is:inline>try{document.documentElement.dataset.persona=localStorage.getItem('ec-persona')||'applying'}catch(e){document.documentElement.dataset.persona='applying'}</script>
+  <!-- M13: der ClientRouter laeuft auch im Portal; beim Tausch bekommt das neue Dokument den Demo-Zustand, bevor es gezeigt wird (kein Umspringen) -->
+  <script is:inline data-astro-rerun>if(!window.__ecPersonaSwap){window.__ecPersonaSwap=1;document.addEventListener('astro:before-swap',function(e){try{e.newDocument.documentElement.dataset.persona=localStorage.getItem('ec-persona')||'applying'}catch(x){e.newDocument.documentElement.dataset.persona='applying'}})}</script>
+  <!-- Telefon (Rundgang 20.09.): der schwebende Chat-Knopf verdeckte breite Formularknoepfe; dort oeffnet stattdessen "Chat" in der oberen Leiste -->
+  <div class="app-top"><div class="container inner caps"><a href={lp('/help')}>FAQ</a><a href={lp('/app/login')}>{t('login')}</a><button type="button" class="ama-top" data-ama-open aria-controls="ama-panel" aria-expanded="false">{t('ama.title')}</button></div></div>
+  <header class="app-head" style="view-transition-name: portal-head"><div class="container head-inner">
+    <a class="logo" href={lp('/')} aria-label="EC Assets, home" style="view-transition-name: wordmark"><Wordmark suffix={t('portal')} /></a>
+    <!-- Benachrichtigungen (20.09.): Glocke mit Zaehler, Liste je Demo-Zustand -->
+    <div class="bell-wrap">
+      <button type="button" class="bell" data-bell aria-expanded="false" aria-controls="bell-panel" aria-label={demo.bell.title}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg><span class="badge">2</span></button>
+      <div class="bell-panel" id="bell-panel" hidden data-bell-panel>
+        <p class="caps bell-title">{demo.bell.title}</p>
+        <ul class="only-applying">{demo.bell.before.map((n) => <li><i></i>{fd(n)}</li>)}</ul>
+        <ul class="only-active">{demo.bell.after.map((n) => <li><i></i>{fd(n)}</li>)}</ul>
+      </div>
+    </div>
+  </div></header>
+  <main id="main" class="app-main"><slot /></main>
+  <!-- "Ask me anything": seit 18.09. 22:50 ein echtes Panel (Jan: "der Button funktioniert nicht"): drei Beispielfragen mit Antworten, freie Eingabe mit Standardantwort; rein clientseitig -->
+  <button class="ama" type="button" data-ama-open aria-controls="ama-panel" aria-expanded="false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>{t('askAnything')}</button>
+  <div class="ama-panel" id="ama-panel" hidden data-ama-panel transition:persist>
+    <div class="ama-head"><div><strong>{t('ama.title')}</strong><small>{t('ama.sub')}</small></div><button type="button" class="ama-x" data-ama-close aria-label={t('ama.close')}>×</button></div>
+    <div class="ama-log" data-ama-log>
+      <div class="msg them">{t('ama.hello')}</div>
+      <div class="ama-sugg">{(['1', '2', '3'] as const).map((n) => <button type="button" class="chip" data-ama-q={n} data-a={t(`ama.a${n}` as 'ama.a1')}>{t(`ama.q${n}` as 'ama.q1')}</button>)}</div>
+    </div>
+    <form class="ama-form" data-ama-form data-fallback={t('ama.fallback')}><input type="text" placeholder={t('ama.placeholder')} aria-label={t('ama.placeholder')} /><button type="submit" class="btn btn-primary btn-sm">{t('ama.send')}</button></form>
+  </div>
+  <script>
+    const init = () => {
+      const opens = [...document.querySelectorAll<HTMLButtonElement>('[data-ama-open]:not([data-bound])')]; const open = opens[0]; const panel = document.querySelector<HTMLElement>('[data-ama-panel]');
+      if (!open || !panel) return; opens.forEach((o) => { o.dataset.bound = '1'; });
+      const log = panel.querySelector<HTMLElement>('[data-ama-log]')!; const form = panel.querySelector<HTMLFormElement>('[data-ama-form]')!;
+      const say = (text: string, who: 'me' | 'them') => { const d = document.createElement('div'); d.className = 'msg ' + who; d.textContent = text; log.appendChild(d); log.scrollTop = log.scrollHeight; };
+      const toggle = (on: boolean) => { panel.hidden = !on; opens.forEach((o) => { o.setAttribute('aria-expanded', String(on)); o.classList.toggle('is-open', on); }); if (on) panel.querySelector('input')?.focus(); };
+      opens.forEach((o) => o.addEventListener('click', () => toggle(panel.hidden)));
+      panel.querySelector('[data-ama-close]')?.addEventListener('click', () => toggle(false));
+      panel.querySelectorAll<HTMLButtonElement>('[data-ama-q]').forEach((b) => b.addEventListener('click', () => { say(b.textContent ?? '', 'me'); setTimeout(() => say(b.dataset.a ?? '', 'them'), 500); }));
+      form.addEventListener('submit', (e) => { e.preventDefault(); const i = form.querySelector('input')!; const v = i.value.trim(); if (!v) return; say(v, 'me'); i.value = ''; setTimeout(() => say(form.dataset.fallback ?? '', 'them'), 600); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !panel.hidden) toggle(false); });
+      // Glocke
+      const bell = document.querySelector<HTMLButtonElement>('[data-bell]:not([data-bound])'); const bp = document.querySelector<HTMLElement>('[data-bell-panel]');
+      if (bell && bp) { bell.dataset.bound = '1';
+        // M02: ungelesene Hinweise (localStorage ec-unread, beim Laden gelesen) zaehlen auf den Zaehler; ein Commit-Moment (z. B. "I have sent the money") meldet sich per Ereignis ec-unread; Oeffnen der Glocke setzt zurueck
+        const badge = bell.querySelector<HTMLElement>('.badge'); const base = Number(badge?.textContent) || 0; const KEY = 'ec-unread';
+        const unread = () => { try { return Math.max(0, Number(localStorage.getItem(KEY)) || 0); } catch { return 0; } };
+        const paint = () => { if (!badge) return; const n = unread(); badge.textContent = String(base + n); if (n > 0) badge.classList.remove('seen'); };
+        paint();
+        document.addEventListener('ec-unread', () => { try { localStorage.setItem(KEY, String(unread() + 1)); } catch {} paint(); if (badge) { badge.classList.remove('is-bump'); void badge.offsetWidth; badge.classList.add('is-bump'); } });
+        bell.addEventListener('click', () => { bp.hidden = !bp.hidden; bell.setAttribute('aria-expanded', String(!bp.hidden)); if (!bp.hidden) { badge?.classList.add('seen'); try { localStorage.setItem(KEY, '0'); } catch {} } }); document.addEventListener('click', (e) => { if (!bp.hidden && !bell.contains(e.target as Node) && !bp.contains(e.target as Node)) { bp.hidden = true; bell.setAttribute('aria-expanded', 'false'); } }); }
+    };
+    init(); document.addEventListener('astro:page-load', init);
+  </script>
+</Base>
+<style>
+  /* Leiste wie auf der Marketingseite (hellgrau), nicht schwarz */
+  .app-top { background: var(--color-surface); color: var(--color-muted); font-size: .68rem; border-bottom: 1px solid var(--color-border); }
+  .app-top .inner { display: flex; justify-content: flex-end; align-items: center; gap: 24px; padding-top: 0; padding-bottom: 0; }
+  .app-top a, .app-top .ama-top { min-height: 44px; display: inline-flex; align-items: center; } /* M10: Tippflaechen */
+  .app-top a { color: var(--color-muted); text-decoration: none; transition: color .2s; }
+  .app-top a:hover { color: var(--color-accent); }
+  .app-head { background: var(--color-bg); border-bottom: 1px solid var(--color-border); padding: 18px 0; }
+  .logo { text-decoration: none; display: inline-flex; }
+  .app-main { background: var(--color-surface); min-height: calc(100vh - 150px); padding: 56px var(--gutter) 80px; background-image: radial-gradient(70% 50% at 50% 0%, #fff 0%, transparent 70%); }
+  /* Bordeaux statt Schwarz (Jan: "zu viel Schwarz"); offen eine Stufe dunkler */
+  .ama { position: fixed; inset-inline-end: 24px; bottom: 24px; z-index: 60; display: inline-flex; align-items: center; gap: 8px; background: var(--color-accent); color: #fff; padding: 12px 18px; border-radius: var(--radius-pill); text-decoration: none; font-weight: 600; font-size: .9rem; box-shadow: 0 10px 30px -10px rgba(142,45,47,.55); transition: transform .2s var(--ease-out), background-color .2s; }
+  .ama:hover { transform: translateY(-2px); background: var(--color-accent-strong); color: #fff; }
+  .ama { border: 0; cursor: pointer; font: inherit; font-weight: 600; }
+  .ama.is-open { background: var(--color-accent-strong); }
+  .ama svg { flex: none; }
+  .ama-panel { position: fixed; inset-inline-end: 24px; bottom: 84px; width: min(380px, calc(100vw - 48px)); max-height: min(70vh, 560px); background: var(--color-bg); border-radius: var(--radius-l); box-shadow: 0 30px 70px -30px rgba(11,15,25,.45), 0 0 0 1px rgba(11,15,25,.06); display: flex; flex-direction: column; overflow: hidden; z-index: 60; animation: rise .3s var(--ease-out) both; }
+  .ama-panel[hidden] { display: none; }
+  .ama-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 18px 18px 14px; border-bottom: 1px solid var(--color-border); }
+  .ama-head strong { display: block; font-size: 1.05rem; margin-bottom: 2px; }
+  .ama-head small { display: block; color: var(--color-muted); font-size: .8rem; line-height: 1.35; }
+  .ama-x { border: 0; background: var(--color-surface); width: 32px; height: 32px; border-radius: 50%; font-size: 1.2rem; line-height: 1; cursor: pointer; color: var(--color-text); flex: none; }
+  .ama-log { flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; background: var(--color-surface); }
+  /* :global, weil die Nachrichten per Script entstehen und Astros Scope-Attribut nicht tragen */
+  .ama-log :global(.msg) { max-width: 88%; padding: 10px 14px; border-radius: 16px; font-size: .92rem; line-height: 1.45; }
+  .ama-log :global(.msg.them) { background: var(--color-bg); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .ama-log :global(.msg.me) { background: var(--color-accent); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .ama-sugg { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+  .ama-sugg .chip { border: 1px solid var(--color-border); background: var(--color-bg); border-radius: var(--radius-pill); padding: 8px 12px; font: inherit; font-size: .85rem; font-weight: 500; cursor: pointer; text-align: start; color: var(--color-text); }
+  .ama-sugg .chip:hover { border-color: var(--color-accent); color: var(--color-accent); }
+  .ama-form { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--color-border); }
+  .ama-form input { flex: 1; min-width: 0; padding: .7em 1em; border: 1.5px solid var(--color-border); border-radius: var(--radius-pill); font: inherit; font-size: .95rem; }
+  .ama-form input:focus { outline: none; border-color: var(--color-accent); }
+  /* Telefon: nur das Sprechblasen-Icon als runder Knopf, damit er keine Formularknoepfe verdeckt */
+  @media (max-width: 600px) {
+    .ama { inset-inline-end: 16px; bottom: 16px; width: 52px; height: 52px; padding: 0; justify-content: center; font-size: 0; gap: 0; }
+    .ama svg { width: 22px; height: 22px; }
+    .ama-panel { inset-inline: 12px; width: auto; bottom: 80px; max-height: min(72vh, 560px); }
+  }
+  @media (max-width: 800px) { .app-main { padding: 32px var(--gutter) 90px; } }
+  /* Chat am Telefon: Ausloeser in der oberen Leiste, kein schwebender Knopf ueber den Formularen; Panel liegt unten an */
+  .app-top .ama-top { display: none; } /* spezifischer als die Tippflaechen-Regel oben (M10), sonst stand der Knopf am Desktop als eckiger Browser-Button da (Jan 21.09.) */
+  @media (max-width: 600px) {
+    .app-top .ama-top { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; font: inherit; font-size: inherit; letter-spacing: inherit; text-transform: inherit; color: var(--color-accent); cursor: pointer; padding: 0; }
+    .ama { display: none; }
+    .ama-panel { bottom: 12px; }
+  }
+  /* Portalkopf mit Glocke */
+  .head-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .bell-wrap { position: relative; }
+  .bell { position: relative; width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--color-surface); color: var(--color-text); display: grid; place-items: center; cursor: pointer; transition: background-color .2s; }
+  .bell:hover { background: var(--color-surface-strong); }
+  .bell .badge { position: absolute; top: 6px; inset-inline-end: 6px; min-width: 18px; height: 18px; border-radius: 9px; background: var(--color-accent); color: #fff; font-size: .68rem; font-weight: 700; display: grid; place-items: center; padding: 0 5px; box-shadow: 0 0 0 2px var(--color-bg); }
+  .bell .badge.seen { display: none; }
+  /* M02: neuer Hinweis federt den Zaehler ein (einmalig, kein Loop) */
+  .bell .badge.is-bump { animation: m02-bump .32s var(--ease-spring) both; }
+  @keyframes m02-bump { from { transform: scale(.6); } to { transform: scale(1); } }
+  .bell-panel { position: absolute; inset-inline-end: 0; top: calc(100% + 10px); width: min(360px, calc(100vw - 32px)); background: var(--color-bg); border-radius: var(--radius-m); box-shadow: 0 24px 60px -24px rgba(11,15,25,.35), 0 0 0 1px rgba(11,15,25,.06); padding: 16px 18px; z-index: 60; }
+  .bell-title { color: var(--color-muted); font-size: .66rem; margin: 0 0 10px; }
+  .bell-panel ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  .bell-panel li { display: flex; gap: 10px; align-items: flex-start; font-size: .9rem; padding: 8px 0; border-top: 1px solid var(--color-border); }
+  .bell-panel li:first-child { border-top: 0; padding-top: 0; }
+  .bell-panel li i { width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); margin-top: 6px; flex: none; }
+</style>
+<style is:global>
+  /* Demo-Zustand des Portals: Elemente je Zustand (portal-demo.ts) */
+  html[data-persona="applying"] .only-active { display: none !important; }
+  html[data-persona="active"] .only-applying { display: none !important; }
+

@@ -1,0 +1,286 @@
+---
+/**
+ * Dashboard des Portals, seit 20.09. (Jan: "portal auch nicht so viel spannung drin", "ein beispiel account, wie der dann
+ * aussehen koennte, kontostand, karten, auszahlungen"): dieselbe Kundin zu zwei Zeitpunkten, beide Zustaende im HTML,
+ * umgeschaltet ueber html[data-persona] (Seitenleiste, localStorage; Bootstrap in App.astro).
+ * "Before departure": naechster Schritt gross, Countdown zum Botschaftstermin, Reise in vier Stationen, Sperrbetrag mit
+ * Sendungsverfolgung, Botschaftsakte mit Fortschritt, die drei Produkte, Plan und persoenlicher Kontakt.
+ * "In Germany": Kontostand mit Karte als Objekt (CardMock), IBAN kopieren, Karte einfrieren; Sperrkonto mit Auszahlungen
+ * und Fortschritt; Buchungen; Versicherung; Aufgaben; Kontakt. Daten und Texte: src/lib/portal-demo.ts; alle Termine
+ * haengen an DEMO_ANCHORS (M02), Texte mit {token} laufen durch fillDates().
+ */
+import App from '../layouts/App.astro';
+import PortalNav from '../components/PortalNav.astro';
+import Icon from '../components/Icon.astro';
+import CardMock from '../components/CardMock.astro';
+import { type Locale, localePath, t as tr } from '../lib/i18n';
+import { DEMO, DEMO_ANCHORS, DEMO_DATA as D, demoDate, fillDates } from '../lib/portal-demo';
+import { PORTAL } from '../lib/portal-copy';
+import { PKR_PER_EUR_EXAMPLE } from '../lib/funnel-copy';
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const t = (k: Parameters<typeof tr>[1]) => tr(locale, k);
+const lp = (p: string) => localePath(locale, p);
+const c = DEMO[locale] ?? DEMO.en;
+const P = PORTAL[locale] ?? PORTAL.en;
+// M02: Datum und Datums-Tokens ({arrival} ...) aus portal-demo.ts, eine Demo-Welt fuer alle Objekte; Monatsnamen liegen dort
+const fmtDate = (iso: string) => demoDate(iso, locale);
+const fd = (s: string) => fillDates(s, locale);
+const eur = (n: number, decimals = 0) => { const s = Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }); return locale === 'en' ? `€${s}` : `${s} یورو`; };
+const pkr = (n: number) => `PKR ${Math.round(n).toLocaleString('en-US')}`;
+// Vorname aus der Sprachfassung (ui-strings dash.user), damit die Begruessung in Urdu und Punjabi nicht lateinisch bleibt
+const firstName = t('dash.user').split(' ')[0];
+const greet = { m: c.greet.morning.replace('{name}', firstName), a: c.greet.afternoon.replace('{name}', firstName), e: c.greet.evening.replace('{name}', firstName) };
+// Countdown zum Termin: beim Bauen berechnet, im Browser aktualisiert (data-appt)
+const daysTo = Math.ceil((new Date(D.appointment + 'T00:00:00').getTime() - Date.now()) / 864e5);
+const apptIn = daysTo === 0 ? c.appt.today : daysTo > 0 ? c.appt.inDays.replace('{n}', String(daysTo)) : c.appt.passed.replace('{n}', String(-daysTo));
+const blockedLeft = D.deposit - D.payoutsMade * D.payout;
+const pct = Math.round((D.payoutsMade / D.payoutsTotal) * 100);
+const journeyState = ['done', 'cur', '', ''];
+const tiles = [
+  { icon: 'bank', name: c.tiles.ba, status: t('dash.s1'), text: t('dash.d1').replace('EC-000000', D.transferRef), href: lp('/app/transfer'), cta: t('dash.c1'), live: true },
+  { icon: 'shield', name: c.tiles.hi, status: t('dash.s2'), text: t('dash.d2'), href: lp('/app/documents'), cta: t('dash.c2'), live: false },
+  { icon: 'card', name: c.tiles.bank, status: t('dash.s3'), text: t('dash.d3'), href: lp('/app/activate'), cta: t('learnMore'), live: false },
+];
+const docItems = c.docs.items.map((name, i) => ({ name, ready: i < D.docsReady }));
+---
+<App title={t('dash.title')} locale={locale} path="/app/dashboard">
+  <div class="dash">
+    <PortalNav locale={locale} current="dashboard" />
+    <section class="main" data-dash data-greet-m={greet.m} data-greet-a={greet.a} data-greet-e={greet.e}>
+      <header class="head">
+        <div>
+          <p class="kicker">{t('dash.title')}</p>
+          <h1 data-greet>{t('dash.welcome')}</h1>
+          <p class="muted state only-applying">{c.state.before}</p>
+          <p class="muted state only-active">{fd(c.state.after)}</p>
+        </div>
+      </header>
+
+      <!-- ============ Before departure ============ -->
+      <div class="only-applying grid-a">
+        <div class="card white next">
+          <p class="kicker">{c.next.kicker}</p>
+          <h2>{c.next.title}</h2>
+          <p class="muted">{c.next.text}</p>
+          <div class="btns"><a class="btn btn-primary" href={lp('/app/transfer')}>{c.next.cta}</a><a class="btn btn-outline" href={lp('/app/transfer')}>{c.next.alt}</a></div>
+        </div>
+        <div class="card white appt" data-appt={D.appointment}>
+          <span class="icircle"><Icon name="calendar" size={20} /></span>
+          <p class="caps lbl">{c.appt.label}</p>
+          <p class="big" data-appt-in>{apptIn}</p>
+          <p class="when">{fmtDate(D.appointment)}</p>
+          <p class="muted small">{c.appt.where}</p>
+          <a class="btn btn-link" href={lp('/embassy-checklist')}>{c.appt.add}</a>
+        </div>
+
+        <div class="card white journey">
+          <p class="caps lbl">{c.journey.title}</p>
+          <ol class="steps">{c.journey.steps.map((s, i) => <li class={journeyState[i]}><span class="dot"><b>{i + 1}</b></span><span class="st-title">{s.title}</span><span class="st-sub">{fd(s.sub)}</span></li>)}</ol>
+        </div>
+
+        <div class="card white money">
+          <div class="row"><p class="caps lbl">{c.money.title}</p><span class="pill wait"><i class="pulse" aria-hidden="true"></i>{c.money.state}</span></div>
+          <p class="amount">{eur(D.deposit)}</p>
+          <p class="muted small">{c.money.inPkr.replace('{pkr}', pkr(D.deposit * PKR_PER_EUR_EXAMPLE))}</p>
+          <ol class="track">{c.money.track.map((s, i) => <li class:list={{ done: i === 0 }}><b>{i + 1}</b><span>{s}</span></li>)}</ol>
+          <a class="btn btn-outline" href={lp('/app/transfer')}>{c.money.cta}</a>
+        </div>
+        <div class="card white file">
+          <div class="row"><p class="caps lbl">{c.docs.title}</p><span class="muted small">{c.docs.progress.replace('{a}', String(D.docsReady)).replace('{b}', String(D.docsTotal))}</span></div>
+          <div class="bar" aria-hidden="true"><i style={`width:${Math.round((D.docsReady / D.docsTotal) * 100)}%`}></i></div>
+          <ul class="doclist">{docItems.map((d) => <li class:list={{ ready: d.ready }}><span class="mark"><Icon name={d.ready ? 'check' : 'clock'} size={12} /></span>{d.name}</li>)}</ul>
+          <a class="btn btn-outline" href={lp('/app/documents')}>{c.docs.cta}</a>
+        </div>
+
+        <ul class="tiles">{tiles.map((p) => <li class="card white tile"><span class="icircle sm"><Icon name={p.icon} size={18} /></span><span class="status caps">{p.live && <i class="pulse" aria-hidden="true"></i>}{p.status}</span><h3>{p.name}</h3><p class="muted small">{p.text}</p><a class="btn btn-link" href={p.href}>{p.cta}</a></li>)}</ul>
+
+        <div class="card white plan">
+          <p class="caps lbl">{c.plan.title}</p>
+          <dl>
+            <div><dt>{c.plan.arrival}</dt><dd>{fmtDate(DEMO_ANCHORS.arrival)}</dd></div>
+            <div><dt>{c.plan.financing}</dt><dd>{c.plan.financingValue}</dd></div>
+            <div><dt>{c.plan.total}</dt><dd>{eur(12011)}</dd></div>
+          </dl>
+          <a class="btn btn-link" href={lp('/app/start')}>{c.plan.edit}</a>
+        </div>
+        <div class="card white support">
+          <div class="who"><span class="avatar" aria-hidden="true">{c.support.name.slice(0, 1)}</span><div><p class="caps lbl">{c.support.title}</p><strong>{c.support.name}</strong><br /><small class="muted">{c.support.role}</small></div></div>
+          <p class="muted small">{c.support.sub}</p>
+          <div class="btns"><a class="btn btn-outline" href="https://wa.me/" target="_blank" rel="noopener"><Icon name="chat" size={16} />{c.support.cta}</a><a class="btn btn-link" href={lp('/help/contact')}>{c.support.call}</a></div>
+        </div>
+      </div>
+
+      <!-- ============ In Germany ============ -->
+      <div class="only-active grid-b">
+        <div class="card white balance">
+          <div class="bal-text">
+            <p class="caps lbl">{c.balance.label}</p>
+            <p class="amount xl"><span data-count>{eur(D.balance, 2)}</span></p>
+            <p class="iban"><span class="muted">{c.balance.iban}</span><code>{D.iban}</code><button type="button" class="copy" data-copy={D.iban} data-copied={c.balance.copied}>{P.transfer.copy}</button></p>
+            <p class="cardline"><Icon name="wallet" size={16} /><span><b>{c.balance.card} <span class="mask">•••• {D.cardLast4}</span></b><small class="muted">{c.balance.cardSub}</small></span></p>
+            <div class="btns"><a class="btn btn-primary" href="#"><Icon name="arrowne" size={16} />{c.balance.send}</a><a class="btn btn-outline" href="#"><Icon name="plus" size={16} />{c.balance.add}</a><button type="button" class="btn btn-outline" data-freeze data-frozen={c.balance.frozen} data-freeze-label={c.balance.freeze}><Icon name="lock" size={16} /><span>{c.balance.freeze}</span></button></div>
+          </div>
+          <div class="bal-card" aria-hidden="true"><CardMock stage={false} duo={false} vt="obj-card" /></div>
+        </div>
+
+        <div class="card white blocked">
+          <div class="row"><p class="caps lbl">{c.ba.title}</p><span class="pill ok">{c.ba.made.replace('{n}', String(D.payoutsMade)).replace('{m}', String(D.payoutsTotal))}</span></div>
+          <p class="amount">{eur(blockedLeft)} <small class="muted">{c.ba.left.replace('{amount}', '').trim()}</small></p>
+          <div class="bar" aria-hidden="true"><i style={`width:${pct}%`}></i></div>
+          <p class="muted small nextp"><Icon name="calendar" size={14} />{c.ba.next.replace('{amount}', eur(D.payout)).replace('{date}', fmtDate(D.nextPayout))}</p>
+          <p class="caps lbl sub">{c.ba.payouts}</p>
+          <ul class="payouts">{D.payouts.map((p) => <li><span class="mark" class:list={[{ up: p.state === 'upcoming' }]}><Icon name={p.state === 'paid' ? 'check' : 'clock'} size={12} /></span><span class="pdate">{fmtDate(p.date)}</span><span class="pstate muted small">{p.state === 'paid' ? c.ba.paid : c.ba.upcoming}</span><span class="pamt">{eur(p.amount)}</span></li>)}</ul>
+          <a class="btn btn-link" href={lp('/help')}>{c.ba.extend}</a>
+        </div>
+        <div class="card white txs">
+          <div class="row"><p class="caps lbl">{c.tx.title}</p><a class="btn btn-link" href="#">{c.tx.all}</a></div>
+          <ul class="txlist">{D.tx.map((x) => <li><span class="icircle sm"><Icon name={x.icon} size={16} /></span><span class="txt"><b>{c.txLabels[x.key]}</b><small class="muted">{fmtDate(x.date)}</small></span><span class:list={['amt', { in: x.amount > 0 }]}>{x.amount > 0 ? '+' : '−'}{eur(x.amount, 2)}</span></li>)}</ul>
+        </div>
+
+        <div class="card white ins">
+          <div class="row"><p class="caps lbl">{c.ins.title}</p><span class="pill ok">{fd(c.ins.state)}</span></div>
+          <p class="strong">{c.ins.plan}</p>
+          <p class="muted small nextp"><Icon name="calendar" size={14} />{fd(c.ins.next)}</p>
+          <div class="btns"><a class="btn btn-outline" href={lp('/app/documents')}><Icon name="id" size={16} />{c.ins.card}</a><a class="btn btn-link" href={lp('/guides/compare-health-insurances')}>{c.ins.doctor}</a></div>
+        </div>
+        <div class="card white todo">
+          <p class="caps lbl">{c.todo.title}</p>
+          <ul class="todos">{c.todo.items.map((it, i) => <li><label><input type="checkbox" data-todo={`b-${i}`} /><span>{fd(it)}</span></label></li>)}</ul>
+        </div>
+
+        <div class="card white support wide">
+          <div class="who"><span class="avatar" aria-hidden="true">{c.support.name.slice(0, 1)}</span><div><p class="caps lbl">{c.support.title}</p><strong>{c.support.name}</strong><br /><small class="muted">{c.support.role}</small></div></div>
+          <p class="muted small">{c.support.sub}</p>
+          <div class="btns"><a class="btn btn-outline" href="https://wa.me/" target="_blank" rel="noopener"><Icon name="chat" size={16} />{c.support.cta}</a><a class="btn btn-link" href={lp('/help/contact')}>{c.support.call}</a></div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    // Begruessung nach Tageszeit, Countdown zum Termin, IBAN kopieren, Karte einfrieren, Aufgaben merken. Nichts wird gesendet.
+    const bind = () => {
+      const root = document.querySelector<HTMLElement>('[data-dash]:not([data-bound])'); if (!root) return; root.dataset.bound = '1';
+      const h = new Date().getHours(); const g = root.querySelector<HTMLElement>('[data-greet]'); const key = h < 12 ? 'greetM' : h < 18 ? 'greetA' : 'greetE';
+      if (g && root.dataset[key]) g.textContent = root.dataset[key]!;
+      const appt = root.querySelector<HTMLElement>('[data-appt]');
+      if (appt) { const d = new Date(appt.dataset.appt + 'T00:00:00'); const n = Math.ceil((d.getTime() - Date.now()) / 864e5); const out = appt.querySelector<HTMLElement>('[data-appt-in]')!; const tpl = out.textContent ?? ''; if (n > 0 && /\d/.test(tpl)) out.textContent = tpl.replace(/\d+/, String(n)); }
+      root.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => b.addEventListener('click', async () => { try { await navigator.clipboard.writeText(b.dataset.copy!); } catch {} const o = b.textContent; b.textContent = b.dataset.copied!; b.classList.add('is-done'); setTimeout(() => { b.textContent = o; b.classList.remove('is-done'); }, 1500); }));
+      const fz = root.querySelector<HTMLButtonElement>('[data-freeze]');
+      if (fz) fz.addEventListener('click', () => { const on = fz.classList.toggle('is-frozen'); fz.querySelector('span')!.textContent = on ? fz.dataset.frozen! : fz.dataset.freezeLabel!; root.querySelector('.bal-card')?.classList.toggle('frozen', on); });
+      const saved: Record<string, boolean> = (() => { try { return JSON.parse(localStorage.getItem('ec-todo') || '{}'); } catch { return {}; } })();
+      root.querySelectorAll<HTMLInputElement>('[data-todo]').forEach((cb) => { cb.checked = !!saved[cb.dataset.todo!]; cb.addEventListener('change', () => { saved[cb.dataset.todo!] = cb.checked; try { localStorage.setItem('ec-todo', JSON.stringify(saved)); } catch {} }); });
+    };
+    bind(); document.addEventListener('astro:page-load', bind);
+  </script>
+</App>
+<style>
+  .dash { display: grid; grid-template-columns: 260px 1fr; gap: 32px; max-width: 1200px; margin: 0 auto; align-items: start; }
+  .dash > :global(*) { min-width: 0; }
+  .main { display: grid; gap: 20px; }
+  .head h1 { font-size: clamp(1.8rem, 3vw, 2.4rem); margin-bottom: .2em; }
+  .state { margin: 0; font-size: .95rem; }
+  .muted { color: var(--color-muted); } .small { font-size: .86rem; } .strong { font-weight: 600; margin: 0 0 6px; }
+  .lbl { color: var(--color-muted); font-size: .66rem; margin: 0 0 10px; }
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .row .lbl { margin: 0; }
+  .card { padding: 26px 28px; }
+  .btns { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 18px; }
+  .btns .btn { display: inline-flex; align-items: center; gap: 8px; }
+  .pill { display: inline-flex; align-items: center; gap: 7px; font-size: .68rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; border-radius: var(--radius-pill); padding: 5px 11px; white-space: nowrap; }
+  .pill.wait { background: var(--color-accent-soft); color: var(--color-accent); }
+  .pill.ok { background: #e6f4ec; color: #1f7a4d; }
+  .pulse { width: 8px; height: 8px; border-radius: 50%; background: currentColor; position: relative; flex: none; display: inline-block; }
+  .pulse::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid currentColor; opacity: 0; animation: pulse 1.8s ease-out infinite; }
+  @keyframes pulse { 0% { transform: scale(.6); opacity: .8; } 100% { transform: scale(1.6); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .pulse::after { animation: none; } }
+  .amount { font-family: var(--font-heading); font-size: 2.2rem; font-weight: var(--fw-number); letter-spacing: var(--tracking-number); line-height: 1; margin: 4px 0 6px; font-variant-numeric: tabular-nums; }
+  .amount small { font-family: var(--font-body); font-size: .85rem; font-weight: 500; letter-spacing: 0; }
+  .amount.xl { font-size: clamp(2.4rem, 4vw, 3.2rem); margin-bottom: 14px; }
+  .bar { height: 8px; border-radius: 4px; background: var(--color-surface-strong); overflow: hidden; margin: 12px 0; }
+  .bar i { display: block; height: 100%; background: var(--color-accent); border-radius: 4px; transition: width .6s var(--ease-out); }
+  .icircle { background: var(--color-accent-soft); color: var(--color-accent); }
+  /* ---- Before departure ---- */
+  .grid-a { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .next { grid-column: 1 / span 1; }
+  .next h2 { font-size: 1.6rem; margin: 0 0 .4em; }
+  .next .muted { max-width: 52ch; }
+  .appt { display: flex; flex-direction: column; align-items: flex-start; }
+  .appt .icircle { margin-bottom: 14px; }
+  .appt .big { font-family: var(--font-heading); font-size: 2rem; font-weight: var(--fw-number); letter-spacing: var(--tracking-number); margin: 0; line-height: 1.1; color: var(--color-accent); }
+  .appt .when { font-weight: 600; margin: 4px 0 2px; }
+  .appt .btn-link { margin-top: auto; padding-top: 12px; }
+  .journey { grid-column: 1 / -1; }
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; position: relative; }
+  .steps li { display: flex; flex-direction: column; gap: 6px; position: relative; padding-top: 6px; }
+  .steps li::before { content: ""; position: absolute; top: 20px; inset-inline-start: 36px; inset-inline-end: -12px; height: 2px; background: var(--color-border); }
+  .steps li:last-child::before { display: none; }
+  .steps li.done::before { background: var(--color-accent); }
+  .dot { width: 30px; height: 30px; border-radius: 50%; background: var(--color-surface-strong); color: var(--color-muted); display: grid; place-items: center; position: relative; z-index: 1; margin-bottom: 8px; }
+  .dot b { font-size: .78rem; }
+  li.done .dot { background: var(--color-accent); color: #fff; }
+  li.cur .dot { background: var(--color-accent); color: #fff; box-shadow: 0 0 0 5px var(--color-accent-soft); }
+  .st-title { font-weight: 600; font-size: .95rem; }
+  li:not(.done):not(.cur) .st-title { color: var(--color-muted); }
+  .st-sub { color: var(--color-muted); font-size: .82rem; }
+  .track { list-style: none; margin: 14px 0 18px; padding: 0; display: grid; gap: 8px; }
+  .track li { display: flex; gap: 12px; align-items: center; color: var(--color-muted); font-size: .9rem; }
+  .track b { width: 24px; height: 24px; border-radius: 50%; background: var(--color-surface-strong); display: grid; place-items: center; font-size: .72rem; flex: none; }
+  .track li.done { color: var(--color-text); } .track li.done b { background: var(--color-accent); color: #fff; }
+  .doclist { list-style: none; margin: 8px 0 18px; padding: 0; display: grid; gap: 8px; font-size: .92rem; color: var(--color-muted); }
+  .doclist li { display: flex; align-items: center; gap: 10px; }
+  .doclist li.ready { color: var(--color-text); }
+  .mark { width: 22px; height: 22px; border-radius: 50%; background: var(--color-surface-strong); color: var(--color-muted); display: grid; place-items: center; flex: none; }
+  li.ready .mark, .payouts .mark:not(.up) { background: #e6f4ec; color: #1f7a4d; }
+  .tiles { grid-column: 1 / -1; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .tile { display: flex; flex-direction: column; gap: 8px; }
+  .tile .status { font-size: .64rem; color: var(--color-muted); display: flex; align-items: center; gap: 7px; margin-top: 6px; }
+  .tile .status .pulse { color: var(--color-accent); }
+  .tile h3 { font-size: 1.1rem; margin: 0; }
+  .tile p { margin: 0; flex: 1; }
+  .plan dl { margin: 0 0 12px; display: grid; gap: 0; }
+  .plan dl div { display: flex; justify-content: space-between; gap: 16px; padding: 10px 0; border-top: 1px solid var(--color-border); font-size: .92rem; }
+  .plan dt { color: var(--color-muted); } .plan dd { margin: 0; font-weight: 600; text-align: end; }
+  .support .who { display: flex; gap: 14px; align-items: center; margin-bottom: 10px; }
+  .support .who .lbl { margin-bottom: 2px; }
+  .avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--color-ink); color: #fff; display: grid; place-items: center; font-weight: 600; flex: none; }
+  .support.wide { grid-column: 1 / -1; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; }
+  .support.wide .btns { margin-top: 0; }
+  .support.wide .small { margin: 0; }
+  /* ---- In Germany ---- */
+  .grid-b { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .balance { grid-column: 1 / -1; display: grid; grid-template-columns: 1.15fr .85fr; gap: 24px; align-items: center; overflow: hidden; }
+  .iban { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 10px; font-size: .92rem; }
+  .iban code { font-family: var(--font-body); font-variant-numeric: tabular-nums; letter-spacing: .04em; font-weight: 600; }
+  .copy { background: var(--color-surface); border: 0; border-radius: var(--radius-pill); font: inherit; font-size: .74rem; font-weight: 600; padding: 4px 10px; cursor: pointer; color: var(--color-text); transition: background-color .2s; }
+  .copy:hover { background: var(--color-surface-strong); }
+  .copy.is-done { background: #e6f4ec; color: #1f7a4d; }
+  .cardline { display: flex; align-items: center; gap: 10px; margin: 0; }
+  .cardline span { display: flex; flex-direction: column; line-height: 1.25; } .cardline b { font-size: .92rem; } .cardline small { font-size: .8rem; }
+  .cardline .mask { display: inline; font-variant-numeric: tabular-nums; letter-spacing: .06em; color: var(--color-muted); font-weight: 500; }
+  .bal-card { position: relative; min-height: 220px; display: grid; place-items: center; transition: filter .3s, opacity .3s; }
+  .bal-card :global(.scene) { width: 86%; }
+  .bal-card.frozen { filter: grayscale(1); opacity: .55; }
+  .btn.is-frozen { background: var(--color-ink); color: #fff; border-color: var(--color-ink); }
+  .nextp { display: flex; align-items: center; gap: 8px; margin: 0 0 14px; }
+  .lbl.sub { margin-top: 6px; }
+  .payouts { list-style: none; margin: 0 0 12px; padding: 0; }
+  .payouts li { display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 12px; padding: 9px 0; border-top: 1px solid var(--color-border); font-size: .92rem; }
+  .payouts .mark.up { background: var(--color-surface-strong); color: var(--color-muted); }
+  .pamt { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .txlist { list-style: none; margin: 0; padding: 0; }
+  .txlist li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--color-border); }
+  .txlist li:first-child { border-top: 0; padding-top: 4px; }
+  .txlist .icircle { background: var(--color-surface); color: var(--color-text); }
+  .txt { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; } .txt b { font-size: .92rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .txt small { font-size: .78rem; }
+  .amt { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .amt.in { color: #1f7a4d; }
+  .todos { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  .todos label { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; cursor: pointer; font-size: .92rem; border-top: 1px solid var(--color-border); }
+  .todos li:first-child label { border-top: 0; }
+  .todos input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--color-accent); flex: none; }
+  .todos input:checked + span { color: var(--color-muted); text-decoration: line-through; }
+  @media (max-width: 1000px) { .tiles { grid-template-columns: 1fr; } .balance { grid-template-columns: 1fr; } .bal-card { min-height: 200px; } .support.wide { grid-template-columns: 1fr; gap: 12px; } }
+  @media (max-width: 900px) { .dash, .grid-a, .grid-b { grid-template-columns: 1fr; } .journey, .tiles, .balance, .support.wide, .next { grid-column: auto; } .steps { grid-template-columns: 1fr 1fr; } .steps li::before { display: none; } }
+  @media (max-width: 600px) { .card { padding: 20px 18px; } .amount.xl { font-size: 2.2rem; } .steps { grid-template-columns: 1fr; } .btns .btn { flex: 1 1 auto; justify-content: center; } }
+</style>

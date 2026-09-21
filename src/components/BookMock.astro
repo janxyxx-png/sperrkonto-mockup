@@ -1,0 +1,29 @@
+---
+/** Ratgeber/eBook als CSS-Buchcover, Platzhalter fuer Download-Teaser. */
+import Wordmark from './Wordmark.astro';
+import { type Locale, t } from '../lib/i18n';
+interface Props { title?: string; class?: string; locale?: Locale }
+const { title = 'Guide', class: cls, locale = 'en' } = Astro.props;
+---
+<div class:list={['book', cls]} aria-hidden="true">
+  <div class="cover">
+    <Wordmark tone="light" size=".85rem" />
+    <div class="t">{title}</div>
+    <div class="meta">{t(locale, 'freeDownloadPdf')}</div>
+  </div>
+</div>
+<style>
+  .book { width: min(260px, 100%); aspect-ratio: 3 / 4; position: relative; filter: drop-shadow(0 30px 40px rgba(11,15,25,.22)); }
+  .book::before { content: ""; position: absolute; inset: 6px -6px -6px 6px; border-radius: 6px 14px 14px 6px; background: var(--color-surface-strong); }
+  .cover { position: absolute; inset: 0; border-radius: 6px 14px 14px 6px; padding: 24px; color: #fff; display: flex; flex-direction: column;
+    background: var(--color-dark); overflow: hidden; }
+  .cover::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 10px; background: rgba(0,0,0,.18); }
+  .cover::after { content: ""; position: absolute; right: -40px; bottom: -40px; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,.08); }
+  .t { margin-top: auto; font-family: var(--font-heading); font-weight: 600; font-size: 1.45rem; line-height: 1.1; letter-spacing: -.02em; max-width: 9ch; }
+  /* Arabischschriftige Buecher oeffnen andersherum: Ruecken rechts */
+  :global([dir="rtl"]) .book::before { inset: 6px 6px -6px -6px; border-radius: 14px 6px 6px 14px; }
+  :global([dir="rtl"]) .cover { border-radius: 14px 6px 6px 14px; }
+  :global([dir="rtl"]) .cover::before { left: auto; right: 0; }
+  :global([dir="rtl"]) .cover::after { right: auto; left: -40px; }
+  .meta { margin-top: 10px; font-size: .72rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; opacity: .7; }
+</style>

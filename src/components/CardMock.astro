@@ -1,0 +1,120 @@
+---
+/** Debitkarte als Produktobjekt (CSS, kein Fremdbild). Seit 18.09. abends nach Jans Revolut-Vergleich neu gebaut:
+ *  echte Perspektive (rotateX/rotateY statt flacher Drehung), Kartendicke als gestapelter Schatten, Lichtkante,
+ *  gepraegte Wortmarke, Chip mit Kontaktflaechen, zwei Karten gefaechert (gebuerstetes Silber vorn, Bordeaux der
+ *  Marke hinten) auf einer dunklen Buehne mit Lichtfleck, wie Fintechs ihre Karten fotografieren. Keine echten
+ *  Nummern, kein Netzwerk-Logo (deshalb "DEBIT" statt zweier Kreise). */
+import Wordmark from './Wordmark.astro';
+interface Props { class?: string; tilt?: boolean; stage?: boolean; duo?: boolean; vt?: string }
+// vt (M13): Name fuer den Seitenwechsel (View Transition); dasselbe Objekt auf zwei Seiten reist statt zu blenden
+
+const { class: cls, tilt = true, stage = true, duo = true, vt } = Astro.props;
+---
+<div class:list={['card-stage', cls, { tilt, stage, duo }]} aria-hidden="true" data-tilt style={vt ? `view-transition-name:${vt}` : undefined}>
+  <div class="scene">
+    {duo && <div class="bankcard back">
+      <span class="grain"></span><span class="sheen"></span>
+      <div class="row top"><Wordmark tone="light" size=".85rem" /><svg class="nfc" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6.5 8.5a6 6 0 0 1 0 7"/><path d="M10 6a9.5 9.5 0 0 1 0 12"/><path d="M13.5 3.5a13 13 0 0 1 0 17"/></svg></div>
+      <div class="mid"><span class="chip"><i class="h"></i><i class="h b"></i><i class="v"></i></span></div>
+      <div class="row bottom"><span class="name">EC Assets Bank Account</span><span class="kind">Debit</span></div>
+    </div>}
+    <div class="bankcard front">
+      <span class="grain"></span><span class="sheen"></span>
+      <div class="row top">
+        <Wordmark size=".85rem" />
+        <svg class="nfc" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M6.5 8.5a6 6 0 0 1 0 7"/><path d="M10 6a9.5 9.5 0 0 1 0 12"/><path d="M13.5 3.5a13 13 0 0 1 0 17"/></svg>
+      </div>
+      <div class="mid">
+        <span class="chip"><i class="h"></i><i class="h b"></i><i class="v"></i></span>
+        <div class="num">{[0, 1, 2].map(() => <span class="grp"><i /><i /><i /><i /></span>)}<span class="last">3000</span></div>
+      </div>
+      <div class="row bottom"><span class="name">EC Assets Bank Account</span><span class="kind">Debit</span></div>
+    </div>
+  </div>
+</div>
+<style>
+  .card-stage { position: relative; width: 100%; max-width: 560px; margin: 0 auto; display: grid; place-items: center; container-type: inline-size; }
+  /* Buehne: tiefes Graphit mit warmem Lichtfleck oben links und einem Hauch Bordeaux unten rechts, damit die Karte Licht hat */
+  .card-stage.stage { aspect-ratio: 5 / 4.3; border-radius: var(--radius-l); overflow: hidden;
+    background:
+      radial-gradient(70% 60% at 22% 12%, rgba(255,255,255,.16) 0%, transparent 60%),
+      radial-gradient(60% 50% at 88% 96%, rgba(142,45,47,.45) 0%, transparent 65%),
+      linear-gradient(160deg, #2a2d34 0%, #17191e 50%, #0e0f12 100%); }
+  .card-stage.stage::after { content: ""; position: absolute; inset: auto 8% 9% 8%; height: 18%; border-radius: 50%; background: radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,.55), transparent 70%); filter: blur(10px); }
+  .scene { position: relative; width: 66%; aspect-ratio: 1.586; perspective: 1400px; transform-style: preserve-3d; z-index: 1; }
+  /* Beim Scrollen dreht die Szene aus der Schraege in ihre Lage (Jan 18.09. spaet); ohne animation-timeline bleibt die Endlage.
+     Die Zeitleiste haengt an .card-stage (Scroller = Viewport), nicht an .scene: .card-stage hat overflow hidden und waere sonst
+     selbst der Scroller. Die Drehung laeuft ueber registrierte Eigenschaften in die Szene. */
+  @property --turn { syntax: '<angle>'; inherits: true; initial-value: 0deg; }
+  @property --lift { syntax: '<length>'; inherits: true; initial-value: 0px; }
+  .scene { transform: perspective(1400px) rotateY(var(--turn)) translateY(var(--lift)); }
+  @supports (animation-timeline: view()) {
+    .card-stage { animation: sceneTurn linear both; animation-timeline: view(); animation-range: entry 0% cover 55%; }
+    @keyframes sceneTurn { from { --turn: -18deg; --lift: 28px; } to { --turn: 0deg; --lift: 0px; } }
+  }
+  .card-stage:not(.stage) .scene { width: min(420px, 66%); } /* M03: groessere Buehne, groessere Karte */
+  .card-stage:not(.stage).duo .scene { margin-inline-start: -10%; margin-top: 6%; }
+
+  .bankcard { position: absolute; inset: 0; border-radius: 4.5% / 7.2%; padding: 6% 6.5%; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden;
+    transform-style: preserve-3d; backface-visibility: hidden; transition: transform .8s var(--ease-out); }
+  /* Vorderseite: gebuerstetes Silber, Schrift in Tinte, Marke in Bordeaux */
+  .front { color: var(--color-ink);
+    background:
+      linear-gradient(118deg, rgba(255,255,255,0) 30%, rgba(255,255,255,.35) 47%, rgba(255,255,255,0) 58%),
+      linear-gradient(140deg, #f2f3f5 0%, #d7d9de 32%, #b9bcc4 55%, #e2e3e7 76%, #c9ccd3 100%);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.55) inset, 0 -1px 0 rgba(11,15,25,.2) inset,
+      /* Kartendicke (Metallkante) */
+      1px 2px 0 #9ea2ab, 2px 4px 0 #8a8e97, 3px 6px 0 #767a83,
+      /* Schatten auf der Buehne */
+      0 40px 60px -20px rgba(0,0,0,.7), 0 18px 28px -14px rgba(0,0,0,.5); }
+  /* Rueckseite: Bordeaux, eine Stufe dahinter */
+  .back { color: #fff;
+    background:
+      linear-gradient(118deg, rgba(255,255,255,0) 30%, rgba(255,255,255,.14) 47%, rgba(255,255,255,0) 58%),
+      linear-gradient(140deg, #a8383b 0%, #8e2d2f 38%, #6a1e21 70%, #8e2d2f 100%);
+    box-shadow: 0 0 0 1px rgba(255,255,255,.18) inset, 1px 2px 0 #5c1a1d, 2px 4px 0 #4b1417, 3px 6px 0 #3b0f12, 0 40px 60px -20px rgba(0,0,0,.7); }
+  .grain { position: absolute; inset: 0; pointer-events: none; opacity: .5;
+    background: repeating-linear-gradient(140deg, rgba(255,255,255,.07) 0 1px, rgba(0,0,0,.03) 1px 2.5px); }
+  .back .grain { opacity: .25; }
+  .sheen { position: absolute; inset: -40% -30%; pointer-events: none; background: linear-gradient(112deg, transparent 40%, rgba(255,255,255,.5) 47%, rgba(255,255,255,.08) 52%, transparent 58%); mix-blend-mode: screen; }
+  .back .sheen { background: linear-gradient(112deg, transparent 40%, rgba(255,255,255,.22) 47%, transparent 56%); }
+
+  /* Perspektive: leicht von oben und schraeg, die Rueckkarte versetzt und weiter gedreht */
+  .tilt .front { transform: rotateX(14deg) rotateY(-22deg) rotateZ(-4deg) translateZ(40px); }
+  .tilt .back { transform: rotateX(14deg) rotateY(-22deg) rotateZ(-4deg) translate3d(17%, -20%, -60px); }
+  .card-stage:not(.tilt) .back { transform: translate3d(14%, -18%, -1px); }
+  /* Feinschliff 27: die Karte neigt sich zum Zeiger (motion.ts tilt setzt --px/--py von -1 bis 1), der Lichtstreifen wandert mit;
+     beim Verlassen kehrt sie in die Ruhelage zurueck. Nur mit Maus, nicht bei reduzierter Bewegung. */
+  .card-stage { --px: 0; --py: 0; }
+  .card-stage:hover .bankcard { transition-duration: .45s; }
+  .card-stage:hover .front { transform: rotateX(calc(10deg - var(--py) * 7deg)) rotateY(calc(-16deg + var(--px) * 9deg)) rotateZ(-3deg) translateZ(56px); }
+  .card-stage:hover .back { transform: rotateX(calc(10deg - var(--py) * 5deg)) rotateY(calc(-16deg + var(--px) * 6deg)) rotateZ(-3deg) translate3d(19%, -22%, -50px); }
+  .sheen { transition: transform .6s var(--ease-out); }
+  .card-stage:hover .sheen { transform: translateX(calc(var(--px) * 14%)); }
+  .card-stage.duo .scene { margin-inline-start: -12%; margin-top: 6%; }
+
+  .row { display: flex; justify-content: space-between; align-items: center; position: relative; }
+  /* gepraegte Marke: heller Saum oben, Schatten unten */
+  .front .row.top :global(.wordmark) { filter: drop-shadow(0 1px 0 rgba(255,255,255,.7)) drop-shadow(0 -1px 0 rgba(11,15,25,.18)); }
+  .back .row.top :global(.wordmark) { filter: drop-shadow(0 1px 0 rgba(255,255,255,.2)) drop-shadow(0 -1px 0 rgba(0,0,0,.3)); }
+  .nfc { opacity: .55; }
+  .mid { position: relative; display: flex; flex-direction: column; gap: 5%; }
+  .chip { display: block; position: relative; width: 12.5%; aspect-ratio: 1.32; border-radius: 18%; overflow: hidden;
+    background: linear-gradient(135deg, #fbf3d6 0%, #d9c98e 38%, #f0e5bf 62%, #c9b87a 100%);
+    box-shadow: 0 1px 0 rgba(255,255,255,.7) inset, 0 -1px 0 rgba(90,70,20,.35) inset, 0 2px 5px rgba(0,0,0,.28); }
+  .chip i { position: absolute; background: rgba(90,75,35,.5); }
+  .chip i.h { left: 0; right: 0; height: 1px; top: 34%; } .chip i.h.b { top: 66%; }
+  .chip i.v { top: 0; bottom: 0; width: 1px; left: 50%; }
+  .num { display: flex; align-items: center; gap: .85em; font-size: clamp(.95rem, 3.1cqw, 1.4rem); font-weight: 500; font-variant-numeric: tabular-nums; opacity: .78; line-height: 1;
+    text-shadow: 0 1px 0 rgba(255,255,255,.6); }
+  .grp { display: inline-flex; gap: .2em; } .grp i { display: block; width: .3em; height: .3em; border-radius: 50%; background: currentColor; }
+  .num .last { letter-spacing: .12em; }
+  .bottom { font-size: clamp(.6rem, 1.8cqw, .78rem); font-weight: 500; letter-spacing: .04em; opacity: .7; }
+  .back .bottom { opacity: .8; }
+  .kind { text-transform: uppercase; letter-spacing: .18em; font-size: .85em; opacity: .8; color: var(--color-accent); }
+  .back .kind { color: #fff; }
+  @media (max-width: 800px) { .scene { width: 70%; } }
+  @media (max-width: 600px) { .card-stage:not(.stage) .scene { width: 72%; } .card-stage:not(.stage).duo .scene { margin-inline-start: -8%; } }
+  @media (prefers-reduced-motion: reduce) { .bankcard { transition: none; } }
+</style>

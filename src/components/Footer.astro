@@ -1,0 +1,136 @@
+---
+/** Footer. Seit Feinschliff 27 (Jan 20.09. abends: "der Footer sieht bisschen unwertig aus") neu gesetzt: Tiefe im Rot
+ *  (Verlauf nach unten, Lichtschein oben links), ein Markenblock mit Wortmarke, den zwei Belegen und den Store-Badges statt
+ *  loser Icon-Zeilen, die vier Linkspalten daneben, darunter das WhatsApp-Versprechen der Topbar mit dem Kontakt-Knopf als
+ *  Glaskarte statt der einsamen "Contact us"-Zeile, zum Schluss Social-Icons, Rechtslinks und Copyright. Keine neuen Texte:
+ *  alles kommt aus nav.json und ui-strings. Gerade Kanten (Jan: keine grossen Rundungen). */
+import { navFor, route } from '../lib/content';
+import { localePath, t, type Locale } from '../lib/i18n';
+import Wordmark from './Wordmark.astro';
+import StoreBadges from './StoreBadges.astro';
+import Mark from './Mark.astro';
+import Icon from './Icon.astro';
+interface Props { locale?: Locale; withFootnotes?: boolean }
+const { locale = 'en', withFootnotes = false } = Astro.props;
+const nav = navFor(locale);
+const r = (h?: string) => route(h, locale);
+const promo = nav.topbar[0];
+---
+<footer class="footer">
+  <div class="container">
+    <div class="top">
+      <div class="brand">
+        <Wordmark size="1.4rem" />
+        <!-- Die zwei Belege standen hier zum dritten Mal (M08): die Trust-Bruecke unter dem Hero traegt sie -->
+        <StoreBadges locale={locale} height={36} class="ft-stores" />
+      </div>
+      <div class="cols">
+        <!-- Am Telefon Akkordeon je Spalte (M10): alle offen im HTML, motion.ts foldCards schliesst unter 560 px alle ausser der ersten; darueber ohne Schalter -->
+        {nav.footerCols.map((c, ci) => (
+          <details class="fcol" open data-first={ci === 0 ? '' : undefined}>
+            <summary><h4 class="caps">{c.heading}</h4><i class="plus" aria-hidden="true" /></summary>
+            <ul>{c.links.map((l) => <li><a href={r(l.href)}>{l.label}</a></li>)}</ul>
+          </details>
+        ))}
+      </div>
+    </div>
+    <div class="contact">
+      <div class="ct-lead"><span class="ct-ic"><Mark name="whatsapp" label={false} size={20} /></span><p class="ct-text">{promo?.label}</p></div>
+      <a class="btn btn-on-dark btn-sm" href={localePath(locale, '/help/contact')} data-astro-prefetch="viewport">{t(locale, 'contactUs')}</a>
+    </div>
+    <div class="bottom">
+      <ul class="social" aria-label="Social">
+        {([['instagram', 'https://instagram.com/'], ['youtube', 'https://youtube.com/'], ['whatsapp', localePath(locale, '/help/contact')], ['x', 'https://x.com/'], ['tiktok', 'https://tiktok.com/']] as const).map(([n, h]) => (
+          <li><a href={h} aria-label={n} target={h.startsWith('http') ? '_blank' : undefined} rel={h.startsWith('http') ? 'noopener' : undefined}><Mark name={n} label={false} size={18} /></a></li>
+        ))}
+      </ul>
+      <ul class="legal-links">{nav.legal.map((l) => <li><a href={r(l.href)}>{l.label}</a></li>)}</ul>
+    </div>
+    <div class="legal">{nav.copyright}</div>
+    {withFootnotes && <div class="footnotes"><slot /></div>}
+  </div>
+</footer>
+<style>
+  /* Tiefe statt einer flachen roten Wand: Verlauf in ein tieferes Bordeaux nach unten, Lichtschein oben links */
+  .footer { color: var(--color-on-dark-muted); padding: 72px 0 0; margin-top: 0; font-size: .93rem; border-top: 1px solid var(--color-on-dark-border); overflow: clip;
+    background: radial-gradient(90% 60% at 0% 0%, rgba(255,255,255,.07) 0%, transparent 60%), linear-gradient(180deg, var(--color-dark) 0%, #772023 100%); }
+  .footer > .container { padding-bottom: 28px; }
+  .footer :global(.wordmark) { color: #fff; }
+  .footer a { transition: color .2s var(--ease-out); }
+
+  /* Markenblock links, vier Spalten rechts */
+  .top { display: grid; grid-template-columns: minmax(260px, 1.1fr) 3fr; gap: 64px; align-items: start; }
+  .brand { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+  .proofs { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; font-size: .88rem; line-height: 1.4; max-width: 34ch; }
+  .proofs li, .proofs a { display: flex; gap: 10px; align-items: flex-start; color: var(--color-on-dark-muted); text-decoration: none; }
+  .proofs a:hover { color: #fff; }
+  .pf-ic { flex: none; width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.12); color: #fff; display: inline-grid; place-items: center; margin-top: -1px; }
+  .footer :global(.ft-stores) { margin: 4px 0 0; }
+  .cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+  .cols h4 { color: #fff; font-size: .72rem; letter-spacing: .1em; margin-bottom: 16px; opacity: .92; }
+  /* Spalten als details: ueber 600 px immer offen und ohne Schalter, darunter Akkordeon (M10) */
+  .fcol summary { list-style: none; pointer-events: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .fcol summary::-webkit-details-marker { display: none; }
+  .fcol .plus { display: none; }
+  .cols ul { list-style: none; padding: 0; margin: 0; }
+  .cols li { margin: 8px 0; }
+  .cols a { color: var(--color-on-dark-muted); text-decoration: none; }
+  .cols a:hover { color: #fff; }
+
+  /* Kontaktkarte: das Versprechen der Topbar, ein Knopf */
+  .contact { margin-top: 52px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 20px 28px; padding: 18px 20px 18px 22px; border-radius: var(--radius-m); background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); }
+  .ct-lead { display: flex; align-items: center; gap: 14px; min-width: 0; }
+  .ct-ic { flex: none; width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.14); color: #fff; display: inline-grid; place-items: center; }
+  .ct-text { margin: 0; color: #fff; font-weight: 500; font-size: 1rem; line-height: 1.35; }
+  .contact :global(.btn) { white-space: nowrap; }
+
+  /* Unten: Social-Icons links, Rechtslinks rechts, darunter das Copyright */
+  .bottom { display: flex; justify-content: space-between; align-items: center; gap: 16px 32px; flex-wrap: wrap; margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--color-on-dark-border); }
+  .social { display: flex; gap: 10px; list-style: none; padding: 0; margin: 0; }
+  .social a { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.1); color: #fff; display: grid; place-items: center; transition: background-color .2s var(--ease-out), transform .3s var(--ease-spring); }
+  .social a:hover { background: rgba(255,255,255,.22); transform: translateY(-2px); }
+  .social a:active { transform: scale(.94); transition-duration: var(--dur-press); }
+  .legal-links { display: flex; gap: 6px 22px; list-style: none; padding: 0; margin: 0; flex-wrap: wrap; font-size: .84rem; }
+  .legal-links a { color: var(--color-on-dark-muted); text-decoration: none; }
+  .legal-links a:hover { color: #fff; }
+  .legal { margin-top: 18px; font-size: .8rem; color: rgba(255,255,255,.66); }
+  .footnotes { margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--color-on-dark-border); font-size: .78rem; line-height: 1.5; color: var(--color-on-dark-muted); }
+  .footnotes:empty { display: none; }
+  .footnotes :global(h3), .footnotes :global(h4) { font-size: .8rem; color: #fff; margin: 0 0 .6em; font-weight: 600; }
+  .footnotes :global(p) { max-width: 110ch; margin: 0 0 .55em; }
+  .footnotes :global(a) { color: #fff; }
+
+  @media (max-width: 1000px) { .top { grid-template-columns: 1fr; gap: 44px; } }
+  @media (max-width: 800px) {
+    .footer { padding-top: 56px; }
+    .cols { grid-template-columns: 1fr 1fr; column-gap: 24px; }
+    /* Tippflaechen: jeder Link mindestens 40 px hoch */
+    .cols li { margin: 0; }
+    .cols a, .legal-links a { display: inline-block; padding: 10px 0; } /* M10: 40 px Tippflaeche */
+    .legal-links { gap: 0 20px; }
+    .contact { grid-template-columns: 1fr; padding: 18px; }
+    .contact :global(.btn) { width: 100%; }
+  }
+  @media (max-width: 600px) {
+    .cols { grid-template-columns: 1fr; gap: 0; }
+    .fcol { border-top: 1px solid var(--color-on-dark-border); }
+    .fcol summary { pointer-events: auto; cursor: pointer; min-height: 48px; padding: 4px 0; }
+    .fcol summary h4 { margin: 0; }
+    .fcol .plus { display: block; position: relative; width: 22px; height: 22px; flex: none; color: #fff; opacity: .8; }
+    .fcol .plus::before, .fcol .plus::after { content: ""; position: absolute; left: 50%; top: 50%; background: currentColor; transform: translate(-50%, -50%); width: 12px; height: 2px; }
+    .fcol .plus::after { width: 2px; height: 12px; transition: transform .2s var(--ease-out); }
+    .fcol[open] .plus::after { transform: translate(-50%, -50%) rotate(90deg); }
+    .fcol > ul { padding-bottom: 10px; }
+    .footer { padding-top: 40px; font-size: .86rem; }
+    .brand { gap: 16px; }
+    .proofs { font-size: .82rem; }
+    .cols { gap: 8px 16px; }
+    .cols h4 { margin-bottom: 8px; }
+    .cols a, .legal-links a { padding: 10px 0; }
+    .contact { margin-top: 36px; }
+    .ct-text { font-size: .92rem; }
+    .bottom { margin-top: 32px; padding-top: 18px; flex-direction: column; align-items: flex-start; gap: 14px; }
+    .legal { font-size: .74rem; }
+    .footnotes { font-size: .72rem; margin-top: 20px; padding-top: 16px; }
+  }
+</style>

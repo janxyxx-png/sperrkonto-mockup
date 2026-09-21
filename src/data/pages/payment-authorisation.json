@@ -1,0 +1,55 @@
+{
+  "slug": "payment-authorisation",
+  "path": "/payment-authorisation",
+  "title": "Power of attorney for payments | EC Assets",
+  "description": "Power of attorney granted to EC Assets for payment processing with its e-money partner.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Power of attorney for payment processing"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>This is a structural placeholder for the mockup. The final wording must come from EC Assets' legal counsel before publication.</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "By ordering a product with a payment component, you grant EC Assets a limited power of attorney towards its e-money partner."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Scope"
+        },
+        {
+          "type": "paragraph",
+          "html": "The power of attorney allows EC Assets to open and manage an e-money account in your name with its licensed e-money partner, to initiate payouts from your Blocked Account and to close the account when the contract ends."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Limits"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets may not use the power of attorney for any purpose other than delivering the products you ordered. It ends automatically when your contract with EC Assets ends."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Revocation"
+        },
+        {
+          "type": "paragraph",
+          "html": "You can revoke the power of attorney at any time in text form. Revocation may make it impossible to deliver the product."
+        }
+      ]
+    }
+  ]
+}

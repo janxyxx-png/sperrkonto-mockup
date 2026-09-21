@@ -1,0 +1,91 @@
+{
+  "slug": "legal-notice",
+  "path": "/legal-notice",
+  "title": "Legal notice | EC Assets",
+  "description": "Legal notice and imprint of EC Assets.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "Legal notice"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>This is a structural placeholder for the mockup. The final wording must come from EC Assets' legal counsel before publication.</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "Information required under German law."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Company"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets GmbH <br> Musterstraße 1 <br> 10178 Berlin, Germany"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Managing directors"
+        },
+        {
+          "type": "paragraph",
+          "html": "Sara Ahmed, Jonas Weber"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Commercial register"
+        },
+        {
+          "type": "paragraph",
+          "html": "Registered at the local court of Berlin (Charlottenburg), registration number HRB 123456 B"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "VAT identification number"
+        },
+        {
+          "type": "paragraph",
+          "html": "DE 123456789"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Insurance brokerage"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets acts as an insurance broker under § 34d of the German Trade Regulation Act. Registration number D-1234-ABCDE-56, register maintained by the German Chamber of Industry and Commerce."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Contact"
+        },
+        {
+          "type": "paragraph",
+          "html": "Email: legal@ecassets.com <br> Support: via the Help Center"
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Dispute resolution"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets is neither obliged nor willing to take part in dispute resolution proceedings before a consumer arbitration board."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+# M14: Cache-Regeln fuer das Hosting (Netlify- und Cloudflare-Pages-Format, wie public/_redirects).
+# Schriften, Fotos und die gehashten Build-Assets aendern sich nie unter ihrem Namen (ein Foto, das sich aendert, bekommt einen
+# neuen Namen): ein Jahr, immutable. HTML wird bei jedem Aufruf gegen den Server geprueft.
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+/img/*
+  Cache-Control: public, max-age=31536000, immutable
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate

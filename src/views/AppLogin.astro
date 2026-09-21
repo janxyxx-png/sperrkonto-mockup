@@ -1,0 +1,101 @@
+---
+/** Portal-Login. Seit 18.09. 22:50 (Jan: "kalt und uninspiriert, Logos fehlen"): Foto der Serie als Seitenflaeche mit
+ *  einem Satz, Google- und Apple-Marke in den Buttons, weisses Formular davor. */
+import App from '../layouts/App.astro';
+import Wordmark from '../components/Wordmark.astro';
+import Mark from '../components/Mark.astro';
+import Pic from '../components/Pic.astro';
+import { type Locale, localePath, t as tr } from '../lib/i18n';
+import { FUNNEL } from '../lib/funnel-copy';
+import { DEMO, PERSONA_KEY } from '../lib/portal-demo';
+import Icon from '../components/Icon.astro';
+interface Props { locale?: Locale }
+const { locale = 'en' } = Astro.props;
+const t = (k: Parameters<typeof tr>[1]) => tr(locale, k);
+const lp = (p: string) => localePath(locale, p);
+// Pruefung und Passwort-Anzeige wie im Registrierungsschritt des Funnels (Rundgang 20.09.); Texte aus funnel-copy acct
+const f = (FUNNEL[locale] ?? FUNNEL.en).acct;
+const demo = (DEMO[locale] ?? DEMO.en).login;
+---
+<App title={t('login')} locale={locale} path="/app/login">
+  <div class="login">
+    <div class="card white form">
+      <div class="logo"><Wordmark size="1.5rem" /></div>
+      <p class="muted">{t('login.welcome')}<br />{t('login.please')}</p>
+      <form data-login data-next={lp('/app/dashboard')} novalidate>
+        <label class="field" data-field="email"><span>{t('email')}</span><input type="email" placeholder="you@example.com" autocomplete="email" required /><small class="err" data-err="email" hidden>{f.emailErr}</small></label>
+        <label class="field" data-field="pw"><span>{t('password')}</span><span class="pw-wrap"><input type="password" placeholder="••••••••" autocomplete="current-password" required data-pw /><button type="button" class="pw-toggle" data-pw-toggle aria-pressed="false" data-show={f.show} data-hide={f.hide}>{f.show}</button></span><small class="err" data-err="pw" hidden>{f.pwErr}</small></label>
+        <a class="forgot" href={lp('/help/contact')}>{t('login.forgot')}</a>
+        <button class="btn btn-primary wide" type="submit">{t('login')}</button>
+      </form>
+      <a class="btn btn-outline wide" href={lp('/app/dashboard')}><Mark name="google" label={false} size={18} />{t('withGoogle')}</a>
+      <a class="btn btn-outline wide" href={lp('/app/dashboard')}><Mark name="apple" label={false} size={18} />{t('withApple')}</a>
+      <div class="or">{t('or')}</div>
+      <a class="btn btn-outline wide" href={lp('/app/start')}>{t('createAccount')}</a>
+      <!-- Demo-Konten (Jan 20.09.): dieselbe Kundin vor der Abreise und drei Monate spaeter in Deutschland -->
+      <div class="demo" data-demo data-key={PERSONA_KEY} data-next={lp('/app/dashboard')}>
+        <p class="caps dl">{demo.demoTitle}</p>
+        <p class="muted small">{demo.demoText}</p>
+        <div class="demo-btns">
+          <button type="button" class="demo-btn" data-persona-go="applying"><span class="icircle sm"><Icon name="plane" size={16} /></span><span>{demo.before}</span></button>
+          <button type="button" class="demo-btn" data-persona-go="active"><span class="icircle sm"><Icon name="card" size={16} /></span><span>{demo.after}</span></button>
+        </div>
+      </div>
+    </div>
+    <div class="side" aria-hidden="true">
+      <Pic src="/img/photos/cine-rooftop-couple-night.jpg" alt="" sizes="(max-width: 800px) 100vw, 50vw" />
+      <div class="scrim"></div>
+      <div class="copy"><p class="big">{t('login.side')}</p><p class="sub">{t('login.sideSub')}</p></div>
+    </div>
+  </div>
+  <script>
+    // Login: Pruefung im Browser, Passwort anzeigen; bei gueltigen Eingaben weiter ins Portal. Nichts wird gesendet.
+    const bind = () => {
+      const form = document.querySelector<HTMLFormElement>('[data-login]:not([data-bound])'); if (!form) return; form.dataset.bound = '1';
+      const email = form.querySelector<HTMLInputElement>('input[type="email"]')!, pw = form.querySelector<HTMLInputElement>('[data-pw]')!;
+      const err = (k: string, on: boolean) => { const e = form.querySelector<HTMLElement>(`[data-err="${k}"]`); if (e) e.hidden = !on; form.querySelector(`[data-field="${k}"]`)?.classList.toggle('is-invalid', on); };
+      const okMail = () => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+      email.addEventListener('input', () => { if (okMail()) err('email', false); });
+      pw.addEventListener('input', () => { if (pw.value.length >= 8) err('pw', false); });
+      const toggle = form.querySelector<HTMLButtonElement>('[data-pw-toggle]')!;
+      toggle.addEventListener('click', () => { const show = pw.type === 'password'; pw.type = show ? 'text' : 'password'; toggle.textContent = show ? toggle.dataset.hide! : toggle.dataset.show!; toggle.setAttribute('aria-pressed', String(show)); pw.focus(); });
+      form.addEventListener('submit', (e) => { e.preventDefault(); const a = okMail(), b = pw.value.length >= 8; err('email', !a); err('pw', !b); if (!a) { email.focus(); return; } if (!b) { pw.focus(); return; } location.href = form.dataset.next!; });
+    };
+    // Demo-Konten: Zustand merken, dann ins Portal
+    const bindDemo = () => { const box = document.querySelector<HTMLElement>('[data-demo]:not([data-bound])'); if (!box) return; box.dataset.bound = '1'; box.querySelectorAll<HTMLButtonElement>('[data-persona-go]').forEach((b) => b.addEventListener('click', () => { try { localStorage.setItem(box.dataset.key!, b.dataset.personaGo!); } catch {} location.href = box.dataset.next!; })); };
+    bind(); bindDemo(); document.addEventListener('astro:page-load', () => { bind(); bindDemo(); });
+  </script>
+</App>
+<style>
+  .login { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; max-width: 1040px; margin: 0 auto; align-items: stretch; }
+  .form { padding: 44px; text-align: center; animation: rise .5s var(--ease-out) both; align-self: center; }
+  .logo { margin-bottom: 10px; }
+  .muted { color: var(--color-muted); margin-bottom: 28px; }
+  .field { text-align: start; }
+  .forgot { display: block; text-align: start; font-size: .85rem; margin: -6px 0 20px; }
+  .wide { width: 100%; margin-bottom: 10px; }
+  .wide :global(.mk) { margin-inline-end: 2px; }
+  .or { color: var(--color-muted); margin: 14px 0; font-size: .72rem; letter-spacing: var(--tracking-caps); display: flex; align-items: center; gap: 12px; }
+  .or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--color-border); }
+  /* Foto-Seitenflaeche: Motiv der Serie, unten ein Satz */
+  .side { position: relative; border-radius: var(--radius-l); overflow: clip; isolation: isolate; min-height: 520px; display: flex; align-items: flex-end; color: #fff; padding: 36px; }
+  .side :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; filter: var(--photo-grade); z-index: -2; }
+  .scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(11,15,25,.05) 0%, rgba(11,15,25,.2) 50%, rgba(11,15,25,.72) 100%), var(--vignette); }
+  .big { font-size: 1.6rem; font-weight: 600; letter-spacing: -.02em; line-height: 1.15; margin: 0 0 8px; max-width: 18ch; text-wrap: balance; }
+  .sub { margin: 0; color: rgba(255,255,255,.8); font-size: var(--fs-small); max-width: 34ch; }
+  @media (max-width: 800px) { .login { grid-template-columns: 1fr; gap: 16px; } .side { min-height: 220px; padding: 22px; order: -1; } .big { font-size: 1.25rem; } .form { padding: 28px 22px; } }
+  .pw-wrap { position: relative; display: flex; }
+  .pw-wrap input { flex: 1; padding-inline-end: 64px; }
+  .pw-toggle { position: absolute; inset-inline-end: 12px; top: 50%; transform: translateY(-50%); background: none; border: 0; font: inherit; font-size: .78rem; font-weight: 600; color: var(--color-muted); cursor: pointer; padding: 6px 4px; }
+  .pw-toggle:hover { color: var(--color-text); }
+  .err { display: block; margin-top: 6px; font-size: .8rem; color: var(--color-accent); font-weight: 500; }
+  .err[hidden] { display: none; }
+  .field.is-invalid input { border-color: var(--color-accent); box-shadow: 0 0 0 3px var(--color-accent-soft); }
+  .demo { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--color-border); }
+  .dl { display: block; color: var(--color-muted); font-size: .66rem; margin-bottom: 6px; }
+  .demo .small { margin: 0 0 12px; font-size: .84rem; }
+  .demo-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .demo-btn { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-m); background: var(--color-bg); font: inherit; font-size: .88rem; font-weight: 600; color: var(--color-text); cursor: pointer; text-align: start; transition: border-color .2s, transform .2s; }
+  .demo-btn:hover { border-color: var(--color-ink); transform: translateY(-1px); }
+  .demo-btn .icircle { background: var(--color-accent-soft); color: var(--color-accent); width: 34px; height: 34px; flex: none; }
+</style>

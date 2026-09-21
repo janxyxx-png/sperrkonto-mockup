@@ -1,0 +1,356 @@
+{
+  "slug": "about-us",
+  "path": "/about-us",
+  "title": "About EC Assets | Who we are",
+  "description": "EC Assets sets up the financial and insurance requirements of a German visa for people who apply from abroad. Meet the team, our story and what we stand for.",
+  "sections": [
+    {
+      "id": 0,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 1,
+          "text": "About EC Assets"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>We take the bureaucracy out of moving to Germany.</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "Most of us moved to Germany from somewhere else. We remember the embassy queues, the forms in a language we did not yet speak and the uncertainty about whether a document would be accepted. EC Assets exists so that the next generation of newcomers does not have to go through that."
+        },
+        {
+          "type": "paragraph",
+          "html": "We build one place where a Blocked Account, health insurance and a German bank account are set up together, online, before you travel. <br> <br> The hard part is our job. Yours is to get ready for a new chapter."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Built by people who have made the move themselves"
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Why we do it"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>A move abroad is one of the biggest changes a person can make. It deserves a clear path, not a maze.</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "Our purpose is to make the administrative side of that move predictable: fixed prices, clear steps and documents that are accepted the first time."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Where we are going"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>We want EC Assets to be the first place anyone moving to Germany turns to, from the day they decide to go until they feel at home</strong>."
+        },
+        {
+          "type": "paragraph",
+          "html": "Students, job seekers, au-pairs and professionals with a contract in hand: whoever you are, we want the practical side of your move handled before you land."
+        },
+        {
+          "type": "image",
+          "src": "image",
+          "alt": ""
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "What we stand for"
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            {
+              "html": "<strong>CLARITY:</strong> We say what things cost and how long they take.",
+              "mark": "ok"
+            },
+            {
+              "html": "<strong>RELIABILITY:</strong> A document from us is accepted the first time.",
+              "mark": "ok"
+            },
+            {
+              "html": "<strong>RESPECT:</strong> Every customer is a person starting over, not a case number.",
+              "mark": "ok"
+            },
+            {
+              "html": "<strong>TEAMWORK:</strong> We solve problems together, across languages and time zones.",
+              "mark": "ok"
+            },
+            {
+              "html": "<strong>INTEGRITY:</strong> We only recommend what we would choose ourselves.",
+              "mark": "ok"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Our story so far"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "The idea"
+        },
+        {
+          "type": "paragraph",
+          "html": "A small group of former international students in Berlin compare notes on their visa applications and realise that everyone had struggled with the same three documents."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "The first Blocked Account"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets opens its first Blocked Accounts for students applying from abroad, with a confirmation letter issued the day the deposit arrives."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Health insurance joins the platform"
+        },
+        {
+          "type": "paragraph",
+          "html": "Partnerships with a statutory and a private insurer mean the second visa requirement can be arranged in the same application."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "The {{product}}"
+        },
+        {
+          "type": "paragraph",
+          "html": "Blocked Account, health insurance and travel cover are bundled into one application at one monthly price."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "A bank account for arrival day"
+        },
+        {
+          "type": "paragraph",
+          "html": "A German Bank Account with IBAN is added to every Blocked Account, so monthly payouts land in an account that is already open."
+        },
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Today"
+        },
+        {
+          "type": "paragraph",
+          "html": "A team of several nationalities in Berlin, customers in more than 100 countries and a single goal: that arriving in Germany feels like the start of something, not the end of a fight with paperwork."
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Leadership"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>The people responsible for EC Assets. Profiles and photos will be added here.</strong>"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Sara Ahmed"
+        },
+        {
+          "type": "paragraph",
+          "html": "Managing Director"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Jonas Weber"
+        },
+        {
+          "type": "paragraph",
+          "html": "Chief Operating Officer"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Bilal Khan"
+        },
+        {
+          "type": "paragraph",
+          "html": "Chief Technology Officer"
+        },
+        {
+          "type": "heading",
+          "level": 4,
+          "text": "Lena Fischer"
+        },
+        {
+          "type": "paragraph",
+          "html": "Head of Customer Support"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "The team"
+        },
+        {
+          "type": "paragraph",
+          "html": "<strong>An international team for an international job</strong>"
+        },
+        {
+          "type": "paragraph",
+          "html": "The people who answer your questions have, in most cases, been through the same process themselves. Between us we speak more than <strong>a dozen languages</strong>, and we know which embassy asks for which document."
+        },
+        {
+          "type": "paragraph",
+          "html": "That experience shapes everything we build. If a step feels unnecessary, we remove it."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Want to work with us?"
+        },
+        {
+          "type": "paragraph",
+          "html": "EC Assets is a growing company based in Berlin. Expect short decision paths, real responsibility from day one and colleagues from all over the world."
+        },
+        {
+          "type": "button",
+          "text": "See open positions",
+          "href": "/careers",
+          "style": "btn btn-m btn-solid btn-white text-base fill-base btn-icon btn-icon-back"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "hint": "",
+      "background": false,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 3,
+          "text": "Where to find us"
+        },
+        {
+          "type": "paragraph",
+          "html": "Our office is in Berlin:"
+        },
+        {
+          "type": "paragraph",
+          "html": "Musterstraße 1 | 10178 Berlin"
+        },
+        {
+          "type": "paragraph",
+          "html": "We also work with partners in several countries so that support is available across time zones."
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "hint": "",
+      "background": true,
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Frequently asked questions"
+        },
+        {
+          "type": "faq",
+          "items": [
+            {
+              "q": "What does EC Assets do?",
+              "a": "EC Assets sets up the financial and insurance requirements of a German visa for people who apply from abroad. Students, job seekers, au-pairs and professionals open a Blocked Account and arrange health insurance with us online, before they travel, without a German address or German language skills."
+            },
+            {
+              "q": "Where is EC Assets based?",
+              "a": "Our team works from Berlin. <br> <br> The service itself is fully digital, so you can <a href=\"/help\">reach us online</a> from anywhere. We reply within 24 hours."
+            },
+            {
+              "q": "Who are your partners?",
+              "a": "We work with statutory and private health insurers that specialise in international customers, a licensed partner bank in the EU that holds the accounts, and an international payments provider for deposits from abroad. The full list is published on our partners page."
+            },
+            {
+              "q": "Why choose EC Assets?",
+              "a": "Because the three things a German visa asks for come from one place, in English, with documents that every embassy recognises. You apply from your home country, the confirmation letter arrives within days, and your bank account is ready when you land."
+            },
+            {
+              "q": "Who can use EC Assets?",
+              "a": "Anyone preparing a move to Germany: university and language students, interns, job seekers, au-pairs and professionals with a job offer. If your visa requires proof of funds or health insurance, we can set it up."
+            }
+          ]
+        }
+      ],
+      "anchor": "faq"
+    }
+  ]
+}
