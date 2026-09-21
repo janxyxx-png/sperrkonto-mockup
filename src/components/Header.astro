@@ -248,6 +248,9 @@ const waHref = r(nav.topbar[0]?.href ?? '/help/contact');
     .mainnav.open { opacity: 1; transform: none; visibility: visible; pointer-events: auto; transition-delay: 0s; }
     .nav-backdrop { display: block; position: absolute; top: 100%; inset-inline: 0; height: calc(100vh - 100%); height: calc(100dvh - 100%); z-index: 1; background: rgba(11,15,25,.35); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .26s var(--ease-out-soft), visibility 0s .26s; }
     .header.nav-open .nav-backdrop { opacity: 1; visibility: visible; pointer-events: auto; transition-delay: 0s; }
+    /* Offen: Header fest am oberen Rand. Mit gesperrtem Scrollen (html.nav-lock) haelt position: sticky nicht mehr, der Header rutschte
+       samt Sheet um die gescrollte Strecke nach oben aus dem Bild (Jan, 21.09., iPhone). Das Sheet deckt den Rest des Bildschirms ab. */
+    .header.nav-open { position: fixed; top: 0; inset-inline: 0; }
     /* Zeilen: Icon, Titel, gedaempfte Kurzbeschreibung; Haarlinien, gerade Kanten, keine Pillen */
     .links { flex-direction: column; align-items: stretch; gap: 0; }
     .links li { border-bottom: 1px solid var(--color-border); }

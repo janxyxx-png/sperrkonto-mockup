@@ -12,7 +12,7 @@ const { tone = 'brand', size = '1.1rem', suffix } = Astro.props;
 <style>
   /* Die Marke bleibt auch auf RTL-Seiten eine LTR-Einheit; Farbe kommt aus color (currentColor im Pfad) */
   .wordmark { display: inline-flex; align-items: baseline; gap: .55em; font-size: var(--logo-h); line-height: 1; white-space: nowrap; direction: ltr; }
-  .logo { display: block; height: var(--logo-h); width: auto; aspect-ratio: 9015 / 1376; flex: none; }
+  .logo { display: block; height: var(--logo-h); width: auto; aspect-ratio: 9015 / 1376; flex: none; overflow: visible; } /* overflow: Safari schnitt die Buchstabenboeden am Rahmen ab (21.09.) */
   .brand { color: var(--color-brand); }
   .light { color: #fff; }
   .ink { color: var(--color-ink); }

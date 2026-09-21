@@ -152,7 +152,7 @@ a.card:hover .card-arrow { transform: translateX(3px); background: var(--color-a
 
 /* Hoehe von Topbar + Header (Header.astro), damit der Foto-Hero darunter durchlaufen kann */
 :root { --hdr-h: 118px; }
-@media (max-width: 1120px) { :root { --hdr-h: 66px; } /* M09: Topbar mobil weg, nur noch der Header */ html.nav-lock, html.nav-lock body { overflow: hidden; } }
+@media (max-width: 1120px) { :root { --hdr-h: 66px; } /* M09: Topbar mobil weg, nur noch der Header */ html.nav-lock { overflow: hidden; } } /* nur html: mit overflow auf body verliert der klebende Header den Halt und das Menue rutscht aus dem Bild (21.09.) */
 
 /* Icon-System: ein Motiv fuer die ganze Seite. Weicher Kreis mit Tinte-Glyphe fuer Merkmale, Listen und Belege;
    Tinte-Kreis mit weisser Glyphe fuer Aktionen (Pfeilkreis, Wortmarke). Auf dunklem Grund: heller Schleier + weisse Glyphe. */

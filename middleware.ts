@@ -5,7 +5,8 @@
  *  Hash erzeugen: printf '%s' 'DasPasswort' | shasum -a 256 */
 import { next } from '@vercel/edge';
 
-export const config = { matcher: '/(.*)' };
+// Manifest und Icons bleiben frei: der Browser laedt sie ohne Cookie, hinter der Tuer gaebe es nur 401-Fehler im Protokoll
+export const config = { matcher: '/((?!manifest\\.webmanifest$|apple-touch-icon\\.png$|favicon\\.svg$|favicon\\.ico$).*)' };
 
 const COOKIE = 'ec-mockup';
 const MAX_AGE = 60 * 60 * 24 * 30;
@@ -21,7 +22,9 @@ const page = (state: 'ask' | 'wrong' | 'unset') => `<!doctype html>
 <style>
   :root { color-scheme: light; }
   body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #f4f4f5; color: #0b0f19; font: 16px/1.5 -apple-system, "Segoe UI", system-ui, sans-serif; }
-  main { width: min(92vw, 400px); background: #fff; border-radius: 20px; padding: 36px 32px 32px; }
+  body { padding: 16px; box-sizing: border-box; }
+  main { box-sizing: border-box; width: 100%; max-width: 400px; background: #fff; border-radius: 20px; padding: 36px 32px 32px; }
+  @media (max-width: 420px) { main { padding: 28px 22px 24px; } }
   .mark { font-weight: 700; letter-spacing: -.03em; font-size: 1.35rem; color: #8e2d2f; margin: 0 0 22px; }
   h1 { font-size: 1.45rem; letter-spacing: -.02em; line-height: 1.15; margin: 0 0 6px; }
   p { margin: 0 0 22px; color: #5b6070; }
