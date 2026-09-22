@@ -78,7 +78,7 @@ const titleHtml = words(title);
     .phero.home { min-height: 0; }
     .phero :global(.photo) { object-position: 60% 30%; }
     .checklist { grid-template-columns: 1fr; gap: 0; }
-    .checklist li { font-size: .95rem; margin: .35em 0; }
+    .checklist li { font-size: .95rem; margin: .45em 0; line-height: 1.5; }
     h1 { margin-bottom: 16px; }
     .ctas { margin-bottom: 24px; }
     .lead:last-of-type, .sub:last-of-type { margin-bottom: 24px; }
@@ -88,14 +88,15 @@ const titleHtml = words(title);
     .phero { padding: 40px 0 60px; }
     .phero.under-header { padding-top: calc(var(--hdr-h) + 16px); }
     /* Telefonmass (M03): das Display-Moment der Zielgruppe ist der Telefon-Hero; Revolut 44 bis 48 px */
-    .home h1 { font-size: 2.6rem; letter-spacing: -.03em; line-height: 1; }
-    .page h1 { font-size: 2.1rem; }
-    .lead, .sub { font-size: 1rem; }
+    /* Zeilenabstaende am Telefon luftiger (Jan, 22.09.): 1,0 in der Headline und 1,4 im Lead standen zu eng, wenn beide umbrechen */
+    .home h1 { font-size: 2.6rem; letter-spacing: -.03em; line-height: 1.08; }
+    .page h1 { font-size: 2.1rem; line-height: 1.12; }
+    .lead, .sub { font-size: 1rem; line-height: 1.5; }
     .kicker { font-size: .8rem; margin-bottom: 12px; }
     .ctas { gap: 6px; }
     .ctas .btn { flex: 1 1 100%; }
     .ctas .btn-ghost-dark { background: none; border: 0; min-height: 40px; font-weight: 500; justify-content: flex-start; padding: 0; }
-    .checklist li { font-size: .9rem; margin: .25em 0; }
+    .checklist li { font-size: .9rem; margin: .5em 0; line-height: 1.5; }
     h1 :global(.w) { animation-duration: .5s; }
     /* Telefon: kein Zoom (der schob Gesichter aus dem schmalen Ausschnitt), Ausschnitt aus --pos-m, sonst --pos; Spiegelung bleibt */
     .phero :global(.photo) { --zoom: 1 !important; object-position: var(--pos-m, var(--pos, 100% 45%)); }
